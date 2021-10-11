@@ -10,5 +10,3 @@ async def on_shutdown(dp):
 
 if __name__ == '__main__':
     executor.start_polling(dp, on_shutdown=on_shutdown)
-    
-    
