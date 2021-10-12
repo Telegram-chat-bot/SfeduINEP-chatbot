@@ -21,3 +21,36 @@ async def callback_lang(call: CallbackQuery):
 async def callback_abiturient(call: CallbackQuery):
     await call.message.answer("Выберите интересующее вас в меню ниже", reply_markup=kb.abiturient_menu)
     await bot.delete_message(message_id=call.message.message_id, chat_id=call.message.chat.id)
+
+
+@dp.message_handler(lambda message:message.text =="Об институте")
+async def callback_level(message:Message):
+    await message.answer("Все о университете",reply_markup=kb.about_university)
+
+@dp.message_handler(lambda message:message.text =="Поступление")
+async def callback_level(message:Message):
+    await message.answer("Все о поступлении",reply_markup=kb.flow_in_university)
+
+@dp.message_handler(lambda message:message.text =="Задать вопрос")
+async def callback_level(message:Message):
+    await message.answer("Задать вопрос",reply_markup=kb.ask_question)
+
+@dp.message_handler(lambda message:message.text =="Назад")
+async def callback_level(message:Message):
+    await message.answer("возвращение",reply_markup=kb.abiturient_menu)
+
+
+
+
+#@dp.message_handler(lambda message:message.text == "Тест на профориентацию")
+#async def callback_level(message:Message):
+ #   pass
+
+#@dp.message_handler(lambda message:message.text == "Направления подготовки")
+#async def callback_level(message:Message):
+ #   pass
+
+#@dp.message_handler(lambda message:message.text == "Вступительные испытания")
+#async def callback_level(message:Message):
+ #   pass
+
