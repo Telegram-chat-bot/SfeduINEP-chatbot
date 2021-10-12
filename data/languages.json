@@ -29,10 +29,60 @@
     },
 
     "en":{
-
+        "abitr-keyboard":{
+            "menu": {
+                "main":  {
+                        "career": "Career Guidance test",
+                        "prepare_direct": "Directions of preparation",
+                        "testing": "Entrance examination",
+                        "admission": "Admission to university",
+                        "about_university": "About the Institute",
+                        "ask_question": "Ask a question"
+                },
+                "about_university":[
+                    {
+                        "tour": "Sign up for a guided tour",
+                        "education": "Science and study",
+                        "events": "Events",
+                        "sport": "Sport and Culture",
+                        "competitions": "Contests",
+                        "work": "Partners and employment",
+                        "news": "News",
+                        "dormitory": "Student dormitories and Canteens",
+                        "photos": "Photos",
+                        "contacts": "Contacts"
+                    }
+                ]
+            }
+        }
     },
 
     "es":{
-
+        "abitr-keyboard":{
+            "menu": {
+                "main":  {
+                        "career": "Prueba de orientación profesional",
+                        "prepare_direct": "Áreas de preparación",
+                        "testing": "Pruebas de acceso",
+                        "admission": "Ingreso",
+                        "about_university": "Sobre el Instituto",
+                        "ask_question": "Preguntar"
+                },
+                "about_university":[
+                    {
+                        "tour": "Inscribirse en una excursión",
+                        "education": "Ciencia y estudio",
+                        "events": "Medidas",
+                        "sport": "Deporte y cultura",
+                        "competitions": "Concursos",
+                        "work": "Socios y empleo",
+                        "news": "Novedad",
+                        "dormitory": "Dormitorios y comedores",
+                        "photos": "Fotos",
+                        "contacts": "Contactos"
+                    }
+                ]
+            }
+        }
     }
 }
