@@ -3,7 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 .env
-test.py
 
 # C extensions
 *.so
@@ -129,3 +128,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+test.py

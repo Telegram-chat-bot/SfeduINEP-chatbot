@@ -6,17 +6,56 @@ abiturient_menu = ReplyKeyboardMarkup(
         [
             KeyboardButton("Тест на профориентацию"),
             KeyboardButton("Направления подготовки"),
-            KeyboardButton("Вступителные испытания"),
+            KeyboardButton("Вступительные испытания"),
             
         ],
         [
             KeyboardButton("Поступление"),
             KeyboardButton("Об институте"),
             KeyboardButton("Задать вопрос")
+            #KeyboardButton("Выбор языка")
         ]
     ],
     resize_keyboard=True
 )
+
+
+
+
+#вступительные испытания,тест на профориентацию,направления подготовки
+#выполняются в инлайне путем выбора уровня образования
+#а потом выводятся статьи
+
+#give_level = ["Тест на профориентацию","Направления подготовки","Вступительные испытания",
+#"Правила приема"#....
+#]
+
+
+flow_in_university = ReplyKeyboardMarkup(
+    [
+        [
+            KeyboardButton("Правила приема"),   #нужен левел
+            KeyboardButton("Подать документы"),  #не нужен левел
+            
+        ],
+        [
+            KeyboardButton("Проходные баллы"),   #нужен левел(для абит-баллы по егэ,магист-примеры экзам)
+            KeyboardButton("Количество мест")   #нужен левел
+        ],
+        [
+            KeyboardButton('Индивидуальные достижения'),  #нужен левел
+            KeyboardButton('Особые права и льготы')  #нужно только для бакалавров(но надо еще уточнить)
+        ],
+        [
+            KeyboardButton('Статистика приёма'),#нужен левел
+            KeyboardButton('Порядок зачисления'),#нужен левел
+            KeyboardButton('Назад')
+        ],
+    ],
+    resize_keyboard=True
+)
+
+
 
 about_university = ReplyKeyboardMarkup(
     [
@@ -46,6 +85,7 @@ about_university = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
+
 ask_question = ReplyKeyboardMarkup(
     [
         [
@@ -60,3 +100,4 @@ ask_question = ReplyKeyboardMarkup(
         ]
     ]
 )
+
