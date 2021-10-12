@@ -1,6 +1,6 @@
 from aiogram.types.reply_keyboard import KeyboardButton, ReplyKeyboardMarkup
 
-
+#Главное меню---------
 abiturient_menu = ReplyKeyboardMarkup(
     [
         [
@@ -13,25 +13,22 @@ abiturient_menu = ReplyKeyboardMarkup(
             KeyboardButton("Поступление"),
             KeyboardButton("Об институте"),
             KeyboardButton("Задать вопрос")
-            #KeyboardButton("Выбор языка")
         ]
     ],
     resize_keyboard=True
 )
 
 
-
-
 #вступительные испытания,тест на профориентацию,направления подготовки
 #выполняются в инлайне путем выбора уровня образования
 #а потом выводятся статьи
 
-#give_level = ["Тест на профориентацию","Направления подготовки","Вступительные испытания",
-#"Правила приема"#....
-#]
 
 
-flow_in_university = ReplyKeyboardMarkup(
+#ПОДРАЗДЕЛЫ В ГЛ.МЕНЮ-------------
+
+#Раздел "Поступление" в гл. меню
+university_admission = ReplyKeyboardMarkup(
     [
         [
             KeyboardButton("Правила приема"),   #нужен левел
@@ -56,7 +53,7 @@ flow_in_university = ReplyKeyboardMarkup(
 )
 
 
-
+#Раздел "Об институте" в гл. меню
 about_university = ReplyKeyboardMarkup(
     [
         [
@@ -85,7 +82,7 @@ about_university = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-
+#Раздел "Задать вопрос" в гл.меню
 ask_question = ReplyKeyboardMarkup(
     [
         [
@@ -101,4 +98,3 @@ ask_question = ReplyKeyboardMarkup(
     ],
     resize_keyboard=True
 )
-

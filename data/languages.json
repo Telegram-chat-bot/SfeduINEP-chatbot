@@ -1,5 +1,6 @@
 {
     "ru":{
+        "previous": "Назад",
         "abitr-keyboard":{
             "menu": {
                 "main":  {
@@ -10,8 +11,7 @@
                         "about_university": "Об институте",
                         "ask_question": "Задать вопрос"
                 },
-                "about_university":[
-                    {
+                "about_university":{
                         "tour": "Записаться на экскурсию",
                         "education": "Наука и учёба",
                         "events": "Мероприятия",
@@ -22,8 +22,12 @@
                         "dormitory": "Общежития и столовые",
                         "photos": "Фото",
                         "contacts": "Контакты"
-                    }
-                ]
+                },
+                "ask_question":{
+                    "FAQ": "F.A.Q",
+                    "admission_question": "Вопросы по поступлению",
+                    "prepare_question": "Вопросы по направлению подготовки"
+                }
             }
         }
     },

@@ -16,7 +16,7 @@ lang3 = InlineKeyboardButton(text="Espanol", callback_data="es")
 lang_key = InlineKeyboardMarkup().add(lang1, lang2, lang3)
 
 #Инлайн кнопки выбора уровня образования----------
-bakalav_level = InlineKeyboardButton(text="Бакалавриат\Специалитет", callback_data="baka")
-magistrat_level = InlineKeyboardButton(text="Магистратура", callback_data="maga")
+bak_level = InlineKeyboardButton(text="Бакалавриат/Специалитет", callback_data="bak")
+mag_level = InlineKeyboardButton(text="Магистратура", callback_data="mag")
 
-choose_level = InlineKeyboardMarkup().add(bakalav_level,magistrat_level)
+choose_level = InlineKeyboardMarkup().add(bak_level,mag_level)
