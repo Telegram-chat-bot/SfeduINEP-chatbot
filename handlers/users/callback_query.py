@@ -24,7 +24,6 @@ async def callback_abiturient(call: CallbackQuery):
 async def prepare_direct_block(call: CallbackQuery):
     if call.data == "bak":
         await call.message.edit_text("Направления бакалаврской подготовки:", reply_markup=btn.bak_prepare_direct)
-    
     elif call.data == "spec":
         await call.message.edit_text("Специалитет:", reply_markup=btn.spec_prepare_direct)
     elif call.data == "mag":
