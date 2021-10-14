@@ -12,7 +12,7 @@ async def welcome(message: Message):
 
 
 #Обработчики главных разделов---------------
-@dp.message_handler(lambda message: message.text == "Направления подготовки")
+@dp.message_handler(lambda message: message.text in kb.check)
 async def prepare_direct(message: Message):
     await message.answer("Выберите интересующий вас уровень подготовки", reply_markup=btn.choose_level)
 
@@ -31,6 +31,26 @@ async def callback_level(message:Message):
 @dp.message_handler(lambda message:message.text =="Назад")
 async def callback_level(message:Message):
     await message.answer("Вы вернулись назад",reply_markup=kb.abiturient_menu)
+
+@dp.message_handler(lambda message:message.text == "Правила приема")
+async def pravila_url(message:Message):
+    await message.answer("С правилами приема можете ознакомиться ниже",reply_markup = btn.rules)
+
+#пока так
+@dp.message_handler(lambda message:message.text == "Направления подготовки")
+async def napravlenia(message:Message):
+    await message.answer("1 октября будет доступно",reply_markup = btn.training_directions)
+
+#пока так
+@dp.message_handler(lambda message:message.text == "Вступительные испытания")
+async def napravlenia(message:Message):
+    await message.answer("1 октября будет доступно",reply_markup = btn.choose_level)
+    if message.text =="Бакалавриат/Специалитет":
+        await message.answer("aboba",reply_markup = btn.training_directions)
+
+
+
+
 
 
 

@@ -20,3 +20,12 @@ bak_level = InlineKeyboardButton(text="Бакалавриат/Специалит
 mag_level = InlineKeyboardButton(text="Магистратура", callback_data="mag")
 
 choose_level = InlineKeyboardMarkup().add(bak_level,mag_level)
+
+#ссылка правила приема---------------
+rules_of_reception = InlineKeyboardButton(text="Ссылка", url = "https://sfedu.ru/www/stat_pages22.show?p=ABT/N8202")
+rules = InlineKeyboardMarkup().add(rules_of_reception)
+
+#ссылка направления подготовки
+training_directions = InlineKeyboardButton(text = "Ссылка",url ="https://sfedu.ru/www/stat_pages22.show?p=ABT/N8206/P")
+train = InlineKeyboardMarkup().add(training_directions)
+
