@@ -49,3 +49,9 @@ mag5 = InlineKeyboardButton(text="20.04.01 «Техносферная безоп
 mag6 = InlineKeyboardButton(text="28.04.01 «Нанотехнологии и микросистемная техника»", callback_data="28.04.01")
 
 mag_prepare_direct = InlineKeyboardMarkup(row_width=1).add(mag1, mag2, mag3, mag4, mag5, mag6, back_btn)
+
+#ссылка вступительные исыпатния(надо изменить)-------------------
+challeng_mag = InlineKeyboardButton(text = "ссылка",url = "https://sfedu.ru/www/stat_pages22.show?p=ABT/N8211/P")#поменять ссылки
+challeng_bak = InlineKeyboardButton(text = "ссылка",url = "https://sfedu.ru/www/stat_pages22.show?p=ABT/N8211/P")#поменять ссылки
+challengs_mag = InlineKeyboardMarkup().add(challeng_mag)
+challengs_bak = InlineKeyboardMarkup().add(challeng_bak)

@@ -31,3 +31,11 @@ async def back_to_btn_handler(message:Message):
 async def prepare_direction_item(message: Message):
     await message.answer("Выберите специальность", reply_markup=btn.choose_level)
 
+
+@dp.message_handler(lambda message:message.text == "Вступительные испытания")
+async def napravlenia(message:Message):
+    await message.answer("1 октября будет доступно", reply_markup = btn.choose_level)
+
+@dp.message_handler(lambda message:message.text == "Правила приема")
+async def pravila_url(message:Message):
+    await message.answer("С правилами приема можете ознакомиться ниже",reply_markup = btn.choose_level)

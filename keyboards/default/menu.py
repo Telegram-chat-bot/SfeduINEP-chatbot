@@ -6,6 +6,9 @@ back_keyboard = ReplyKeyboardMarkup(
     ],
     resize_keyboard=True
 )
+
+check = ["Проходные баллы","Количество мест"]
+
 abiturient_menu = ReplyKeyboardMarkup(
     [
         [
