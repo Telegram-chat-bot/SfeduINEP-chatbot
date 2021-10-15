@@ -17,6 +17,7 @@ async def callback_abiturient(call: CallbackQuery):
     await bot.delete_message(message_id=call.message.message_id, chat_id=call.message.chat.id)
 
 
-@dp.callback_query_handler(lambda call: call.data == "bak")
-async def bak_choosed(call: CallbackQuery):
-    await call.message
+
+
+
+
