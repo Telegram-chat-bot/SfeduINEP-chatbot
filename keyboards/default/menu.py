@@ -93,6 +93,7 @@ ask_question = ReplyKeyboardMarkup(
             KeyboardButton('Вопросы по направлению подготовки'),
             KeyboardButton("Назад")
         ]
-    ]
+    ],
+    resize_keyboard=True
 )
 

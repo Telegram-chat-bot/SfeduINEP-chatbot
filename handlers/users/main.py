@@ -34,7 +34,7 @@ async def prepare_direction_item(message: Message):
 
 @dp.message_handler(lambda message:message.text == "Вступительные испытания")
 async def napravlenia(message:Message):
-    await message.answer("1 октября будет доступно", reply_markup = btn.choose_level)
+    await message.answer("Выберите направление подготовки", reply_markup = btn.choose_level)
 
 @dp.message_handler(lambda message:message.text == "Правила приема")
 async def pravila_url(message:Message):

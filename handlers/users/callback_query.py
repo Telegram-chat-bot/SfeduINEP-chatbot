@@ -1,10 +1,6 @@
 from aiogram.types import CallbackQuery
 from loader import dp, bot
 
-from aiogram.types import ReplyKeyboardRemove
-
-from aiogram.utils import markdown as mkn
-
 from keyboards.default import menu as kb
 from keyboards.inline import buttons as btn
 
@@ -25,29 +21,29 @@ async def prepare_direct_block(call: CallbackQuery):
     if call.data == "bak":
         await call.message.edit_text("Направления бакалаврской подготовки:", reply_markup=btn.bak_prepare_direct)
     elif call.data == "spec":
-        await call.message.edit_text("Специалитет:", reply_markup=btn.spec_prepare_direct)
+        await call.message.edit_text("Направления специалитета:", reply_markup=btn.spec_prepare_direct)
     elif call.data == "mag":
-        await call.message.edit_text("Магистратура", reply_markup=btn.mag_prepare_direct)
+        await call.message.edit_text("Направления магистерской подготовки:", reply_markup=btn.mag_prepare_direct)
     elif call.data == "back_to":
         await call.message.edit_text("Вы вернулись назад", reply_markup=btn.choose_level)
     
 
 #вступительные испытания --> бакалавр\магистр --> статья с ссылкой бак\маг
-@dp.callback_query_handler(lambda call: call.data == "mag")
-async def text(call: CallbackQuery):
-    await call.message.answer("1 октября будет все известны испытания для магов",reply_markup = btn.challengs_mag) #train_mag надо изменить
+# @dp.callback_query_handler(lambda call: call.data == "mag")
+# async def text(call: CallbackQuery):
+#     await call.message.answer("1 октября будет все известны испытания для магов",reply_markup = btn.challengs_mag) #train_mag надо изменить
 
-@dp.callback_query_handler(lambda call: call.data == "bak")
-async def text(call: CallbackQuery):
-    await call.message.answer("1 октября будет все известны испытания для бАкара",reply_markup = btn.challengs_bak) #train_bak надо изменить
+# @dp.callback_query_handler(lambda call: call.data == "bak")
+# async def text(call: CallbackQuery):
+#     await call.message.answer("1 октября будет все известны испытания для бАкара",reply_markup = btn.challengs_bak) #train_bak надо изменить
 
-@dp.callback_query_handler(lambda call:call.data =="mag")
-async def test(call:CallbackQuery):
-    await call.message.answer("1 октября будет известны направления для магистров",reply_markup = btn.rules)#поменять rules
+# @dp.callback_query_handler(lambda call:call.data =="mag")
+# async def test(call:CallbackQuery):
+#     await call.message.answer("1 октября будет известны направления для магистров",reply_markup = btn.rules)#поменять rules
 
-@dp.callback_query_handler(lambda call:call.data =="bak")
-async def test(call:CallbackQuery):
-    await call.message.answer("1 октября будет известны направления для бакалавриата ",reply_markup = btn.rules)#поменять rules
+# @dp.callback_query_handler(lambda call:call.data =="bak")
+# async def test(call:CallbackQuery):
+#     await call.message.answer("1 октября будет известны направления для бакалавриата ",reply_markup = btn.rules)#поменять rules
 
 
 
