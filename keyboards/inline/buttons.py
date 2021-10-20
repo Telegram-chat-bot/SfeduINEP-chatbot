@@ -77,7 +77,9 @@ bak_prepare_direct = InlineKeyboardMarkup(
 spec_prepare_direct = InlineKeyboardMarkup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(text="26.05.04 «Применение и эксплуатация технических систем надводных кораблей и подводных лодок»", callback_data="26.05.04"),
+            InlineKeyboardButton(text="26.05.04 «Применение и эксплуатация технических систем надводных кораблей и подводных лодок»", callback_data="26.05.04")
+        ],
+        [
             back_btn
         ]
     ],

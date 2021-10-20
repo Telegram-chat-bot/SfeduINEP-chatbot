@@ -1,5 +1,6 @@
 from loader import dp, bot
 from aiogram.types import Message
+import articels
 
 from keyboards.default import menu as kb
 from keyboards.inline import buttons as btn
@@ -39,3 +40,43 @@ async def napravlenia(message:Message):
 @dp.message_handler(lambda message:message.text == "Правила приема")
 async def pravila_url(message:Message):
     await message.answer("С правилами приема можете ознакомиться ниже",reply_markup = btn.choose_level)
+
+@dp.message_handler(lambda message:message.text == "Подать документы")
+async def podat(message:Message):
+    await message.answer(text = articels.postuplenie1)
+
+@dp.message_handler(lambda message:message.text == "Проходные баллы")
+async def prohod(message:Message):
+    await message.answer(text = articels.postuplenie2)
+
+@dp.message_handler(lambda message:message.text == "Количество мест")
+async def mesta(message:Message):
+    await message.answer(text = articels.postuplenie3)
+
+@dp.message_handler(lambda message:message.text == "Записаться на экскурсию")
+async def mesta(message:Message):
+    await message.answer(text = articels.postuplenie4)
+
+@dp.message_handler(lambda message:message.text == "Наука и учеба")
+async def mesta(message:Message):
+    await message.answer(text = articels.postuplenie5)
+
+@dp.message_handler(lambda message:message.text == "Мероприятия")
+async def mesta(message:Message):
+    await message.answer(text = articels.postuplenie6)
+
+@dp.message_handler(lambda message:message.text == "Спорт и культура")
+async def mesta(message:Message):
+    await message.answer(text = articels.postuplenie7)
+
+@dp.message_handler(lambda message:message.text == "Контакты")
+async def mesta(message:Message):
+    await message.answer(text = articels.postuplenie8)
+
+@dp.message_handler(lambda message:message.text == "F.A.Q")
+async def mesta(message:Message):
+    await message.answer(text = articels.postuplenie9)
+
+@dp.message_handler(lambda message:message.text == "Вопросы по поступлению")
+async def mesta(message:Message):
+    await message.answer(text = articels.postuplenie10)
