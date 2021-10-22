@@ -134,9 +134,7 @@ async def mesta(message: Message):
 async def direction_training_questions(message: Message):
     pass
 
-<<<<<<< HEAD
 #-----------------------------------
-=======
 @dp.message_handler(lambda message:message.text == "Правила приема")
 async def pravila_url(message:Message):
     await message.answer("С правилами приема можете ознакомиться ниже",reply_markup = btn.choose_level)
@@ -180,4 +178,4 @@ async def mesta(message:Message):
 @dp.message_handler(lambda message:message.text == "Вопросы по поступлению")
 async def mesta(message:Message):
     await message.answer(text = articels.postuplenie10)
->>>>>>> 0cb5c4f6eb1adb47904c6c62e1feea72d498aafd
+
