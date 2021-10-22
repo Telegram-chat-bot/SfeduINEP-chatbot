@@ -53,16 +53,10 @@ bak_prepare_direct = InlineKeyboardMarkup(
                 InlineKeyboardButton(text="12.03.04 «Биотехнические системы и технологии»", callback_data="12.03.04")
             ],
             [
-                InlineKeyboardButton(text="17.03.01 “Корабельное вооружение”", callback_data="17.03.01")
-            ],
-            [
                 InlineKeyboardButton(text="20.03.01 «Техносферная безопасность»", callback_data="20.03.01")
             ],
             [
                 InlineKeyboardButton(text="21.03.02 «Землеустройство и кадастры»", callback_data="21.03.02")
-            ],
-            [
-                InlineKeyboardButton(text=" 27.03.01 «Стандартизация и метрология»", callback_data="27.03.01")
             ],
             [
                 InlineKeyboardButton(text="28.03.02 «Наноинженерия»", callback_data="28.03.02")
@@ -77,7 +71,9 @@ bak_prepare_direct = InlineKeyboardMarkup(
 spec_prepare_direct = InlineKeyboardMarkup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(text="26.05.04 «Применение и эксплуатация технических систем надводных кораблей и подводных лодок»", callback_data="26.05.04"),
+            InlineKeyboardButton(text="26.05.04 «Применение и эксплуатация технических систем надводных кораблей и подводных лодок»", callback_data="26.05.04")
+        ],
+        [
             back_btn
         ]
     ],

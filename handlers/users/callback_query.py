@@ -16,7 +16,7 @@ async def callback_abiturient(call: CallbackQuery):
     await bot.delete_message(message_id=call.message.message_id, chat_id=call.message.chat.id)
 
 #Направления подготовки-------------
-@dp.callback_query_handler(lambda call: call.data in ["bak", "spec", "mag", "back_to"])
+@dp.callback_query_handler(lambda call: call.data)
 async def prepare_direct_block(call: CallbackQuery):
     if call.data == "bak":
         await call.message.edit_text("Направления бакалаврской подготовки:", reply_markup=btn.bak_prepare_direct)
