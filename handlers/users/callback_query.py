@@ -1,4 +1,5 @@
 from aiogram.types import CallbackQuery
+from aiogram.types.message import Message
 from loader import dp, bot
 
 from keyboards.default import menu as kb
@@ -16,7 +17,7 @@ async def callback_abiturient(call: CallbackQuery):
     await bot.delete_message(message_id=call.message.message_id, chat_id=call.message.chat.id)
 
 #Направления подготовки-------------
-@dp.callback_query_handler(lambda call: call.data)
+@dp.callback_query_handler(lambda call: call.data in ["bak", "mag", "spec", "back_to"])
 async def prepare_direct_block(call: CallbackQuery):
     if call.data == "bak":
         await call.message.edit_text("Направления бакалаврской подготовки:", reply_markup=btn.bak_prepare_direct)
@@ -27,6 +28,7 @@ async def prepare_direct_block(call: CallbackQuery):
     elif call.data == "back_to":
         await call.message.edit_text("Вы вернулись назад", reply_markup=btn.choose_level)
     
+
 
 #вступительные испытания --> бакалавр\магистр --> статья с ссылкой бак\маг
 # @dp.callback_query_handler(lambda call: call.data == "mag")

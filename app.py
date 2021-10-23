@@ -2,7 +2,6 @@ from loader import bot, storage, dp
 from aiogram import executor
 import handlers
 
-
 async def on_shutdown(dp):
     await bot.close()
     await storage.close()
