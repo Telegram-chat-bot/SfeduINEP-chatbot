@@ -1,5 +1,6 @@
 from loader import bot, dp
 from aiogram.types import CallbackQuery, message, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.dispatcher import FSMContext
 
 from keyboards.inline import buttons as btn
 
@@ -19,11 +20,10 @@ def init_url(link):
     )
 
 @dp.callback_query_handler(lambda call: call.data)
-async def test(call: CallbackQuery):
+async def direct_of_prepare_handler(call: CallbackQuery, state: FSMContext):
     for direction, link in directions.items():
         if call.data == direction:
             await call.message.edit_text("Всю информацию по данному направлению вы можете найти, перейдя по ссылке", reply_markup=init_url(link=link))
-
 
 
 directions = {

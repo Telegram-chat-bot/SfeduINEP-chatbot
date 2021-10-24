@@ -2,6 +2,9 @@ from loader import dp, bot
 from aiogram.types import Message
 import articels
 
+from states.state_machine import User_State
+from aiogram.dispatcher import FSMContext
+
 from keyboards.default import menu as kb
 from keyboards.inline import buttons as btn
 
@@ -21,7 +24,7 @@ async def prepare_direction_item(message: Message):
     await message.answer("Выберите специальность", reply_markup=btn.choose_level)
 
 @dp.message_handler(lambda message:message.text == "Вступительные испытания")
-async def napravlenia(message:Message):
+async def passing_scores_item(message:Message):
     await message.answer("Выберите направление подготовки", reply_markup = btn.choose_level)
 
 @dp.message_handler(lambda message: message.text == "Поступление")
