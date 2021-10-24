@@ -65,11 +65,11 @@ async def num_of_places(message: Message):
 
 @dp.message_handler(lambda message: message.text == "Индивидуальные достижения")
 async def achievements(message: Message):
-    pass
+    await message.answer(text = articels.postuplenie3_1)
 
 @dp.message_handler(lambda message: message.text == "Особые права и льготы")
 async def special_rights(message: Message):
-    pass
+    await message.answer(text = articels.postuplenie3_2)
 
 @dp.message_handler(lambda message: message.text == "Статистика приема")
 async def admission_statcistics(message: Message):
@@ -77,7 +77,7 @@ async def admission_statcistics(message: Message):
 
 @dp.message_handler(lambda message: message.text == "Порядок зачисления")
 async def enrollment_procedure(message: Message):
-    pass
+    await message.answer(text = articels.postuplenie3_3)
 
 #---------------------------
 
@@ -100,11 +100,11 @@ async def mesta(message: Message):
 
 @dp.message_handler(lambda message: message.text == "Конкурсы")
 async def competitions(message: Message):
-    pass
+    await message.answer(text = articels.postuplenie7_1)
 
 @dp.message_handler(lambda message: message.text == "Партнеры и трудоустройство")
 async def partners_employment(message: Message):
-    pass
+    await message.answer(text = articels.postuplenie7_2)
 
 @dp.message_handler(lambda message: message.text == "Новости")
 async def news(message: Message):
@@ -112,7 +112,7 @@ async def news(message: Message):
 
 @dp.message_handler(lambda message: message.text == "Общежития и столовые")
 async def dormitory_eatery(message: Message):
-    pass
+    await message.answer(text = articels.postuplenie7_3)
 
 @dp.message_handler(lambda message: message.text == "Фото")
 async def photos(message: Message):
