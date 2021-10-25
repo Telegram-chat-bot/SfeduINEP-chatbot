@@ -1,4 +1,6 @@
 from aiogram.dispatcher.storage import FSMContext
+from keyboards import default
+import keyboards
 from states.state_machine import User_State
 
 from aiogram.types import CallbackQuery
@@ -23,7 +25,7 @@ async def callback_abiturient(call: CallbackQuery):
 
 
 #Направления подготовки-------------
-@dp.callback_query_handler(lambda call: call.data in ["bak", "spec", "mag", "back_to"])
+@dp.callback_query_handler(lambda call: call.data in ["bak", "spec", "mag", "back_to", "back_to_menu"])
 async def prepare_direct_block(call: CallbackQuery):
     if call.data == "bak":
         await call.message.edit_text("Направления бакалаврской подготовки:", reply_markup=btn.bak_prepare_direct)
@@ -31,30 +33,13 @@ async def prepare_direct_block(call: CallbackQuery):
         await call.message.edit_text("Направления специалитета:", reply_markup=btn.spec_prepare_direct)
     elif call.data == "mag":
         await call.message.edit_text("Направления магистерской подготовки:", reply_markup=btn.mag_prepare_direct)
+        
     elif call.data == "back_to":
         await call.message.edit_text("Выберите направление подготовки", reply_markup=btn.choose_level)
-    
 
-
-#вступительные испытания --> бакалавр\магистр --> статья с ссылкой бак\маг
-# @dp.callback_query_handler(lambda call: call.data == "mag")
-# async def text(call: CallbackQuery):
-#     await call.message.answer("1 октября будет все известны испытания для магов",reply_markup = btn.challengs_mag) #train_mag надо изменить
-
-# @dp.callback_query_handler(lambda call: call.data == "bak")
-# async def text(call: CallbackQuery):
-#     await call.message.answer("1 октября будет все известны испытания для бАкара",reply_markup = btn.challengs_bak) #train_bak надо изменить
-
-# @dp.callback_query_handler(lambda call:call.data =="mag")
-# async def test(call:CallbackQuery):
-#     await call.message.answer("1 октября будет известны направления для магистров",reply_markup = btn.rules)#поменять rules
-
-# @dp.callback_query_handler(lambda call:call.data =="bak")
-# async def test(call:CallbackQuery):
-#     await call.message.answer("1 октября будет известны направления для бакалавриата ",reply_markup = btn.rules)#поменять rules
-
-
-
+    elif call.data == "back_to_menu":
+        await call.message.delete_reply_markup()
+        await bot.delete_message(message_id=call.message.message_id, chat_id=call.message.chat.id)
 
 
 #поступление-->подать документы-->

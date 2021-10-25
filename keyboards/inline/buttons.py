@@ -31,6 +31,9 @@ choose_level = InlineKeyboardMarkup(
             InlineKeyboardButton(text="Бакалавриат", callback_data="bak"),
             InlineKeyboardButton(text="Специалитет", callback_data="spec"),
             InlineKeyboardButton(text="Магистратура", callback_data="mag")
+        ],
+        [
+            InlineKeyboardButton(text="Назад", callback_data="back_to_menu")
         ]
     ]
 )
@@ -54,9 +57,6 @@ bak_prepare_direct = InlineKeyboardMarkup(
             ],
             [
                 InlineKeyboardButton(text="20.03.01 «Техносферная безопасность»", callback_data="20.03.01")
-            ],
-            [
-                InlineKeyboardButton(text="21.03.02 «Землеустройство и кадастры»", callback_data="21.03.02")
             ],
             [
                 InlineKeyboardButton(text="28.03.02 «Наноинженерия»", callback_data="28.03.02")
@@ -86,22 +86,19 @@ spec_prepare_direct = InlineKeyboardMarkup(
 mag_prepare_direct = InlineKeyboardMarkup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(text="11.04.03 «Конструирование и технология электронных средств»", callback_data="11.04.03")
+            InlineKeyboardButton(text="09.04.03 «Прикладная информатика»", callback_data="09.04.03")
         ],
         [
-            InlineKeyboardButton(text="11.04.04 «Электроника и наноэлектроника»", callback_data="11.04.04")
+            InlineKeyboardButton(text="11.04.00 «Электроника, радиотехника и системы связи»", callback_data="11.04.00")
         ],
         [
-            InlineKeyboardButton(text="12.04.01 «Приборостроение»", callback_data="12.04.01")
+            InlineKeyboardButton(text="12.04.00 «Фотоника, приборостроение, оптические и биотехнические системы и технологии»", callback_data="12.04.00")
         ],
         [
-            InlineKeyboardButton(text="12.04.04 «Биотехнические системы и технологии»", callback_data="12.04.04")
+            InlineKeyboardButton(text="28.04.01 «Техносферная безопасность»", callback_data="20.04.01")
         ],
         [
-            InlineKeyboardButton(text="20.04.01 «Техносферная безопасность»", callback_data="20.04.01")
-        ],
-        [
-            InlineKeyboardButton(text="28.04.01 «Нанотехнологии и микросистемная техника»", callback_data="28.04.01")
+            InlineKeyboardButton(text="28.04.02 «Наноинженерия»", callback_data="28.04.02")
         ],
         [
             back_btn
@@ -110,9 +107,3 @@ mag_prepare_direct = InlineKeyboardMarkup(
 )
 
 #-------------------------------
-
-#ссылка вступительные исыпатния(надо изменить)-------------------
-challeng_mag = InlineKeyboardButton(text = "ссылка",url = "https://sfedu.ru/www/stat_pages22.show?p=ABT/N8211/P")#поменять ссылки
-challeng_bak = InlineKeyboardButton(text = "ссылка",url = "https://sfedu.ru/www/stat_pages22.show?p=ABT/N8211/P")#поменять ссылки
-challengs_mag = InlineKeyboardMarkup().add(challeng_mag)
-challengs_bak = InlineKeyboardMarkup().add(challeng_bak)
