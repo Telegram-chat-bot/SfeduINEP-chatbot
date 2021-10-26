@@ -1,6 +1,13 @@
 from aiogram.types.reply_keyboard import KeyboardButton, ReplyKeyboardMarkup
 
-#Главное меню---------
+back_keyboard = ReplyKeyboardMarkup(
+    [
+        [KeyboardButton("Назад")]
+    ],
+    resize_keyboard=True
+)
+
+
 abiturient_menu = ReplyKeyboardMarkup(
     [
         [
@@ -18,34 +25,24 @@ abiturient_menu = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-
-#вступительные испытания,тест на профориентацию,направления подготовки
-#выполняются в инлайне путем выбора уровня образования
-#а потом выводятся статьи
-
-
-
-#ПОДРАЗДЕЛЫ В ГЛ.МЕНЮ-------------
-
-#Раздел "Поступление" в гл. меню
 university_admission = ReplyKeyboardMarkup(
     [
         [
-            KeyboardButton("Правила приема"),   #нужен левел
-            KeyboardButton("Подать документы"),  #не нужен левел
+            KeyboardButton("Правила приема"), 
+            KeyboardButton("Подать документы"), 
             
         ],
         [
-            KeyboardButton("Проходные баллы"),   #нужен левел(для абит-баллы по егэ,магист-примеры экзам)
-            KeyboardButton("Количество мест")   #нужен левел
+            KeyboardButton("Проходные баллы"),  
+            KeyboardButton("Количество мест")   
         ],
         [
-            KeyboardButton('Индивидуальные достижения'),  #нужен левел
-            KeyboardButton('Особые права и льготы')  #нужно только для бакалавров(но надо еще уточнить)
+            KeyboardButton('Индивидуальные достижения'),
+            KeyboardButton('Особые права и льготы')
         ],
         [
-            KeyboardButton('Статистика приёма'),#нужен левел
-            KeyboardButton('Порядок зачисления'),#нужен левел
+            KeyboardButton('Статистика приёма'),
+            KeyboardButton('Порядок зачисления'),
             KeyboardButton('Назад')
         ],
     ],
@@ -53,7 +50,7 @@ university_admission = ReplyKeyboardMarkup(
 )
 
 
-#Раздел "Об институте" в гл. меню
+
 about_university = ReplyKeyboardMarkup(
     [
         [
@@ -82,7 +79,7 @@ about_university = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-#Раздел "Задать вопрос" в гл.меню
+
 ask_question = ReplyKeyboardMarkup(
     [
         [
@@ -98,3 +95,4 @@ ask_question = ReplyKeyboardMarkup(
     ],
     resize_keyboard=True
 )
+

@@ -1,5 +1,11 @@
 {
     "ru":{
+        "choose_role": "Кто вы?",
+        "roles": {
+            "abitr": "Абитуриент",
+            "student": "Студент",
+            "teacher": "Преподаватель"
+        },
         "previous": "Назад",
         "abitr-keyboard":{
             "menu": {
@@ -33,6 +39,12 @@
     },
 
     "en":{
+        "choose_role": "Who are you?",
+        "roles": {
+            "abitr": "Entrant",
+            "student": "Student",
+            "teacher": "Teacher"
+        },
         "abitr-keyboard":{
             "menu": {
                 "main":  {
