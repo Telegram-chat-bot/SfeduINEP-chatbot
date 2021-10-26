@@ -15,13 +15,18 @@ from keyboards.inline import buttons as btn
 #Обработчик выбора роли--------------------
 @dp.callback_query_handler(lambda call: call.data in ['ru', 'en', 'es'])
 async def callback_lang(call: CallbackQuery):
-    await call.message.edit_text("Кто вы?", reply_markup=btn.roles)
+    await bot.answer_callback_query(call.id)
+    await call.message.answer("""
+    Здравствуйте! Вас приветствует чат-бот ИНЭП ЮФУ, готов ответить на ВСЕ Ваши вопросы (но это не точно). Выберите интересующий раздел меню или задайте вопрос в диалоге.
+    """, reply_markup=kb.abiturient_menu)
+
+    await bot.delete_message(message_id=call.message.message_id, chat_id=call.message.chat.id)
 
 #Обработчики выбранных ролей-----------------
-@dp.callback_query_handler(lambda call: call.data == "abtr")
-async def callback_abiturient(call: CallbackQuery):
-    await call.message.answer("Выберите интересующий вас пункт", reply_markup=kb.abiturient_menu)
-    await bot.delete_message(message_id=call.message.message_id, chat_id=call.message.chat.id)
+# @dp.callback_query_handler(lambda call: call.data == "abtr")
+# async def callback_abiturient(call: CallbackQuery):
+#     await call.message.answer("Выберите интересующий вас пункт", reply_markup=kb.abiturient_menu)
+#     await bot.delete_message(message_id=call.message.message_id, chat_id=call.message.chat.id)
 
 
 #Направления подготовки-------------

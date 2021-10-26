@@ -1,6 +1,6 @@
 from loader import dp, bot, item
 from aiogram.types import Message
-import articels
+from data import articels
 
 from states.state_machine import User_State
 from aiogram.dispatcher import FSMContext
@@ -116,9 +116,9 @@ async def news(message: Message):
 
 @dp.message_handler(lambda message: message.text == "Общежития и столовые")
 async def dormitory_eatery(message: Message):
-    await message.answer(text = articels.dormitory_eatery_article)
+    # await message.answer(text = articels.dormitory_eatery_article)
     with open("img/dormitories.jpg", "rb") as photo:
-        await bot.send_photo(photo=photo, chat_id=message.chat.id)
+        await bot.send_photo(photo=photo, chat_id=message.chat.id, caption=articels.dormitory_eatery_article)
 
 @dp.message_handler(lambda message: message.text == "Фото")
 async def photos(message: Message):

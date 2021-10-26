@@ -24,10 +24,8 @@ async def direct_of_prepare_handler(call: CallbackQuery):
         if call.data == direction:
             if item[0] == 1:
                 await call.message.edit_text("Всю информацию по данному направлению вы можете найти, перейдя по ссылке", reply_markup=init_url(link=value))
-            elif item[0] == 2:
-                await call.message.edit_text(value, reply_markup=InlineKeyboardMarkup().add(btn.back_btn))
-            elif item[0] == 3:
-                await call.message.answer(value, reply_markup=InlineKeyboardMarkup().add(btn.back_btn))
+            elif item[0] in [2, 3]:
+                await call.message.edit_text(f"{direction}\n{value}", reply_markup=InlineKeyboardMarkup().add(btn.back_btn))
 
 
 directions = {
