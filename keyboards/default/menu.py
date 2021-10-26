@@ -7,7 +7,6 @@ back_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-check = ["Проходные баллы","Количество мест"]
 
 abiturient_menu = ReplyKeyboardMarkup(
     [
@@ -29,21 +28,21 @@ abiturient_menu = ReplyKeyboardMarkup(
 university_admission = ReplyKeyboardMarkup(
     [
         [
-            KeyboardButton("Правила приема"),   #нужен левел
-            KeyboardButton("Подать документы"),  #не нужен левел
+            KeyboardButton("Правила приема"), 
+            KeyboardButton("Подать документы"), 
             
         ],
         [
-            KeyboardButton("Проходные баллы"),   #нужен левел(для абит-баллы по егэ,магист-примеры экзам)
-            KeyboardButton("Количество мест")   #нужен левел
+            KeyboardButton("Проходные баллы"),  
+            KeyboardButton("Количество мест")   
         ],
         [
-            KeyboardButton('Индивидуальные достижения'),  #нужен левел
-            KeyboardButton('Особые права и льготы')  #нужно только для бакалавров(но надо еще уточнить)
+            KeyboardButton('Индивидуальные достижения'),
+            KeyboardButton('Особые права и льготы')
         ],
         [
-            KeyboardButton('Статистика приёма'),#нужен левел
-            KeyboardButton('Порядок зачисления'),#нужен левел
+            KeyboardButton('Статистика приёма'),
+            KeyboardButton('Порядок зачисления'),
             KeyboardButton('Назад')
         ],
     ],
