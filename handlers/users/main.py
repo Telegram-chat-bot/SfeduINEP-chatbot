@@ -1,8 +1,5 @@
-from logging import error
-from os import link
 from loader import dp, bot, item, db
 from aiogram.types import Message
-from data import articels
 
 from states.state_machine import User_State
 from aiogram.dispatcher import FSMContext
