@@ -50,14 +50,11 @@ async def back_to_btn_handler(message: Message):
 #РАЗДЕЛ ПОСТУПЛЕНИЕ--------
 @dp.message_handler(lambda message: message.text == "Правила приема")
 async def rules_admission(message: Message):
-    # await message.answer(text=articels.rules_admission_article)
-    data = await db.get_data(block="admission", element="admission_rules")
-    await message.answer(data[0].get("admission_rules"))
+    await message.answer(await db.get_data(block="admission", element="admission_rules"))
 
 @dp.message_handler(lambda message:message.text == "Подать документы")
 async def submit_doc(message: Message):
-    data = await db.get_data(block="admission", element="submit_doc")
-    await message.answer(data[0].get("submit_doc"))
+    await message.answer(await db.get_data(block="admission", element="submit_doc"))
 
 @dp.message_handler(lambda message: message.text == "Проходные баллы")
 async def passing_scores(message: Message):
@@ -71,15 +68,11 @@ async def num_of_places(message: Message):
 
 @dp.message_handler(lambda message: message.text == "Индивидуальные достижения")
 async def achievements(message: Message):
-    # await message.answer(text = articels.achievements_article)
-    data = await db.get_data(block="admission", element="achievements")
-    await message.answer(data[0].get("achievements"))
+    await message.answer(await db.get_data(block="admission", element="achievements"))
 
 @dp.message_handler(lambda message: message.text == "Особые права и льготы")
 async def special_rights(message: Message):
-    # await message.answer(text = articels.special_rights_article)
-    data = await db.get_data(block="admission", element="special_rights")
-    await message.answer(data[0].get("special_rights"))
+    await message.answer(await db.get_data(block="admission", element="special_rights"))
 
 @dp.message_handler(lambda message: message.text == "Статистика приёма")
 async def admission_statcistics(message: Message):
@@ -89,48 +82,34 @@ async def admission_statcistics(message: Message):
 
 @dp.message_handler(lambda message: message.text == "Порядок зачисления")
 async def enrollment_procedure(message: Message):
-    data = await db.get_data(block="admission", element="enrollment_proc")
-    await message.answer(data[0].get("enrollment_proc"))
-    # await message.answer(text = articels.enrollment_procedure_article)
+    await message.answer(await db.get_data(block="admission", element="enrollment_proc"))
 
 #---------------------------
 
 #РАЗДЕЛ ОБ ИНСТИТУТЕ
 @dp.message_handler(lambda message: message.text == "Знакомство")
 async def excursion(message: Message):
-    # await message.answer(text = articels.acquaintance_article)
-    data = await db.get_data(block="about", element="acquaintance")
-    await message.answer(data[0].get("acquaintance"))
+    await message.answer(await db.get_data(block="about", element="acquaintance"))
 
 @dp.message_handler(lambda message: message.text == "Записаться на экскурсию")
 async def excursion(message: Message):
-    # await message.answer(text = articels.excursion_article)
-    data = await db.get_data(block="about", element="excursion")
-    await message.answer(data[0].get("excursion"))
+    await message.answer(await db.get_data(block="about", element="excursion"))
 
 @dp.message_handler(lambda message: message.text == "Наука и учёба")
 async def science(message: Message):
-    # await message.answer(text = articels.science_article)
-    data = await db.get_data(block="about", element="science")
-    await message.answer(data[0].get("science"))
+    await message.answer(await db.get_data(block="about", element="science"))
 
 @dp.message_handler(lambda message: message.text == "Мероприятия")
 async def events(message: Message):
-    # await message.answer(text = articels.events_article)
-    data = await db.get_data(block="about", element="events")
-    await message.answer(data[0].get("events"))
+    await message.answer(await db.get_data(block="about", element="events"))
 
 @dp.message_handler(lambda message: message.text == "Партнеры и трудоустройство")
 async def partners_employment(message: Message):
-    # await message.answer(text = articels.partners_employment_article)
-    data = await db.get_data(block="about", element="partners_work")
-    await message.answer(data[0].get("partners_work"))
+    await message.answer(await db.get_data(block="about", element="partners_work"))
 
 @dp.message_handler(lambda message: message.text == "Студсовет")
 async def stud_council(message: Message):
-    # await message.answer(text = articels.stud_council_article)
-    data = await db.get_data(block="about", element="stud_council")
-    await message.answer(data[0].get("stud_council"))
+    await message.answer(await db.get_data(block="about", element="stud_council"))
 
 @dp.message_handler(lambda message: message.text == "Карта")
 async def excursion(message: Message):
@@ -138,21 +117,17 @@ async def excursion(message: Message):
 
 @dp.message_handler(lambda message: message.text == "Фото")
 async def photo(message: Message):
-    # await message.answer(articels.photo_article)
-    data = await db.get_data(block="about", element="photo")
-    await message.answer(data[0].get("photo"))
+    await message.answer(await db.get_data(block="about", element="photo"))
 
 @dp.message_handler(lambda message: message.text == "Контакты")
 async def contacts(message: Message):
-    # await message.answer(text = articels.contact_article)
-    data = await db.get_data(block="about", element="contacts")
-    await message.answer(data[0].get("contacts"))
+    await message.answer(await db.get_data(block="about", element="contacts"))
 
 
 #РАЗДЕЛ ЗАДАТЬ ВОПРОС
 @dp.message_handler(lambda message: message.text == "F.A.Q")
 async def answers(message: Message):
-    await message.answer(text = articels.faq_article)
+    await message.answer(await db.get_data(block="questions", element="faq"))
 
 @dp.message_handler(lambda message: message.text == "Вопросы по поступлению")
 async def admission_questions(message: Message):
