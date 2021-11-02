@@ -13,8 +13,6 @@ abiturient_menu = ReplyKeyboardMarkup(
         [
             KeyboardButton("Тест на профориентацию"),
             KeyboardButton("Направления подготовки"),
-            KeyboardButton("Вступительные испытания"),
-            
         ],
         [
             KeyboardButton("Поступление"),
@@ -22,16 +20,19 @@ abiturient_menu = ReplyKeyboardMarkup(
             KeyboardButton("Задать вопрос")
         ]
     ],
-    resize_keyboard=True
+    resize_keyboard=True,
+    one_time_keyboard=True
 )
 
 university_admission = ReplyKeyboardMarkup(
     [
         [
             KeyboardButton("Правила приема"), 
-            KeyboardButton("Подать документы"), 
-            
+            KeyboardButton("Подать документы"),
         ],
+        # [
+        #     KeyboardButton("Вступительные испытания")
+        # ],
         [
             KeyboardButton("Проходные баллы"),  
             KeyboardButton("Количество мест")   
@@ -54,26 +55,25 @@ university_admission = ReplyKeyboardMarkup(
 about_university = ReplyKeyboardMarkup(
     [
         [
+            KeyboardButton("Знакомство"),
             KeyboardButton("Записаться на экскурсию"),
-            KeyboardButton("Наука и учеба"),
             
         ],
         [
             KeyboardButton("Мероприятия"),
-            KeyboardButton("Спорт и культура")
+            KeyboardButton("Наука и учёба")
         ],
         [
-            KeyboardButton('Конкурсы'),
-            KeyboardButton('Партнеры и трудоустройство')
+            KeyboardButton("Партнеры и трудоустройство"),
+            KeyboardButton("Студсовет")
         ],
         [
-            KeyboardButton('Новости'),
-            KeyboardButton('Общежития и столовые')
+            KeyboardButton("Фото"),
+            KeyboardButton("Карта"),
+            KeyboardButton("Контакты") 
         ],
         [
-            KeyboardButton('Фото'),
-            KeyboardButton('Контакты'),
-            KeyboardButton('Назад')
+            KeyboardButton("Назад")
         ]
     ],
     resize_keyboard=True
@@ -83,13 +83,11 @@ about_university = ReplyKeyboardMarkup(
 ask_question = ReplyKeyboardMarkup(
     [
         [
-            KeyboardButton('F.A.Q')
+            KeyboardButton('F.A.Q'),
+            KeyboardButton('Вопросы по поступлению'),
+            KeyboardButton('Вопросы по направлению подготовки')
         ],
         [
-            KeyboardButton('Вопросы по поступлению')
-        ],
-        [
-            KeyboardButton('Вопросы по направлению подготовки'),
             KeyboardButton("Назад")
         ]
     ],
