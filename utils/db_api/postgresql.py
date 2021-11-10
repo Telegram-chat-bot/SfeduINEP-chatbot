@@ -14,10 +14,10 @@ class Database:
 
     async def create_connection(self):
         self.pool = await asyncpg.create_pool(
-            user=config.DB_USER,
-            password=config.DB_PASS,
-            host=config.DP_HOST,
-            database=config.DB_NAME,
+            user="postgres",
+            password="860269",
+            host="127.0.0.1",
+            database="postgres",
             max_inactive_connection_lifetime=3
         )
     
@@ -43,52 +43,7 @@ class Database:
                     result = await connection.executemany
                 return result
 
-    async def create_data_tables(self):
-        sql = """
-        CREATE TABLE IF NOT EXISTS admission (
-            admission_rules TEXT,
-            submit_doc TEXT,
-            passing_scores TEXT,
-            number_of_places TEXT,
-            achievements TEXT,
-            special_rights TEXT,
-            admission_stat TEXT,
-            enrollment_proc TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS About (
-            acquaintance TEXT,
-            excursion TEXT,
-            events TEXT,
-            science TEXT,
-            partners_work TEXT,
-            stud_council TEXT,
-            photo TEXT,
-            contacts TEXT,
-            map TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS questions(FAQ TEXT)
-        """
-        return await self.execute(sql, execute=True)
-
-    async def add_data(self, inf, block, element):
-        sql = f"""
-        INSERT INTO {block}
-            ({element})
-        SELECT '{inf}'
-        WHERE
-            NOT EXISTS (
-                SELECT {element} FROM {block}
-    );
-        """
-        return await self.execute(sql, execute=True)
-
-    async def update_data(self, block, element, inf):
-        sql = f"""
-        UPDATE {block} SET {element} = '{inf}'
-        """
-        return await self.execute(sql, execute=True)
+    
 
     async def get_data(self, block, element):
         sql = f"""
@@ -102,11 +57,34 @@ class Database:
         """
         return await self.execute(sql, fetchrow=True)
 
+    async def get_direction(self, block, level, section):
+        sql = f"""
+        SELECT direction, name_of_dir, inf  FROM {block} WHERE level='{level}' AND section='{section}'
+        """
+        return await self.execute(sql, fetch=True)
+        
+
+    # async def add_data(self, inf, block, element):
+    #     sql = f"""
+    #     INSERT INTO {block}
+    #         ({element})
+    #     SELECT '{inf}'
+    #     WHERE
+    #         NOT EXISTS (
+    #             SELECT {element} FROM {block}
+    # );
+    #     """
+    #     return await self.execute(sql, execute=True)
+
+    # async def update_data(self, block, element, inf):
+    #     sql = f"""
+    #     UPDATE {block} SET {element} = '{inf}'
+    #     """
+    #     return await self.execute(sql, execute=True)
 
 # db = Database()
 # loop = asyncio.get_event_loop()
 # loop.run_until_complete(db.create_connection())
-# d = loop.run_until_complete(db.get_data(block="admission", element="admission_rules"))
-# print(d)
-# d = loop.run_until_complete(db.get_data(block="admission", element="admission_rules"))
-# print(d[0].get("admission_rules"))
+# d = loop.run_until_complete(db.get_direction(block="bot_directions", level="bak", section="direct_of_prepare"))
+# for k in d:
+#     print(k)
