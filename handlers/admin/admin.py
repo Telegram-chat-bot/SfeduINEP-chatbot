@@ -1,12 +1,12 @@
-from loader import dp,bot,db
-from aiogram.types import Message, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from loader import dp, db
+from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
 from states.state_machine import Admin_State
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 
 from data import config
-from keyboards.inline.buttons import back_btn, admin_menu, choose_level
+from keyboards.inline.buttons import admin_menu, choose_level
 
 query = []
 
