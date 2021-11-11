@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-20$(&w=_mumlc)+d*ej&+yr_8ci6y*3*n44+1@1(151_tyq$=z'
+SECRET_KEY = 'django-insecure-g2vvo@o5pl(r6ee%0*p$#!iyu(@#vv)_@!-71i884_#v!9-45n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -76,8 +76,8 @@ WSGI_APPLICATION = 'django_admin.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'chat-bot-data',
         'USER': 'postgres',
         'PASSWORD': '860269',
         'HOST': '127.0.0.1',
