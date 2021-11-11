@@ -2,8 +2,8 @@ from django.db import models
 
 class Admission(models.Model):
     class Meta:
+        verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Поступление'"
-        verbose_name = "Элемент раздела"
         
     admission_rules = models.TextField(
         verbose_name="Правила приёма",
@@ -11,14 +11,6 @@ class Admission(models.Model):
         )
     submit_doc = models.TextField(
         verbose_name="Подать документы",
-        blank=True
-        )
-    passing_scores= models.TextField(
-        verbose_name="Проходные баллы",
-        blank=True
-        )
-    number_of_places = models.TextField(
-        verbose_name="Количество мест",
         blank=True
         )
     achievements = models.TextField(
@@ -39,12 +31,13 @@ class Admission(models.Model):
         )
     
     def __str__(self) -> str:
-        return "Статья"
-    
+        return "Коллекция статей 'Поступление'"
+
+
 class About(models.Model):
     class Meta:
+        verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Об институте'"
-        verbose_name = "Элемент раздела"
     
     acquaintance = models.TextField(
         verbose_name="Знакомство", 
@@ -84,44 +77,56 @@ class About(models.Model):
         )
     
     def __str__(self) -> str:
-        return "Статья"
-    
+        return "Коллекция статей 'Об институте'"
+  
+  
 class Directions(models.Model):
     class Meta:
-        verbose_name = "Элемент раздела"
-        verbose_name_plural = "Раздел с направлениями подготовки"
+        verbose_name = "элемент раздела"
+        verbose_name_plural = "Раздел 'Направления подготовки'"
+        ordering = ['level', 'direction']
+        # abstract = True
+        
     levels = [
         ("bak", "Бакалавриат" ),
         ("spec", "Специалитет"),
         ("mag", "Магистратура")
     ]
-    blocks = [
-        ("direct_of_prepare", "Направления подготовки"),
-        ("passing_scores", "Проходные баллы"),
-        ("num_of_places", "Количество мест"),
-    ]
     
     level = models.CharField(
-        max_length=4 ,
+        max_length=4,
         verbose_name="Уровень подготовки", 
         choices=levels, 
-        default="bak"
+        default=levels[0][0]
     )
     name_of_dir = models.CharField(
         max_length=100,
         verbose_name="Название специальности"
     )
     direction = models.CharField(max_length=10,
-        verbose_name="Код направления"
-    )
-    section = models.CharField(max_length=20,
-        verbose_name="Раздел бота",
-        choices=blocks,
-        default="direct_of_prepare"
+        verbose_name="Код направления",
+        unique=True
     )
     inf = models.TextField(
         verbose_name="Информация о специальности"
     )
     
     def __str__(self) -> str:
-        return f"({self.section}) {self.level} - {self.direction}"
+        return f"{self.level} - {self.direction}"
+    
+class Passing_scores(models.Model):
+    class Meta:
+        verbose_name = "элемент раздела"
+        verbose_name_plural = "Раздел 'Поступление -> Проходные баллы'"
+
+    inf = models.TextField(verbose_name="Информация о проходных баллах", blank=True)
+    
+    def __str__(self) -> str:
+        return self.id
+    
+class Num_places(models.Model):
+    class Meta:
+        verbose_name = "элемент раздела"
+        verbose_name_plural = "Раздел 'Поступление -> Количество мест'"
+    
+    inf = models.TextField(verbose_name="Информация о кол-ве мест", blank=True)
