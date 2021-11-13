@@ -2,10 +2,9 @@ from asyncpg import Pool
 from typing import Union
 
 from asyncpg.connection import Connection
-from data import config
-# import config
+# from data import config
 import asyncpg
-# import asyncio
+import asyncio
 
 
 class Database:
@@ -17,7 +16,7 @@ class Database:
             user="postgres",
             password="860269",
             host="127.0.0.1",
-            database="postgres",
+            database="chat-bot-data",
             max_inactive_connection_lifetime=3
         )
     
@@ -39,10 +38,6 @@ class Database:
                     result = await connection.fetchrow(command, *args)
                 elif execute:
                     result = await connection.execute(command, *args)
-                elif execute_many:
-                    result = await connection.executemany
-                return result
-
     
 
     async def get_data(self, block, element):
@@ -51,19 +46,25 @@ class Database:
         """
         return await self.execute(sql, fetchval=True)
 
-    async def get_datas(self, block):
+    async def get_directions(self, block, level):
         sql = f"""
-        SELECT * FROM {block}
-        """
-        return await self.execute(sql, fetchrow=True)
-
-    async def get_direction(self, block, level, section):
-        sql = f"""
-        SELECT direction, name_of_dir, inf  FROM {block} WHERE level='{level}' AND section='{section}'
+        SELECT direction, name_of_dir, inf  FROM {block} WHERE level='{level}'
         """
         return await self.execute(sql, fetch=True)
-        
 
+    async def get_id(self, direct, code):
+        sql = f"""
+        SELECT id, direction, name_of_dir FROM {direct};
+        """
+        return await self.execute(sql, fetch=True)
+    
+    async def get_passing_scores(self, block, id):
+        sql = f"""
+        SELECT inf FROM {block} WHERE direction_id='{id}'
+        """
+        return await self.execute(sql, fetch=True)
+
+        
     # async def add_data(self, inf, block, element):
     #     sql = f"""
     #     INSERT INTO {block}
@@ -85,6 +86,6 @@ class Database:
 # db = Database()
 # loop = asyncio.get_event_loop()
 # loop.run_until_complete(db.create_connection())
-# d = loop.run_until_complete(db.get_direction(block="bot_directions", level="bak", section="direct_of_prepare"))
-# for k in d:
-#     print(k)
+# print(loop.run_until_complete(db.get_directions(block="bot_directions", level="spec")))
+# r = loop.run_until_complete(db.get_id(direct="bot_directions", code="09.04.03"))
+# print(loop.run_until_complete(db.get_passing_scores(block="bot_num_places", id=r[0].get('id')))[0].get('inf'))

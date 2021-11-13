@@ -1,9 +1,11 @@
 from django.db import models
+from django.db.models.deletion import CASCADE
 
 class Admission(models.Model):
     class Meta:
         verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Поступление'"
+        app_label = "bot"
         
     admission_rules = models.TextField(
         verbose_name="Правила приёма",
@@ -38,6 +40,7 @@ class About(models.Model):
     class Meta:
         verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Об институте'"
+        app_label = "bot"
     
     acquaintance = models.TextField(
         verbose_name="Знакомство", 
@@ -85,7 +88,7 @@ class Directions(models.Model):
         verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Направления подготовки'"
         ordering = ['level', 'direction']
-        # abstract = True
+        app_label = "bot"
         
     levels = [
         ("bak", "Бакалавриат" ),
@@ -118,15 +121,34 @@ class Passing_scores(models.Model):
     class Meta:
         verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Поступление -> Проходные баллы'"
-
+        ordering = ["direction"]
+        app_label = "bot"
+        
+    direction = models.ForeignKey(
+        "Directions",
+        on_delete=CASCADE,
+        null=True,
+        verbose_name="Направление подготовки"
+    )
     inf = models.TextField(verbose_name="Информация о проходных баллах", blank=True)
     
-    def __str__(self) -> str:
-        return self.id
+    def __str__(self):
+        return f"{self.direction}"
     
 class Num_places(models.Model):
     class Meta:
         verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Поступление -> Количество мест'"
-    
+        ordering = ["direction"]
+        app_label = "bot"
+        
+    direction = models.ForeignKey(
+        'Directions', 
+        on_delete=CASCADE,
+        verbose_name="Направление подготовки",
+        null=True
+    )
     inf = models.TextField(verbose_name="Информация о кол-ве мест", blank=True)
+    
+    def __str__(self):
+        return f"{self.direction}"
