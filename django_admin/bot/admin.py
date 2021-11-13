@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import About, Admission, Passing_scores, Num_places, Directions
 
 admin.site.register(Admission)
