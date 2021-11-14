@@ -146,7 +146,8 @@ class Num_places(models.Model):
         'Directions', 
         on_delete=CASCADE,
         verbose_name="Направление подготовки",
-        null=True
+        null=True,
+        related_name="pass_score"
     )
     inf = models.TextField(verbose_name="Информация о кол-ве мест", blank=True)
     
