@@ -3,15 +3,12 @@ from aiogram.bot.bot import Bot
 async def set_commands(bot: Bot):
     from aiogram.types import BotCommand
     commands = [
-        BotCommand("start", "Запуск бота"),
-        BotCommand("login", "Авторизация(для админов)"),
-        BotCommand("exit", "Выход")
+        BotCommand("start", "Запуск бота")
     ]
     await bot.set_my_commands(commands)
 
 async def on_startup(dp):
     from loader import bot
-    # await db.create_connection()
     await set_commands(bot)
 
 def setup_django():
