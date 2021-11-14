@@ -1,10 +1,13 @@
-from django import db
+from aiogram.types.message import ContentType
+
 from loader import dp, bot, item
 from aiogram.types import Message
 
 from keyboards.default import menu as kb
 from keyboards.inline import buttons as btn
+
 from utils.db_api import db_commands
+
 import logging
 
 #СТАРТОВОЕ СООБЩЕНИЕ
@@ -14,7 +17,8 @@ async def welcome(message: Message):
     Здравствуйте! Вас приветствует чат-бот ИНЭП ЮФУ, готов ответить на ВСЕ Ваши вопросы (но это не точно). Выберите интересующий раздел меню или задайте вопрос в диалоге.
     """, reply_markup=kb.abiturient_menu
     ) 
-    # logging.info(await db_commands.get_directions())
+    logging.info(await db_commands.get_passing_scores(7))
+
 
 #ГЛАВНОЕ МЕНЮ АБИТУРИЕНТ--------------
 @dp.message_handler(lambda message: message.text == "Тест на профориентацию")

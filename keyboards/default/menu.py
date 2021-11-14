@@ -20,8 +20,7 @@ abiturient_menu = ReplyKeyboardMarkup(
             KeyboardButton("Задать вопрос")
         ]
     ],
-    resize_keyboard=True,
-    one_time_keyboard=True
+    resize_keyboard=True
 )
 
 university_admission = ReplyKeyboardMarkup(
@@ -30,9 +29,6 @@ university_admission = ReplyKeyboardMarkup(
             KeyboardButton("Правила приема"), 
             KeyboardButton("Подать документы"),
         ],
-        # [
-        #     KeyboardButton("Вступительные испытания")
-        # ],
         [
             KeyboardButton("Проходные баллы"),  
             KeyboardButton("Количество мест")   

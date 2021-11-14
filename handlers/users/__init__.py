@@ -5,6 +5,5 @@ from .admission import dp
 from .about import dp
 from .ask_question import dp
 from .callback_query import dp
-from . import direction_of_training_inf
 
 __all__ = ["dp"]
