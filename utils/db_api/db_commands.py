@@ -1,5 +1,5 @@
 from os import name
-from django_admin.bot.models import Admission, About, Passing_scores, Directions, Num_places
+from django_admin.bot.models import Admission, About, Passing_scores, Directions, Num_places, Questions
 from asgiref.sync import sync_to_async
 
 @sync_to_async
@@ -22,4 +22,8 @@ def get_num_places(id):
 @sync_to_async
 def get_directions():
     return Directions.objects.values("id", "level", "direction", "name_of_dir", "inf")
+
+@sync_to_async
+def get_faq():
+    return Questions.objects.all().values_list("faq")[0][0]
 

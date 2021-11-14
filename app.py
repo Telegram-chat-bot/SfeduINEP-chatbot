@@ -1,4 +1,5 @@
 from aiogram.bot.bot import Bot
+import filters
 
 async def set_commands(bot: Bot):
     from aiogram.types import BotCommand
@@ -22,6 +23,8 @@ if __name__ == '__main__':
     setup_django()
     
     from aiogram import executor
-    from handlers import dp
+    import filters
+    import handlers
+    from loader import dp
     
     executor.start_polling(dp, on_startup=on_startup)
