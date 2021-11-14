@@ -153,3 +153,17 @@ class Num_places(models.Model):
     
     def __str__(self):
         return f"{self.direction}"
+    
+class Questions(models.Model):
+    class Meta:
+        verbose_name = "элемент раздела"
+        verbose_name_plural = "Раздел 'Задать вопрос'"
+        app_label = "bot"
+        
+    faq = models.TextField(
+        verbose_name="F.A.Q",
+        blank=True
+    )
+    
+    def __str__(self) -> str:
+        return "Часто задаваемые вопросы"

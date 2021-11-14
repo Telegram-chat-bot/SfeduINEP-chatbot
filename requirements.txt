@@ -1,4 +1,4 @@
 aiogram>=2.14.3
-ayncpg==0.24.0
+
 Django>=3.0
 python-dotenv==0.19.1

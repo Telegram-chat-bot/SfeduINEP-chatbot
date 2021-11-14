@@ -4,14 +4,11 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from data import config
 import logging
 
-from utils.db_api.postgresql import Database
-
 bot = Bot(token=config.BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 storage = MemoryStorage()
 # settings.configure()
 
 dp = Dispatcher(bot, storage=storage)
-db = Database()
 
 item = []
 
