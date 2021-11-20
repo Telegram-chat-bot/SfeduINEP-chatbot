@@ -8,7 +8,7 @@ back_keyboard = ReplyKeyboardMarkup(
 )
 
 
-abiturient_menu = ReplyKeyboardMarkup(
+main_menu = ReplyKeyboardMarkup(
     [
         [
             KeyboardButton("Тест на профориентацию"),

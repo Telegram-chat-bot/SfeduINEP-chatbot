@@ -10,7 +10,7 @@ storage = MemoryStorage()
 
 dp = Dispatcher(bot, storage=storage)
 
-item = []
+pressed_button = []
 
 #Логгирование
 logging.basicConfig(format=u'%(filename)s [LINE:%(lineno)d] #%(levelname)-8s [%(asctime)s]  %(message)s',level=logging.INFO,)

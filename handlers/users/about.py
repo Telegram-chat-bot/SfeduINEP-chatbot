@@ -1,5 +1,4 @@
 from loader import dp, bot
-
 from aiogram.types import Message
 
 from utils.db_api.db_commands import get_about_data

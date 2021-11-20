@@ -14,14 +14,27 @@ back_btn_init = InlineKeyboardMarkup(
 choose_level = InlineKeyboardMarkup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(text="Бакалавриат", callback_data="bak"),
-            InlineKeyboardButton(text="Специалитет", callback_data="spec"),
-            InlineKeyboardButton(text="Магистратура", callback_data="mag")
+            InlineKeyboardButton(
+                text="Бакалавриат",
+                callback_data="bak"
+            ),
+            InlineKeyboardButton(
+                text="Специалитет",
+                callback_data="spec"
+            ),
+            InlineKeyboardButton(
+                text="Магистратура",
+                callback_data="mag"
+            )
         ],
         [
-            InlineKeyboardButton(text="Назад", callback_data="back_to_menu")
+            InlineKeyboardButton(
+                text="Назад",
+                callback_data="back_to_menu"
+            )
         ]
-    ]
+    ],
+    row_width=1,
 )
 
 #СПЕЦИАЛЬНОСТИ -----------

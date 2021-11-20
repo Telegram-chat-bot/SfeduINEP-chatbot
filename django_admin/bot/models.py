@@ -111,7 +111,8 @@ class Directions(models.Model):
         unique=True
     )
     inf = models.TextField(
-        verbose_name="Информация о специальности"
+        verbose_name="Информация о специальности",
+        blank=True
     )
     
     def __str__(self) -> str:
@@ -167,3 +168,37 @@ class Questions(models.Model):
     
     def __str__(self) -> str:
         return "Часто задаваемые вопросы"
+    
+class Welcome_message(models.Model):
+    class Meta:
+        verbose_name = "приветствие"
+        verbose_name_plural = "Приветствие бота"
+        app_label = "bot"
+    
+    message = models.TextField(
+        verbose_name="Текст приветствия"
+    )
+    def __str__(self) -> str:
+        return "Текст приветствия"
+
+class ProfTest(models.Model):
+    class Meta:
+        verbose_name = "элемент теста"
+        verbose_name_plural = "Профориентационный тест"
+        ordering = ["direction"]
+        app_label = "bot"
+        
+    direction = models.ForeignKey(
+        "Directions",
+        on_delete=CASCADE,
+        verbose_name="Направления",
+        null=True
+    )
+
+    question = models.TextField(
+        verbose_name="Вопросы",
+        null=True
+        )
+    
+    def __str__(self) -> str:
+        return f"Вопросы - {self.direction}"

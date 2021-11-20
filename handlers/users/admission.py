@@ -1,5 +1,4 @@
-from loader import dp, item
-
+from loader import dp, pressed_button
 from aiogram.types import Message
 
 from keyboards.inline import buttons as btn
@@ -8,7 +7,6 @@ from utils.db_api.db_commands import get_admission_data
 import asyncio
 
 loop = asyncio.get_event_loop()
-
 data = loop.run_until_complete(get_admission_data())[0]
 
 #РАЗДЕЛ ПОСТУПЛЕНИЕ--------
@@ -22,12 +20,12 @@ async def submit_doc(message: Message):
 
 @dp.message_handler(text = "Проходные баллы")
 async def passing_scores(message: Message):
-    item.append("d2")
+    pressed_button.append("dir_pass")
     await message.answer("Выберите направление подготовки", reply_markup = btn.choose_level)
 
 @dp.message_handler(text = "Количество мест")  #item id = 3
 async def num_of_places(message: Message):
-    item.append("d3")
+    pressed_button.append("num_places")
     await message.answer("Выберите направление подготовки", reply_markup=btn.choose_level)
 
 @dp.message_handler(text = "Индивидуальные достижения")
