@@ -147,8 +147,7 @@ class Num_places(models.Model):
         'Directions', 
         on_delete=CASCADE,
         verbose_name="Направление подготовки",
-        null=True,
-        related_name="pass_score"
+        null=True
     )
     inf = models.TextField(verbose_name="Информация о кол-ве мест", blank=True)
     
@@ -202,3 +201,21 @@ class ProfTest(models.Model):
     
     def __str__(self) -> str:
         return f"Вопросы - {self.direction}"
+    
+class ChatID(models.Model):
+    class Meta:
+        verbose_name = "ID чата"
+        verbose_name_plural = "ID чатов для вопросов"
+        app_label = "bot"
+        
+    chat_direction = models.ForeignKey(
+        "Directions",
+        verbose_name="Чат для направления подготовки:",
+        on_delete=CASCADE,
+    )
+    chat_id = models.BigIntegerField(
+        verbose_name="ID чата"
+    )
+    
+    def __str__(self) -> str:
+        return f"{self.chat_direction}"

@@ -11,6 +11,7 @@ from keyboards.inline import buttons as btn
 from utils.db_api import db_commands
 import logging
 
+
 #СТАРТОВОЕ СООБЩЕНИЕ
 @dp.message_handler(CommandStart())
 async def welcome(message: Message):
@@ -18,11 +19,9 @@ async def welcome(message: Message):
         await db_commands.get_welcome_msg(),
         reply_markup=kb.main_menu
     ) 
-    # q = await db_commands.get_questions(id=4)
-    # logging.info(q.split("\n"))
+    logging.info(await db_commands.get_chat_id_group("11.03.04"))
 
-
-#ГЛАВНОЕ МЕНЮ АБИТУРИЕНТ--------------
+#ГЛАВНОЕ МЕНЮ--------------
 @dp.message_handler(text = "Направления подготовки")
 async def prepare_direction_item(message: Message):
     pressed_button.append("dir_inf")
