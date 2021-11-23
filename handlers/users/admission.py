@@ -1,22 +1,28 @@
+import logging
 from loader import dp, pressed_button
 from aiogram.types import Message
 
 from keyboards.inline import buttons as btn
+from keyboards.default import menu as kb
 
-from utils.db_api.db_commands import get_admission_data
-import asyncio
+from utils.db_api import db_commands
 
-loop = asyncio.get_event_loop()
-data = loop.run_until_complete(get_admission_data())[0]
+
+
+@dp.message_handler(text = "Поступление")
+async def admission_item(message:  Message):
+    await message.answer("Все о поступлении", reply_markup=kb.university_admission)
 
 #РАЗДЕЛ ПОСТУПЛЕНИЕ--------
 @dp.message_handler(text = "Правила приема")
 async def rules_admission(message: Message):
-    await message.answer(data["admission_rules"])
+    admission_rules = await db_commands.get_admission_rules()
+    await message.answer(*admission_rules)
 
 @dp.message_handler(text = "Подать документы")
 async def submit_doc(message: Message):
-    await message.answer(data["submit_doc"])
+    submit_document = await db_commands.get_admission_submit_doc()
+    await message.answer(*submit_document)
 
 @dp.message_handler(text = "Проходные баллы")
 async def passing_scores(message: Message):
@@ -30,18 +36,22 @@ async def num_of_places(message: Message):
 
 @dp.message_handler(text = "Индивидуальные достижения")
 async def achievements(message: Message):
-    await message.answer(data["achievements"])
+    achievements = await db_commands.get_admission_achievements()
+    await message.answer(*achievements)
 
 @dp.message_handler(text = "Особые права и льготы")
 async def special_rights(message: Message):
-    await message.answer(data["special_rights"])
+    special_rights = await db_commands.get_admission_spec_rights()
+    await message.answer(*special_rights)
 
 @dp.message_handler(text = "Статистика приёма")
 async def admission_statcistics(message: Message):
-    await message.answer(data["admission_stat"])
+    statistic = await db_commands.get_admission_stat()
+    await message.answer(*statistic)
 
 @dp.message_handler(text = "Порядок зачисления")
 async def enrollment_procedure(message: Message):
-    await message.answer(data["enrollment_proc"])
+    enrollment_procedure = await db_commands.get_admission_enrollment_proc()
+    await message.answer(*enrollment_procedure)
 
 #---------------------------

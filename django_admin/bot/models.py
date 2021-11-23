@@ -125,10 +125,11 @@ class Passing_scores(models.Model):
         ordering = ["direction"]
         app_label = "bot"
         
-    direction = models.ForeignKey(
+    direction = models.OneToOneField(
         "Directions",
         on_delete=CASCADE,
         null=True,
+        unique=True,
         verbose_name="Направление подготовки"
     )
     inf = models.TextField(verbose_name="Информация о проходных баллах", blank=True)
@@ -143,10 +144,11 @@ class Num_places(models.Model):
         ordering = ["direction"]
         app_label = "bot"
         
-    direction = models.ForeignKey(
+    direction = models.OneToOneField(
         'Directions', 
         on_delete=CASCADE,
         verbose_name="Направление подготовки",
+        unique=True,
         null=True
     )
     inf = models.TextField(verbose_name="Информация о кол-ве мест", blank=True)
@@ -187,10 +189,11 @@ class ProfTest(models.Model):
         ordering = ["direction"]
         app_label = "bot"
         
-    direction = models.ForeignKey(
+    direction = models.OneToOneField(
         "Directions",
         on_delete=CASCADE,
         verbose_name="Направления",
+        unique=True,
         null=True
     )
 
@@ -208,13 +211,14 @@ class ChatID(models.Model):
         verbose_name_plural = "ID чатов для вопросов"
         app_label = "bot"
         
-    chat_direction = models.ForeignKey(
+    chat_direction = models.OneToOneField(
         "Directions",
         verbose_name="Чат для направления подготовки:",
         on_delete=CASCADE,
     )
     chat_id = models.BigIntegerField(
-        verbose_name="ID чата"
+        verbose_name="ID чата",
+        unique=True
     )
     
     def __str__(self) -> str:

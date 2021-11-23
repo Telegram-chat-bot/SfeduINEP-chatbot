@@ -39,14 +39,14 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
                 #Если была нажата кнопка Проходные баллы
                 elif pressed_button[-1] == "dir_pass":
                     await call.message.edit_text(
-                        await db_commands.get_passing_scores(id = el["id"]),
+                        await db_commands.get_admission_passing_scores(id = el["id"]),
                         reply_markup=btn.back_btn_init
                         )
                     
                 #Если была нажата кнопка Количество мест   
                 elif pressed_button[-1] == "num_places":
                     await call.message.edit_text(
-                        await db_commands.get_num_places(id = el["id"]), 
+                        await db_commands.get_admission_num_places(id = el["id"]), 
                         reply_markup=btn.back_btn_init
                         )
                     
@@ -55,7 +55,6 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
                     async with state.proxy() as qdata:
                         qdata["direction"] = el["direction"]
                         qdata["level"] = el["level"]
-
                     
                     await call.message.edit_text("Задайте вопрос")
                     await User_State.question_direction.set()

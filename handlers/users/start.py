@@ -18,8 +18,7 @@ async def welcome(message: Message):
     await message.answer(
         await db_commands.get_welcome_msg(),
         reply_markup=kb.main_menu
-    ) 
-    logging.info(await db_commands.get_chat_id_group("11.03.04"))
+    )
 
 #ГЛАВНОЕ МЕНЮ--------------
 @dp.message_handler(text = "Направления подготовки")
@@ -27,9 +26,7 @@ async def prepare_direction_item(message: Message):
     pressed_button.append("dir_inf")
     await message.answer("Выберите специальность", reply_markup=btn.choose_level)
     
-@dp.message_handler(text = "Поступление")
-async def admission_item(message:  Message):
-    await message.answer("Все о поступлении", reply_markup=kb.university_admission)
+
 
 @dp.message_handler(text = "Об институте")
 async def about_item(message: Message):

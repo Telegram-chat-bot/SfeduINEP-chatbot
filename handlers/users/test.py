@@ -1,5 +1,4 @@
 import logging
-from os import stat
 from aiogram import types
 from aiogram.types.inline_keyboard import InlineKeyboardButton, InlineKeyboardMarkup
 from loader import dp, bot
