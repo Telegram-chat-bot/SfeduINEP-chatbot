@@ -4,7 +4,8 @@ import filters
 async def set_commands(bot: Bot):
     from aiogram.types import BotCommand
     commands = [
-        BotCommand("start", "Запуск бота")
+        BotCommand("start", "Запуск бота"),
+        BotCommand("answer", "Ответить на вопрос абитуриента (для админов)")
     ]
     await bot.set_my_commands(commands)
 

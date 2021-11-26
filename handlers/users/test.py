@@ -4,63 +4,77 @@ from aiogram.types.inline_keyboard import InlineKeyboardButton, InlineKeyboardMa
 from loader import dp, bot
 from aiogram.types import Message, CallbackQuery, PollAnswer, Poll, message
 
+from keyboards.inline import buttons as btn
+
 from aiogram.dispatcher import FSMContext
-from states.state_machine import TestState
+
 from utils.db_api import db_commands
 
 import asyncio
 
 
 #ПАМАГИТЕ У МЕНЯ НЕ ПОЛУЧАЕТСЯ! Syntax Error с башкой
-current_direction = []
-current_question = [0]
+# current_direction = []
+# current_question = [0]
 
-loop = asyncio.get_event_loop()
+# loop = asyncio.get_event_loop()
 
-dir_code = loop.run_until_complete(db_commands.get_dir_code())
+# # dir_code = loop.run_until_complete(db_commands.get_dir_code())
 
-current_direction.append(dir_code[0].get("direction"))
-score = {code.get("direction"): 0 for code in dir_code}
+# # current_direction.append(dir_code[0].get("direction"))
+# # score = {code.get("direction"): 0 for code in dir_code}
+
+# proffesions = [
+#     "Аналитик",
+#     "Разработчик ГИС систем",
+#     "Геоинформатик",
+#     "Инженер-конструктор",
+#     "Инженер-технолог по производству изделий микроэлектроники",
+#     "Проектировщик микро- и наноразмерных электромеханических систем",
+#     "Бионик",
+#     "Архитектор медицинского оборудования",
+#     "Инженер приборостроения",
+#     "Менеджер-эколог",
+#     "Инспектор по охране природы",
+#     "Специалист по безопасности",
+#     "Наноинженер",
+#     "Специалист по безопасности в наноиндустрии",
+#     "Проектировщик наноматериалов",
+#     "Кибернетик",
+#     "Менеджер в области нанотехнологий"
+# ]
+
+# answers = InlineKeyboardMarkup(
+#     inline_keyboard=[
+#         [
+#             InlineKeyboardButton(text="Yes", callback_data="y"),
+#             InlineKeyboardButton(text="No", callback_data="n")
+#         ]
+#     ]
+# )
+# questions: dict = loop.run_until_complete(db_commands.get_questions())
+
+# @dp.message_handler(text = "Тест на профориентацию")
+# async def prof_test_handler(message: Message):
+#     await message.answer("Выберите уровень подготовки", reply_markup=btn.levels_prof_test)
 
 
-questions: dict = loop.run_until_complete(db_commands.get_questions())
-
-@dp.message_handler(text = "Тест на профориентацию")
-async def prof_test_handler(message: Message):
-
-    await message.answer(
-        questions[current_direction[0]][0]
-    )
-    await TestState.q1.set()
-        
-@dp.message_handler(state=TestState.q1)
-async def answer_q1(message: Message, state: FSMContext):
-    if message.text.lower() == "да":
-        score[current_direction[0]] += 1
-        await message.answer(
-            questions[current_direction[0]][1]
-        )
-        
-    elif message.text.lower != "нет":
-        await message.answer("Некорректный ответ")
+# @dp.callback_query_handler(lambda call: call.data in ["bak-spec_test", "mag_test"])
+# async def choosing_level(call: CallbackQuery):
+#     if call.data == "bak-spec_test":
+#         await call.message.answer("ABOBA")
+#     else:
+#         await call.message.answer(
+# """Мы верим, что какую бы профессию вы ни выбрали - вас обязательно ждет успех! Для этого, конечно же, потребуются определенные усилия с вашей стороны. Мы, в свою очередь, сделаем все для того, чтобы ваше обучение проходило максимально комфортно и продуктивно.
+# """
+# )
+#         await bot.send_poll(
+#             chat_id=call.message.chat.id,
+#             options=proffesions,
+#             question="Вам предложено 17 различных профессий. Необходимо выбрать те профессии, которые больше подходят и интересны именно Вам.",
+#             is_anonymous=False
+#         )
     
-    await state.update_data(a1 = message.text)
-    await TestState.next()
-
-@dp.message_handler(state=TestState.q2)
-async def answer_q2(message: Message, state: FSMContext):
-    if message.text.lower() == "да":
-        score[current_direction[0]] += 1
-        await message.answer(
-            questions[current_direction[0]][2]
-        )
-        
-    elif message.text.lower != "нет":
-        await message.answer("Некорректный ответ")
-        
-    await state.update_data(a2=message.text)
-    data = await state.get_data()
-    await message.answer(f"{data.get('a1')}\n{data.get('a2')}\n{score}")
 # @dp.poll_answer_handler()
 # async def test(answer: PollAnswer):
 #     if data.index(data[0]) == answer.option_ids[0]:

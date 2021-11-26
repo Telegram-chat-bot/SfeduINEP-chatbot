@@ -6,6 +6,6 @@ class User_State(StatesGroup):
     direction = State()
     question_direction = State()
     
-class TestState(StatesGroup):
-    q1 = State()
-    q2 = State()
+class AdminState(StatesGroup):
+    get_id = State()
+    get_answer = State()

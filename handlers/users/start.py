@@ -26,7 +26,9 @@ async def prepare_direction_item(message: Message):
     pressed_button.append("dir_inf")
     await message.answer("Выберите специальность", reply_markup=btn.choose_level)
     
-
+@dp.message_handler(text = "Тест на профориентацию")
+async def prof_test_handler(message: Message):
+    await message.answer("В разработке")
 
 @dp.message_handler(text = "Об институте")
 async def about_item(message: Message):
