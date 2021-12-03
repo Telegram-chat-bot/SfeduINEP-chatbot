@@ -7,6 +7,17 @@ back_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
+check_results_btn = ReplyKeyboardMarkup(
+    [
+        [
+            KeyboardButton("Получить результаты")
+        ],
+        [
+            KeyboardButton("Назад")
+        ]
+    ],
+    resize_keyboard=True
+)
 
 main_menu = ReplyKeyboardMarkup(
     [
@@ -41,12 +52,10 @@ university_admission = ReplyKeyboardMarkup(
             KeyboardButton('Статистика приёма'),
             KeyboardButton('Порядок зачисления'),
             KeyboardButton('Назад')
-        ],
+        ]
     ],
     resize_keyboard=True
 )
-
-
 
 about_university = ReplyKeyboardMarkup(
     [

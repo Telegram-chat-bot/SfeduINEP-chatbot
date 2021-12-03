@@ -109,7 +109,11 @@ def get_directions():
 #Получение кода направлений
 @sync_to_async
 def get_dir_code():
-    return Directions.objects.values("id", "direction")
+    return [el.direction for el in Directions.objects.all()]
+
+@sync_to_async
+def get_bak_directions():
+    return {k["direction"]:k["name_of_dir"] for k in Directions.objects.filter(level="bak").values("direction", "name_of_dir")}
 
 #-------------------------------------------
 
@@ -130,17 +134,3 @@ def get_welcome_msg():
 def get_chat_id_group(code):
     origin_data = Directions.objects.get(direction=code).id
     return ChatID.objects.get(chat_direction_id = origin_data).chat_id
-
-#Получение вопросов для проф.теста
-@sync_to_async
-def get_questions():
-    directions_data = Directions.objects.values("id", "direction")
-    questions_test = ProfTest.objects.values()
-
-    result = {}
-    for data in directions_data:
-        for question in questions_test:
-            if data["id"] == question["direction_id"]:
-                result[data["direction"]] = question["question"].split("\n")
-                
-    return result

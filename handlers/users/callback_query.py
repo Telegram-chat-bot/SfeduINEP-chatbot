@@ -1,5 +1,4 @@
 from aiogram.types import CallbackQuery
-from aiogram.types.message import Message
 
 from loader import dp, bot
 

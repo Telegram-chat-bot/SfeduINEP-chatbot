@@ -182,28 +182,6 @@ class Welcome_message(models.Model):
     def __str__(self) -> str:
         return "Текст приветствия"
 
-class ProfTest(models.Model):
-    class Meta:
-        verbose_name = "элемент теста"
-        verbose_name_plural = "Профориентационный тест"
-        ordering = ["direction"]
-        app_label = "bot"
-        
-    direction = models.OneToOneField(
-        "Directions",
-        on_delete=CASCADE,
-        verbose_name="Направления",
-        unique=True,
-        null=True
-    )
-
-    question = models.TextField(
-        verbose_name="Вопросы",
-        null=True
-        )
-    
-    def __str__(self) -> str:
-        return f"Вопросы - {self.direction}"
     
 class ChatID(models.Model):
     class Meta:

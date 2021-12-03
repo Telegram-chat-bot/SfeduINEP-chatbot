@@ -1,7 +1,7 @@
 import logging
 
 from loader import dp, pressed_button, bot
-from aiogram.types import Message
+from aiogram.types import Message, ChatMemberStatus
 
 from aiogram.dispatcher import FSMContext
 from states.state_machine import AdminState, User_State
@@ -86,26 +86,14 @@ async def handler(message: Message, state: FSMContext):
         await message.answer("Группа по этому направлению еще не создана или не занесена в базу данных")
         
     await state.finish()
-    
-    
-@dp.message_handler(commands="answer")
-async def answer_command_handler(message: Message):
-    admins = await bot.get_chat_member(chat_id=message.chat.id, user_id=message.from_user.id)
-    if admins.status in ["creator", "administrator"]:
-        await message.answer("Введите id человека, предоставленный в вопросе")
-        await AdminState.get_id.set()
-    else:
-        await message.answer("Вы не являетесь админом")
+
     
 @dp.message_handler(state=AdminState.get_id)
 async def get_user_id(message: Message, state: FSMContext):
-    if re.fullmatch(r"\d{9}", r"{}".format(message.text)):
-        await state.update_data(user_id = message.text)
-        await message.answer("Напишите свой ответ")
-        
-        await AdminState.get_answer.set()
-    else:
-        await message.answer("Некорректный id")
+    await state.update_data(user_id = message.text)
+    await message.answer("Напишите свой ответ")
+    
+    await AdminState.get_answer.set()
     
 @dp.message_handler(state=AdminState.get_answer)
 async def send_answer(message: Message, state: FSMContext):
