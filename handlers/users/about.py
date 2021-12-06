@@ -38,7 +38,7 @@ async def stud_council(message: Message):
 async def excursion(message: Message):
     with open("img/map.jpg", "rb") as photo:
         await bot.send_photo(chat_id=message.chat.id, photo=photo)
-    await bot.send_location(chat_id=message.chat.id, latitude="47.208399", longitude="38.936603")
+    await bot.send_location(chat_id=message.chat.id, latitude="47.204529", longitude="38.944375")
 
 @dp.message_handler(text = "Фото")
 async def photo(message: Message):

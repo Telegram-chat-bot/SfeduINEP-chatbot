@@ -9,10 +9,6 @@ from utils.db_api import db_commands
 
 
 
-@dp.message_handler(text = "Поступление")
-async def admission_item(message:  Message):
-    await message.answer("Все о поступлении", reply_markup=kb.university_admission)
-
 #РАЗДЕЛ ПОСТУПЛЕНИЕ--------
 @dp.message_handler(text = "Правила приема")
 async def rules_admission(message: Message):

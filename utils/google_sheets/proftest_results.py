@@ -2,6 +2,8 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from asgiref.sync import sync_to_async
 
+import logging
+
 @sync_to_async
 def get_results(user_id, directions):
     
@@ -18,25 +20,28 @@ def get_results(user_id, directions):
     test_data = sheet.row_values(rows[-1])[3:]
 
 
-    scores = {}
+    scores = {} #словарь с вычисленным результатом
     i, j = 0, 3
     for k, v in directions.items():
-        scores.setdefault(f"{k} - {v}", 0)
+        scores.setdefault(f"{k} - {v}", 0) #добавление кода направлений с значением 0 по умолчанию
         for point in test_data[i:j]:
-            scores[f"{k} - {v}"] += int(point)
+            scores[f"{k} - {v}"] += int(point) #на каждое направление суммируются баллы из каждых трех вопросов
         i += 3
         j += 3
 
     max_point = max(scores.values())
-    sorted_scores = [(k, scores[k]) for k in sorted(scores, key=scores.get, reverse=True)]
+    sorted_scores = [(k, scores[k]) for k in sorted(scores, key=scores.get, reverse=True)] #Сортировка направлений по баллам
     
-    points = [f"{dir_point[0]}: <i>{dir_point[1]}</i>" for dir_point in sorted_scores]
-    result = [f"<b>{direction}</b>" for direction, point in scores.items() if point == max_point]
+    # logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
+    # logging.info("Отсортированный результат проф. теста")
+    
+    points = [f"{dir_point[0]}: <i>{dir_point[1]}</i>" for dir_point in sorted_scores] #Представление результатов
+    result = [f"<b>{direction}</b>" for direction, point in scores.items() if point == max_point] #Итоговые наиболее подходящие направления для абитуриента
 
     return (
         f"<b>Результаты теста, выполненного <i>{date}</i></b>\n\n"
-        + "Баллы по направлениям\n"
+        + "<u>Баллы по направлениям</u>\n"
         + "\n".join(points)
-        + '\n\nПодведя итоги, могу сказать, что более всего для вас подходит направление(-я)\n'
+        + '\n\nПодведя итоги, могу сказать, что более всего для вас подходит(-ят) направление(-я)\n'
         + "\n".join(result)
     )

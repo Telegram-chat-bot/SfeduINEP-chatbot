@@ -16,15 +16,12 @@ async def prof_test_handler(message: Message):
     
     await message.answer(
 f"""
-<b>ОБЯЗАТЕЛЬНО К ПРОЧТЕНИЮ❗❗❗</b>
-Перед прохождением теста <u>скопируйте свой ID:</u> <b>{message.from_user.id}</b>
-<i>(на мобильных устройствах зажмите сообщение, а затем выделите ID повторным зажатием)</i>
-Он необходим при заполнении формы. После прохождения профориентационного теста вернитесь ко мне и нажмите на кнопку <i>"Получить результаты"</i>
+Вы сомневаетесь в выборе подходящего направления? Не знаете что вам наиболее всего подходит?
+Тогда пройдите профориентационный тест, который был разработан нашими коллегами из психологического факультета специально для таких случаев.
 
-Собственно, сам <a href="https://docs.google.com/forms/d/e/1FAIpQLSeNkbEzcvxl7JsUxuYu13ECBLlZZrxJNyBjC_krgnZbVrUcjQ/viewform">профориентационный тест</a>
+Собственно, сам <a href="https://docs.google.com/forms/d/e/1FAIpQLSeNkbEzcvxl7JsUxuYu13ECBLlZZrxJNyBjC_krgnZbVrUcjQ/viewform?usp=pp_url&entry.834901947={message.from_user.id}">профориентационный тест</a>
 """, reply_markup=kb.check_results_btn
 )
-    
     
 @dp.message_handler(text="Получить результаты")
 async def get_results(message: Message):

@@ -35,12 +35,13 @@ async def direction_training_questions(message: Message):
 
 
 #СТЭЙТЫ-----------------------------
+#Формирование вопроса по поступлению
 @dp.message_handler(state=User_State.question)
 async def question_handler(message: Message, state: FSMContext):
     await state.update_data(admission_quest = message.text)
-    data = await state.get_data()
+    data: dict= await state.get_data()
 
-    await bot.send_message(chat_id="-783193836", text=f"""
+    await bot.send_message(chat_id="-1001669226951", text=f"""
 {datetime.now().strftime("%d.%m.%Y %H:%M")}
 Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name} {message.from_user.last_name}</a>
 Его id {message.from_user.id}
@@ -76,7 +77,7 @@ async def handler(message: Message, state: FSMContext):
             f"""
 {datetime.now().strftime("%d.%m.%Y %H:%M")}
 Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name} {message.from_user.last_name}</a> по направлению {choosed_direction}
-Его id {message.from_user.id}
+Его id: <b>{message.from_user.id}</b>
 
 "{question}"
     """

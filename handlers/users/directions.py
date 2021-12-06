@@ -54,7 +54,6 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
                 elif pressed_button[-1] == "question_direct":
                     async with state.proxy() as qdata:
                         qdata["direction"] = el["direction"]
-                        qdata["level"] = el["level"]
                     
                     await call.message.edit_text("Задайте вопрос")
                     await User_State.question_direction.set()
