@@ -1,16 +1,18 @@
-from aiogram.dispatcher.filters.builtin import Text
-from aiogram.dispatcher.filters import CommandStart, CommandHelp
+from aiogram.dispatcher.filters import CommandStart
+from aiogram.types.inline_keyboard import InlineKeyboardButton, InlineKeyboardMarkup
+from django_admin.bot.models import ChatIDAdmission
 from loader import dp, bot
-from aiogram.types import Message, chat
+from aiogram.types import Message, CallbackQuery, message
 
 from aiogram.dispatcher import FSMContext
-from states.state_machine import AdminState, User_State
+from states.state_machine import AdminState
 
 import logging
 
 from utils.db_api import db_commands
 
 from keyboards.default import menu as kb
+from keyboards.inline import buttons as btn
 
 
 #СТАРТОВОЕ СООБЩЕНИЕ
@@ -23,7 +25,6 @@ async def welcome(message: Message):
 
 #КОМАНДА ВЫХОДА ИЗ РЕЖИМА ВВОДА
 @dp.message_handler(state='*', commands='exit')
-# @dp.message_handler(Text(equals='отмена', ignore_case=True), state='*')
 async def cancel_command(message: Message, state: FSMContext):
     current_state = await state.get_state()
     if current_state is None:
@@ -50,7 +51,10 @@ async def answer_command_handler(message: Message, state: FSMContext):
         
 @dp.message_handler(commands="get_id")
 async def get_id_cmd(message: Message):
-    await message.answer(f"Айди этой группы: {message.chat.id}")
+    if message.chat.type in ["group", "supergroup"]:
+        await message.answer(f"Айди этой группы: {message.chat.id}")
+    else:
+        await message.answer("Команда не предназначена для абитуриента")
     
     
 @dp.message_handler(commands="help")
@@ -70,19 +74,14 @@ async def help_command(message: Message):
     """
         )
     else:
-        from aiogram.types import BotCommand
-        commands = [
-        
-        ]
-        await bot.set_my_commands(commands)
         await message.answer(
             """
 Краткий экскурс в команды бота:
 /exit - команда, которая позволяет выйти из режима ввода данных боту (отмена этого действия);
 /answer - команда для админов групп, связанных с направлениями ИНЭП, позволящая оперативно ответить на вопрос абитуриента;
 /get_id - команда для получения id группы, необходимого для занесения ее в базу данных;
-
-<u>Замечание.</u> Чтобы скопировать ID абитуриента с мобильного устройства, необходимо зажать сообщение, затем выделить ID, повторно зажав сообщение
             """
         )
-        # await bot.pin_chat_message(chat_id=message.chat.id, message_id=message.message_id)
+
+
+

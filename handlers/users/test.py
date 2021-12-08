@@ -6,7 +6,7 @@ from keyboards.default import menu as kb
 from utils.db_api import db_commands
 
 from aiogram.utils.exceptions import MessageTextIsEmpty
-from utils.google_sheets import proftest_results
+from utils import google_sheets
 
 
 
@@ -26,9 +26,11 @@ f"""
 @dp.message_handler(text="Получить результаты")
 async def get_results(message: Message):
     await message.answer("Ваш запрос обрабатывается. Подождите несколько секунд")
+    
     directions = await db_commands.get_bak_directions()
-    result = await proftest_results.get_results(str(message.from_user.id), directions)
+    result = await google_sheets.proftest_results.get_results(str(message.from_user.id), directions)
     try:
         await message.answer(result)
+        
     except MessageTextIsEmpty:
         await message.answer("Вы еще не прошли профориентационный тест")

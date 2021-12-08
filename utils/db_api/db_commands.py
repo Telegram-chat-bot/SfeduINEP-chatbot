@@ -4,10 +4,6 @@ from asgiref.sync import sync_to_async
 
 #-----------------------------------------
 #Получение данных для раздела Поступление
-@sync_to_async
-def get_admission_data():
-    return Admission.objects.values()[0]
-
 #Получение данных о правилах приема
 @sync_to_async
 def get_admission_rules():
@@ -53,10 +49,6 @@ def get_admission_enrollment_proc():
 
 
 #Получение данных для раздела Об институте
-@sync_to_async
-def get_about_data():
-    return About.objects.values()
-
 #Получение данных о разделе Знакомства
 @sync_to_async
 def get_about_acquaintance():
@@ -98,9 +90,6 @@ def get_about_contacts():
     return About.objects.values_list("contacts")[0]
 
 #-------------------------------------------
-
-
-
 #Получение данных о направлениях подготовки
 @sync_to_async
 def get_directions():
@@ -111,6 +100,7 @@ def get_directions():
 def get_dir_code():
     return [el.direction for el in Directions.objects.all()]
 
+#Получение направлений бакалавриата для ПРОФТЕСТА
 @sync_to_async
 def get_bak_directions():
     return {k["direction"]:k["name_of_dir"] for k in Directions.objects.filter(level="bak").values("direction", "name_of_dir")}
@@ -131,6 +121,24 @@ def get_welcome_msg():
 
 #Получение ID чата для направления подготовки
 @sync_to_async
-def get_chat_id_group(code):
+def get_chat_id_group_directions(code):
     origin_data = Directions.objects.get(direction=code).id
-    return ChatID.objects.get(chat_direction_id = origin_data).chat_id
+    return ChatIDDirections.objects.get(chat_direction_id = origin_data).chat_id
+
+#Получение ID чата для вопросов по поступлению
+@sync_to_async
+def get_chat_id_admission():
+    return ChatIDAdmission.objects.all().values_list('chat_id')[0][0]
+
+
+
+#ЗАПИСЬ ДАННЫХ В БАЗУ ДАННЫХ
+#Запись id чата по поступлению
+@sync_to_async
+def save_chatId_Group_admission(group_id):
+    return ChatIDAdmission(chat_id = group_id).save()
+
+#Запись id чата по направлениям
+@sync_to_async
+def save_chatId_Group_direction(group_id, direction):
+    return ChatIDDirections(chat_id = group_id, chat_direction = direction).save()

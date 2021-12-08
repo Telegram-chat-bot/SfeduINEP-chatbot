@@ -15,10 +15,10 @@ from django_admin.bot.models import Directions
 
 @dp.callback_query_handler(lambda call: call.data in ["bak", "spec", "mag"])
 async def direct_of_prepare_handler(call: CallbackQuery):
-    keyboard = await btn.gen_directions_btns_bak(level=call.data)
+    keyboard = await btn.gen_directions_btns(level=call.data)
     await call.message.edit_text("Выберите направление подготовки", reply_markup=keyboard)
     
-@dp.message_handler(state=User_State.direction)
+# @dp.message_handler(state=User_State.direction)
 @dp.callback_query_handler(lambda call: call.data in [element[0] for element in Directions.objects.values_list("direction")])
 async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
     data: dict = await db_commands.get_directions()

@@ -183,10 +183,10 @@ class Welcome_message(models.Model):
         return "Текст приветствия"
 
     
-class ChatID(models.Model):
+class ChatIDDirections(models.Model):
     class Meta:
         verbose_name = "ID чата"
-        verbose_name_plural = "ID чатов для вопросов"
+        verbose_name_plural = "ID чатов для вопросов по направлению подготовки"
         app_label = "bot"
         
     chat_direction = models.OneToOneField(
@@ -201,3 +201,16 @@ class ChatID(models.Model):
     
     def __str__(self) -> str:
         return f"{self.chat_direction}"
+    
+class ChatIDAdmission(models.Model):
+    class Meta:
+        verbose_name = "ID чата"
+        verbose_name_plural = "ID чата по поступлению"
+        app_label = "bot"
+        
+    chat_id = models.BigIntegerField(
+        verbose_name="ID чата",
+        unique=True
+    )
+    def __str__(self) -> str:
+        return "ChatID"

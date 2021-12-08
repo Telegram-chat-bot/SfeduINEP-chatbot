@@ -39,7 +39,7 @@ choose_level = InlineKeyboardMarkup(
 
 #СПЕЦИАЛЬНОСТИ -----------
 #Специальности бакалавра
-async def gen_directions_btns_bak(level: str):
+async def gen_directions_btns(level: str):
     buttons = InlineKeyboardMarkup(row_width=1)
     data = await get_directions()
     for el in data:
@@ -50,7 +50,7 @@ async def gen_directions_btns_bak(level: str):
     return buttons
 
 
-async def init_url(link):
+async def init_url(link: str):
     keyboard = InlineKeyboardMarkup(row_width=1)
     keyboard.add(
         InlineKeyboardButton(text="Ссылка", url=link),

@@ -12,7 +12,6 @@ import logging
 
 
 #ГЛАВНОЕ МЕНЮ--------------
-
 @dp.message_handler(text = "Поступление")
 async def admission_item(message:  Message):
     await message.answer("В этом разделе вы можете узнать о различных тонкостях и нюансах поступления", reply_markup=kb.university_admission)

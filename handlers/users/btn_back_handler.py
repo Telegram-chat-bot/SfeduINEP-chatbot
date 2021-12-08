@@ -2,7 +2,6 @@ from aiogram.types import CallbackQuery
 
 from loader import dp, bot
 
-from keyboards.default import menu as kb
 from keyboards.inline import buttons as btn
 
 
