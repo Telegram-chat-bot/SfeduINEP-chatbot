@@ -1,6 +1,0 @@
-aiogram>=2.14.3
-Django>=3.2.9
-python-dotenv==0.19.1
-asgiref>=3.4.1
-gspread==5.0.0
-oauth2client==4.1.3
