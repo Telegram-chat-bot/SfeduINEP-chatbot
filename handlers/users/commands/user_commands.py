@@ -1,6 +1,6 @@
 from aiogram.dispatcher.filters import CommandStart
 from aiogram.types.inline_keyboard import InlineKeyboardButton, InlineKeyboardMarkup
-from django_admin.bot.models import ChatIDAdmission
+from django_admin.service.models import ChatIDAdmission
 from loader import dp, bot
 from aiogram.types import Message, CallbackQuery, message
 
