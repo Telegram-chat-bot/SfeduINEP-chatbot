@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 locales
 *.code-workspace
+.idea
 
 # C extensions
 *.so
