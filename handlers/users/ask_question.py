@@ -1,45 +1,96 @@
-from loader import dp, item, bot
-from aiogram.dispatcher import FSMContext
-from aiogram.types import Message
+import logging
 
-from utils.db_api.db_commands import get_faq
+from loader import dp, pressed_button, bot
+from aiogram.types import Message, ChatMemberStatus
+
+from aiogram.dispatcher import FSMContext
+from states.state_machine import AdminState, User_State, PositionState
+
+from utils.db_api.db_commands import get_faq, get_chat_id_group_directions, get_chat_id_admission
 
 from datetime import datetime
+import re
 
-from states.state_machine import User_State
+from keyboards.inline import buttons as btn
 
-#РАЗДЕЛ ЗАДАТЬ ВОПРОС
-@dp.message_handler(text = "F.A.Q")
+
+# РАЗДЕЛ ЗАДАТЬ ВОПРОС
+@dp.message_handler(text="F.A.Q")
 async def answers(message: Message):
     await message.answer(await get_faq())
 
-@dp.message_handler(text = "Вопросы по поступлению")
+
+# Обработчик по нажатию на кнопку Вопросы по поступлению
+@dp.message_handler(text="Вопросы по поступлению")
 async def admission_questions(message: Message):
-    await message.answer("Задайте свой вопрос в диалоге. Он будет направлен представителю приёмной комиссии, который ответит Вам, как только сможет")
+    await message.answer(
+        "Задайте свой вопрос в диалоге. Он будет направлен представителю приёмной комиссии, который ответит Вам, "
+        "как только сможет")
     await User_State.question.set()
 
 
-@dp.message_handler(text = "Вопросы по направлению подготовки")
-async def direction_training_questions(message: Message):
-    item.append("q2")
-    await message.answer("Задайте свой вопрос в диалоге. Он будет направлен руководителю направления подготовки, который ответит Вам, как только сможет")
-    await User_State.question.set()
+# Обработчтк по нажатиию на кнопку по направлению
+@dp.message_handler(text="Вопросы по направлению подготовки")
+async def direction_training_questions(message: Message, state: FSMContext):
+    await message.answer(
+        "Задайте свой вопрос в диалоге. Он будет направлен руководителю направления подготовки, который ответит Вам, "
+        "как только сможет",
+        reply_markup=btn.choose_level)
 
-#-----------------------------------
-        
+    await state.set_state(PositionState.set_pressed_btn)
+    async with state.proxy() as data:
+        data["page"] = "question_for_dir"
+    await PositionState.next()
 
-#СТЭЙТЫ-----------------------------
+
+# -----------------------------------
+
+
+# СТЭЙТЫ-----------------------------
+# Формирование вопроса по поступлению
 @dp.message_handler(state=User_State.question)
 async def question_handler(message: Message, state: FSMContext):
-    await state.update_data(admission_quest = message.text)
-    data = await state.get_data()
+    chat_id_group = await get_chat_id_admission()
 
-    await bot.send_message(chat_id="-783193836", text=f"""
+    try:
+        await bot.send_message(chat_id=chat_id_group, text=f"""
+    {datetime.now().strftime("%d.%m.%Y %H:%M")}
+    Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name} {message.from_user.last_name}</a>
+    Его id {message.from_user.id}
+    
+    "{message.text}"
+        """
+                               )
+        await message.answer("Ваш вопрос был учитан и отправлен приёмной комиссии. Ожидайте ответа")
+    except Exception:
+        await message.answer("Произошла ошибка")
+
+    await state.finish()
+
+
+@dp.message_handler(state=User_State.user_question_dir)
+async def handler(message: Message, state: FSMContext):
+    if message.text != "Назад" or message.text != "/exit":
+        question = message.text
+
+        await state.set_state(User_State.direction)
+
+        try:
+            direction = await state.get_data()
+
+            choosed_direction = direction.get("direction")
+            chat_id = await get_chat_id_group_directions(choosed_direction)
+
+            await bot.send_message(chat_id=chat_id, text=f"""
 {datetime.now().strftime("%d.%m.%Y %H:%M")}
-Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name} {message.from_user.last_name}</a>
-
-"{data.get('admission_quest')}"
+Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name} {message.from_user.last_name}</a> по направлению {choosed_direction}
+Его id: <b>{message.from_user.id}</b>
+    
+"{question}"
     """
-    )
-    await message.answer("Ваш вопрос был учитан и отправлен приёмной комиссии. Ожидайте ответа")
+                                   )
+            await message.answer("Ваш вопрос был учитан и отправлен руководителю направления. Ожидайте ответа")
+        except:
+            await message.answer(f"Группа по этому направлению еще не создана или не занесена в базу данных\n{Exception}")
+
     await state.finish()

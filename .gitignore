@@ -2,9 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
-.env
 locales
 *.code-workspace
+.idea
 
 # C extensions
 *.so
@@ -130,4 +130,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-test.py
