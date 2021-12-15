@@ -9,7 +9,7 @@ from asgiref.sync import sync_to_async
 # Получение данных о правилах приема
 @sync_to_async
 def get_admission_rules():
-    return Admission.objects.values_list("admission_rules")
+    return Admission.objects.values_list("admission_rules")[0]
 
 
 # Получение данных Подать документы
