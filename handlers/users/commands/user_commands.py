@@ -12,7 +12,6 @@ import logging
 from utils.db_api import db_commands
 
 from keyboards.default import menu as kb
-from keyboards.inline import buttons as btn
 
 
 # СТАРТОВОЕ СООБЩЕНИЕ
@@ -33,22 +32,6 @@ async def cancel_command(message: Message, state: FSMContext):
 
     await state.finish()
     await message.answer('Выхожу из режима ввода данных...')
-
-
-# КОМАНДА ОТВЕТА АБИТУРИЕНТУ
-@dp.message_handler(commands="answer")
-async def answer_command_handler(message: Message, state: FSMContext):
-    if message.chat.type in ["supergroup", "group"]:
-        admins = await bot.get_chat_member(chat_id=message.chat.id, user_id=message.from_user.id)
-
-        if admins.status in ["creator", "administrator"]:
-            logging.info(admins.status)
-            await message.answer("Введите id человека, предоставленный в вопросе")
-            await state.set_state(AdminState.get_id)
-        else:
-            await message.answer("Вы не являетесь админом")
-    else:
-        await message.answer("У вас здесь нет власти¯\_(ツ)_/¯")
 
 
 @dp.message_handler(commands="get_id")
