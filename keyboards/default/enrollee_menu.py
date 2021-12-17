@@ -1,12 +1,5 @@
 from aiogram.types.reply_keyboard import KeyboardButton, ReplyKeyboardMarkup
 
-back_keyboard = ReplyKeyboardMarkup(
-    [
-        [KeyboardButton("Назад")]
-    ],
-    resize_keyboard=True
-)
-
 check_results_btn = ReplyKeyboardMarkup(
     [
         [

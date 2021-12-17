@@ -2,14 +2,7 @@ from django.db import models
 from django.db.models.deletion import CASCADE
 
 
-class BaseModel(models.Model):
-    class Meta:
-        abstract = True
-
-    objects = models.Manager()
-
-
-class Admission(BaseModel):
+class Admission(models.Model):
     class Meta:
         verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Поступление'"
@@ -44,7 +37,7 @@ class Admission(BaseModel):
         return "Коллекция статей 'Поступление'"
 
 
-class About(BaseModel):
+class About(models.Model):
     class Meta:
         verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Об институте'"
@@ -91,7 +84,7 @@ class About(BaseModel):
         return "Коллекция статей 'Об институте'"
 
 
-class Directions(BaseModel):
+class Directions(models.Model):
     class Meta:
         verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Направления подготовки'"
@@ -127,7 +120,7 @@ class Directions(BaseModel):
         return f"{self.level} - {self.direction}"
 
 
-class Passing_scores(BaseModel):
+class Passing_scores(models.Model):
     class Meta:
         verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Поступление -> Проходные баллы'"
@@ -147,7 +140,7 @@ class Passing_scores(BaseModel):
         return f"{self.direction}"
 
 
-class Num_places(BaseModel):
+class Num_places(models.Model):
     class Meta:
         verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Поступление -> Количество мест'"
@@ -167,7 +160,7 @@ class Num_places(BaseModel):
         return f"{self.direction}"
 
 
-class Questions(BaseModel):
+class Questions(models.Model):
     class Meta:
         verbose_name = "элемент раздела"
         verbose_name_plural = "Раздел 'Задать вопрос'"
@@ -182,7 +175,7 @@ class Questions(BaseModel):
         return "Часто задаваемые вопросы"
 
 
-class Welcome_message(BaseModel):
+class Welcome_message(models.Model):
     class Meta:
         verbose_name = "приветствие"
         verbose_name_plural = "Приветствие бота"

@@ -8,11 +8,12 @@ class PositionState(StatesGroup):
 
 class User_State(StatesGroup):
     direction = State()
-
     get_info_for_question = State()
-    user_question_dir = State()
 
+
+class Questions(StatesGroup):
     question = State()
+    user_question_dir = State()
 
 
 class AdminState(StatesGroup):

@@ -1,7 +1,7 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery
 
-from loader import dp, bot, pressed_button
+from loader import dp
 
 from keyboards.inline import buttons as btn
 from states.state_machine import PositionState

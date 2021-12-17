@@ -1,15 +1,14 @@
 import logging
 
-from loader import dp, pressed_button, bot
-from aiogram.types import Message, ChatMemberStatus
+from loader import dp, bot
+from aiogram.types import Message
 
 from aiogram.dispatcher import FSMContext
-from states.state_machine import AdminState, User_State, PositionState
+from states.state_machine import User_State, PositionState, Questions
 
 from utils.db_api.db_commands import get_faq, get_chat_id_group_directions, get_chat_id_admission
 
 from datetime import datetime
-import re
 
 from keyboards.inline import buttons as btn
 
@@ -26,7 +25,7 @@ async def admission_questions(message: Message):
     await message.answer(
         "Задайте свой вопрос в диалоге. Он будет направлен представителю приёмной комиссии, который ответит Вам, "
         "как только сможет")
-    await User_State.question.set()
+    await Questions.question.set()
 
 
 # Обработчтк по нажатиию на кнопку по направлению
@@ -48,15 +47,15 @@ async def direction_training_questions(message: Message, state: FSMContext):
 
 # СТЭЙТЫ-----------------------------
 # Формирование вопроса по поступлению
-@dp.message_handler(state=User_State.question)
+@dp.message_handler(state=Questions.question)
 async def question_handler(message: Message, state: FSMContext):
     chat_id_group = await get_chat_id_admission()
 
     try:
         await bot.send_message(chat_id=chat_id_group, text=f"""
-    {datetime.now().strftime("%d.%m.%Y %H:%M")}
-    Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name} {message.from_user.last_name}</a>
-    Его id {message.from_user.id}
+{datetime.now().strftime("%d.%m.%Y %H:%M")}
+Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name} {message.from_user.last_name}</a>
+Его id {message.from_user.id}
     
     "{message.text}"
         """
@@ -68,29 +67,28 @@ async def question_handler(message: Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(state=User_State.user_question_dir)
+@dp.message_handler(state=Questions.user_question_dir)
 async def handler(message: Message, state: FSMContext):
-    if message.text != "Назад" or message.text != "/exit":
-        question = message.text
+    question = message.text
 
-        await state.set_state(User_State.direction)
+    await state.set_state(User_State.direction)
 
-        try:
-            direction = await state.get_data()
+    try:
+        direction = await state.get_data()
 
-            choosed_direction = direction.get("direction")
-            chat_id = await get_chat_id_group_directions(choosed_direction)
+        choosed_direction = direction.get("direction")
+        chat_id = await get_chat_id_group_directions(choosed_direction)
 
-            await bot.send_message(chat_id=chat_id, text=f"""
+        await bot.send_message(chat_id=chat_id, text=f"""
 {datetime.now().strftime("%d.%m.%Y %H:%M")}
 Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name} {message.from_user.last_name}</a> по направлению {choosed_direction}
 Его id: <b>{message.from_user.id}</b>
-    
+
 "{question}"
-    """
-                                   )
-            await message.answer("Ваш вопрос был учитан и отправлен руководителю направления. Ожидайте ответа")
-        except:
-            await message.answer(f"Группа по этому направлению еще не создана или не занесена в базу данных\n{Exception}")
+"""
+                               )
+        await message.answer("Ваш вопрос был учитан и отправлен руководителю направления. Ожидайте ответа")
+    except:
+        await message.answer(f"Группа по этому направлению еще не создана или не занесена в базу данных")
 
     await state.finish()

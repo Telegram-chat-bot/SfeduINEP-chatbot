@@ -3,15 +3,7 @@ from django.db.models.deletion import CASCADE
 from django_admin.bot.models import Directions
 
 
-class BaseModel(models.Model):
-    class Meta:
-        abstract = True
-
-    objects = models.Manager()
-
-
-# Create your models here.
-class ChatIDDirections(BaseModel):
+class ChatIDDirections(models.Model):
     class Meta:
         verbose_name = "ID чата"
         verbose_name_plural = "ID чатов для вопросов по направлению подготовки"
@@ -31,10 +23,10 @@ class ChatIDDirections(BaseModel):
         return f"{self.chat_direction}"
 
 
-class ChatIDAdmission(BaseModel):
+class ChatIDAdmission(models.Model):
     class Meta:
         verbose_name = "ID чата"
-        verbose_name_plural = "ID чата по поступлению"
+        verbose_name_plural = "ID чата по вопросам поступлению"
         app_label = "service"
 
     chat_id = models.BigIntegerField(
@@ -43,4 +35,4 @@ class ChatIDAdmission(BaseModel):
     )
 
     def __str__(self) -> str:
-        return "ChatID"
+        return "Чат для вопросов по поступлению"

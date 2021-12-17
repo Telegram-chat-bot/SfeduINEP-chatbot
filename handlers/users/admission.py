@@ -7,7 +7,7 @@ from loader import dp, pressed_button
 from aiogram.types import Message, CallbackQuery
 
 from keyboards.inline import buttons as btn
-from keyboards.default import menu as kb
+from keyboards.default import enrollee_menu as kb
 from states.state_machine import PositionState
 
 from utils.db_api import db_commands

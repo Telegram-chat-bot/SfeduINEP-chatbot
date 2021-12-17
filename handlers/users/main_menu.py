@@ -1,10 +1,10 @@
 from aiogram.dispatcher.storage import FSMContext
 from filters import CommandBack
-from states.state_machine import User_State, PositionState
-from loader import dp, pressed_button, bot
+from states.state_machine import PositionState
+from loader import dp
 from aiogram.types import Message
 
-from keyboards.default import menu as kb
+from keyboards.default import enrollee_menu as kb
 from keyboards.inline import buttons as btn
 import logging
 
