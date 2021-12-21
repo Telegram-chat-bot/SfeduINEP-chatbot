@@ -1,4 +1,4 @@
-from loader import dp, bot
+from loader import dp
 from aiogram.types import Message
 
 from keyboards.default import enrollee_menu as kb
@@ -16,8 +16,8 @@ async def prof_test_handler(message: Message):
         пройдите профориентационный тест, который был разработан нашими коллегами из психологического факультета 
         специально для таких случаев. 
 
-Собственно, сам <a href="https://docs.google.com/forms/d/e/1FAIpQLSeNkbEzcvxl7JsUxuYu13ECBLlZZrxJNyBjC_krgnZbVrUcjQ/viewform?usp=pp_url&entry.834901947={message.from_user.id}">профориентационный тест</a>
-""", reply_markup=kb.check_results_btn
+Собственно, сам <a href="https://docs.google.com/forms/d/e/1FAIpQLSeNkbEzcvxl7JsUxuYu13ECBLlZZrxJNyBjC_krgnZbVrUcjQ/viewform?usp=pp_url&entry.834901947={message.from_user.id}">профориентационный тест</a> """,
+        reply_markup=kb.check_results_btn
     )
 
 

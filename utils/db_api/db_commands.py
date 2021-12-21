@@ -1,5 +1,6 @@
 from django_admin.bot.models import *
 from django_admin.service.models import *
+from django_admin.feedback.models import *
 from asgiref.sync import sync_to_async
 from django.db.models import Q
 
@@ -175,4 +176,12 @@ def isChatExist(chat_id):
 
 @sync_to_async
 def del_chat_id(chat_id):
-    return ChatIDAdmission.objects.get(chat_id=chat_id).delete() or ChatIDDirections.objects.get(chat_id).delete()
+    try:
+        return ChatIDAdmission.objects.get(chat_id=chat_id).delete()
+    except:
+        ChatIDDirections.objects.get(chat_id=chat_id).delete()
+
+
+@sync_to_async
+def send_feedback(username: str, review: str):
+    Feedback(username=username, review=review).save()

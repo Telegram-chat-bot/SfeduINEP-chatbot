@@ -10,33 +10,33 @@ from aiogram.types import Message, CallbackQuery
 from keyboards.inline import buttons as btn
 from keyboards.inline import group_buttons as group_btn
 
-from states.state_machine import PositionState
-from states.state_machine import AdminState
+from states.state_machine import PositionState, Questions
+from states.state_machine import GroupState
 
 from utils.db_api import db_commands
 
 
 # --------------------------
+'''
 @dp.message_handler(text="Ответить на вопрос")
 async def answer_to_question(message: Message, state: FSMContext):
     await message.answer("Введите id человека, предоставленный в вопросе")
-    await state.set_state(AdminState.get_id)
+    await state.set_state(GroupState.get_id)
 
 
-@dp.message_handler(state=AdminState.get_id)
+@dp.message_handler(state=GroupState.get_id)
 async def get_user_id(message: Message, state: FSMContext):
     if re.compile(r"\d{9,10}").match(message.text):
         await state.update_data(user_id=message.text)
         await message.answer("Напишите свой ответ")
 
-        await AdminState.get_answer.set()
+        await GroupState.get_answer.set()
     else:
         await message.answer("Некорректный ID. Введите заново")
 
 
-@dp.message_handler(state=AdminState.get_answer)
+@dp.message_handler(state=GroupState.get_answer)
 async def send_answer(message: Message, state: FSMContext):
-    # if message.text != "/reset":
     await state.update_data(answer=message.text)
 
     data = await state.get_data()
@@ -49,7 +49,7 @@ async def send_answer(message: Message, state: FSMContext):
         """
     )
     await message.answer("Ответ на вопрос отправлен абитуриенту")
-    await state.finish()
+    await state.finish()'''
 
 
 # -----------------------------
@@ -77,7 +77,7 @@ async def add_group(message: Message):
 async def type_of_group(call: CallbackQuery, state: FSMContext):
     chat_exists: bool = await db_commands.isChatExist(call.message.chat.id)
 
-    if call.data == "adm_type" and not chat_exists:  # and db_commands.ChatIDAdmission.objects.count == 0:
+    if call.data == "adm_type" and not chat_exists:
         try:
             await db_commands.save_chat_id_group_admission(call.message.chat.id)
             await call.message.answer("Группа успешно занесена в базу данных")
@@ -86,7 +86,7 @@ async def type_of_group(call: CallbackQuery, state: FSMContext):
             logging.error(error)
 
     elif call.data == "dp_type" and not chat_exists:
-        await call.message.answer("Выберите уровень подготовки", reply_markup=btn.choose_level)
+        await call.message.edit_text("Выберите уровень подготовки", reply_markup=btn.choose_level)
 
         await state.set_state(PositionState.set_pressed_btn)
         async with state.proxy() as data:
@@ -94,7 +94,36 @@ async def type_of_group(call: CallbackQuery, state: FSMContext):
         await PositionState.next()
 
     else:
-        await call.message.answer("ID группы уже существует в базе данных")
+        await call.message.edit_text("ID группы уже существует в базе данных")
+
+
+@dp.callback_query_handler(group_btn.answer_to_question.filter())
+async def ask_to_question_handler(call: CallbackQuery, state: FSMContext):
+    await state.set_state(Questions.answer)
+    callback_data = group_btn.answer_to_question.parse(call.data)
+
+    async with state.proxy() as data:
+        data["questioner_id"] = callback_data["user_id"]
+    await call.message.edit_text("Напишите ответ")
+
+    await Questions.get_answer.set()
+
+
+@dp.message_handler(state=Questions.get_answer)
+async def send_answer(message: Message, state: FSMContext):
+    user_id = await state.get_data()
+    answer = message.text
+
+    await bot.send_message(chat_id=user_id["questioner_id"], text=
+f"""
+Вам пришел ответ на ваш раннее заданный вопрос
+
+"{answer}"
+"""
+                           )
+    await message.answer("Ответ был отправлен абитуриенту")
+
+    await state.finish()
 
 
 # ----------------------------------
@@ -103,9 +132,17 @@ async def type_of_group(call: CallbackQuery, state: FSMContext):
 @dp.message_handler(IsGroup(), text="Помощь")
 async def help_button(message: Message):
     await message.answer(
-        """
-Краткий экскурс в команды бота:
-/exit - команда, которая позволяет выйти из режима ввода данных боту (отмена этого действия);
-        """
+        """Краткий экскурс в команды бота: /exit - команда, которая позволяет выйти из режима ввода данных боту ( 
+отмена этого действия);
+
+<b>Ответ на вопрос</b>
+Чтобы ответить абитуриенту, необходимо:
+1) Нажать на кнопку <i>"Ответить на вопрос"</i>;
+2) Ввести <b>ID</b> абитуриента, который указан в вопросе;
+3) Ввести свой ответ и отправить.
+
+<b>P.S.</b>
+<i>Чтобы скопировать конкретный участок текста сообщения 
+на мобильных устройствах, необходимо зажать сообщение -> зажать нужный фрагмент текста и скопировать )</i> """
     )
 # -------------------------------------

@@ -1,5 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.callback_data import CallbackData
 
+answer_to_question = CallbackData("ask_to", "user_id")
 group_type = InlineKeyboardMarkup(
     inline_keyboard=[
         [
@@ -10,3 +12,13 @@ group_type = InlineKeyboardMarkup(
         ]
     ]
 )
+
+
+async def gen_answer_btn(user_id: str):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Ответить на вопрос", callback_data=answer_to_question.new(user_id=user_id))
+            ]
+        ]
+    )

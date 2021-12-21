@@ -10,6 +10,9 @@ import logging
 
 
 # ГЛАВНОЕ МЕНЮ--------------
+from utils.db_api import db_commands
+
+
 @dp.message_handler(text="Поступление")
 async def admission_item(message: Message):
     await message.answer("В этом разделе вы можете узнать о различных тонкостях и нюансах поступления",

@@ -2,8 +2,7 @@ import logging
 
 from aiogram.dispatcher import FSMContext
 
-from django_admin.bot.models import Directions
-from loader import dp, pressed_button
+from loader import dp
 from aiogram.types import Message, CallbackQuery
 
 from keyboards.inline import buttons as btn
@@ -38,7 +37,6 @@ async def passing_scores(message: Message, state: FSMContext):
 
 @dp.message_handler(text="Количество мест")  # item id = 3
 async def num_of_places(message: Message, state: FSMContext):
-    pressed_button.append("num_places")
     await message.answer("Выберите направление подготовки", reply_markup=btn.choose_level)
 
     await state.set_state(PositionState.set_pressed_btn)
