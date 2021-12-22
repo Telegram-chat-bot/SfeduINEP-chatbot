@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.views.generic import TemplateView
+from django_admin.feedback.models import Feedback
 
 
 # Create your views here.
-
-class Home(TemplateView):
-    template_name = "index.html"
+def main_page(request):
+    data = Feedback.objects
+    context = {"response": data}
+    return render(request, "bot/index.html", context)

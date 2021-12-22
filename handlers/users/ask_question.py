@@ -111,8 +111,8 @@ async def handler(message: Message, state: FSMContext):
 @dp.message_handler(state=Feedback.feedback_message)
 async def get_feedback(message: Message, state: FSMContext):
     fb_message = message.text
-
-    await db_commands.send_feedback(username=message.from_user.username, review=fb_message)
+    user_name = ' '.join([message.from_user.first_name, message.from_user.last_name])
+    await db_commands.send_feedback(username=user_name, review=fb_message)
     await message.answer("Ваш отзыв отправлен")
 
     await state.finish()

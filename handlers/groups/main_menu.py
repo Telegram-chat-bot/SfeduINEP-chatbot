@@ -15,7 +15,6 @@ from states.state_machine import GroupState
 
 from utils.db_api import db_commands
 
-
 # --------------------------
 '''
 @dp.message_handler(text="Ответить на вопрос")
@@ -101,10 +100,10 @@ async def type_of_group(call: CallbackQuery, state: FSMContext):
 async def ask_to_question_handler(call: CallbackQuery, state: FSMContext):
     await state.set_state(Questions.answer)
     callback_data = group_btn.answer_to_question.parse(call.data)
-
+    await call.message.delete_reply_markup()
     async with state.proxy() as data:
         data["questioner_id"] = callback_data["user_id"]
-    await call.message.edit_text("Напишите ответ")
+    await call.message.answer("Напишите ответ")
 
     await Questions.get_answer.set()
 
@@ -115,7 +114,7 @@ async def send_answer(message: Message, state: FSMContext):
     answer = message.text
 
     await bot.send_message(chat_id=user_id["questioner_id"], text=
-f"""
+    f"""
 Вам пришел ответ на ваш раннее заданный вопрос
 
 "{answer}"
