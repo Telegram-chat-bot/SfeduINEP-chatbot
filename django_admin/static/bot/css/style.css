@@ -7,6 +7,7 @@ body{
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
+    padding-bottom: 40px;
 
 }
 header{
@@ -34,9 +35,14 @@ header{
     margin-right: 10px;
 }
 .nav-menu a{
+    text-transform: lowercase;
+    font-variant: small-caps;
     font-size: 20px;
     text-decoration: none;
     color: white;
+}
+.nav-menu a:hover{
+    text-decoration: underline;
 }
 /* Контейнер-центровщик */
 .container{
@@ -44,7 +50,7 @@ header{
     width: 60%;
 }
 .container h1{
-    padding-top: 20px;
+    padding-top: 25px;
 }
 .no-data-msg{
     opacity: 0.5;
@@ -55,24 +61,10 @@ header{
     background-color: white;
     text-align: center;
 
-    margin: 50px auto 0;
-    width: 70%;
-    /*min-height: 500px;*/
+    margin: 80px auto 0;
+    width: 50%;
     border-radius: 10px;
-}
-.review-list{
-    word-wrap: break-word;
-    text-align: left;
-
-    border: 1px solid black;
-    border-radius: 6px;
-
-    box-sizing: border-box;
-
-    padding: 20px;
-    margin-bottom: 15px;
-
-    width: 100%;
+    padding-bottom: 25px;
 }
 .review-text{
     font-size: 18px;
@@ -83,7 +75,29 @@ header{
     margin-left: 10px;
     font-size: 14px;
 }
+
+.review-list{
+    word-wrap: break-word;
+    text-align: left;
+
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 6px;
+
+    box-sizing: border-box;
+
+    padding: 20px;
+    margin-bottom: 15px;
+
+    width: 100%;
+
+    box-shadow: 0 10px 15px -5px rgba(0,0,0,0.2);
+}
+.review-list p{
+    margin-bottom: 15px;
+}
 .review-list summary{
+    cursor: pointer;
+    padding-bottom: 10px;
     padding-left: 30px;
     font-size: 18px;
     list-style: none;
@@ -105,10 +119,29 @@ header{
     content: "";
     position: absolute;
 }
-details[open] > summary::before{
-    transform: rotate(180deg);
+.review-list[open] > summary::before{
+    transform: rotateX(180deg);
     background-position-y: 30%;
 }
-details[open]:last-child{
-    margin-bottom: 50px;
+.review-list[open] > summary{
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+}
+.review-list:hover{
+    border: 1px solid gray;
+}
+.review-list[open]{
+    background: rgba(0,0,0,0.03);
+}
+.review-list[open] summary ~ *{
+  animation: sweep .5s ease-in-out;
+}
+@keyframes sweep {
+  0%    {opacity: 0;}
+  100%  {opacity: 1;}
+}
+.review-list[open] > summary:before {
+  transition: 0.7s;
+}
+.review-list > summary:before{
+    transition: 0.7s;
 }

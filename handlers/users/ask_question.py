@@ -11,6 +11,7 @@ from utils.db_api.db_commands import get_faq, get_chat_id_group_directions, get_
 
 from datetime import datetime
 
+from keyboards.default import enrollee_menu as kb
 from keyboards.inline import buttons as btn
 from keyboards.inline import group_buttons as group_btn
 
@@ -113,6 +114,6 @@ async def get_feedback(message: Message, state: FSMContext):
     fb_message = message.text
     user_name = ' '.join([message.from_user.first_name, message.from_user.last_name])
     await db_commands.send_feedback(username=user_name, review=fb_message)
-    await message.answer("Ваш отзыв отправлен")
+    await message.answer("Ваш отзыв отправлен", reply_markup=kb.main_menu)
 
     await state.finish()

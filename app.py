@@ -1,5 +1,4 @@
 from aiogram.bot.bot import Bot
-import filters
 
 
 async def set_commands(bot: Bot):
@@ -12,7 +11,7 @@ async def set_commands(bot: Bot):
     await bot.set_my_commands(commands)
 
 
-async def on_startup(dp):
+async def on_startup():
     from loader import bot
     await set_commands(bot)
 
