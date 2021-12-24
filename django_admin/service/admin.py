@@ -10,4 +10,7 @@ admin.site.register(ChatIDAdmission)
 class ChatIDAdmin(admin.ModelAdmin):
     list_display = ["chat_direction", "chat_id"]
 
-# admin.site.register(ChatIDDirections)
+
+@admin.register(Users)
+class UsersAdmin(admin.ModelAdmin):
+    list_display = ["username", "user_id"]

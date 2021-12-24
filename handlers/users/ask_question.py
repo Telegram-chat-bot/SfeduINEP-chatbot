@@ -31,34 +31,6 @@ async def admission_questions(message: Message):
     await Questions.user_question.set()
 
 
-# Обработчик  нажатиия кнопку по направлению
-@dp.message_handler(text="Вопросы по направлению подготовки")
-async def direction_training_questions(message: Message, state: FSMContext):
-    await message.answer(
-        "Задайте свой вопрос в диалоге. Он будет направлен руководителю направления подготовки, который ответит Вам, "
-        "как только сможет",
-        reply_markup=btn.choose_level)
-
-    await state.set_state(PositionState.set_pressed_btn)
-    async with state.proxy() as data:
-        data["page"] = "question_for_dir"
-    await PositionState.next()
-
-
-@dp.message_handler(text="Обратная связь")
-async def feedback_page(message: Message, state: FSMContext):
-    await message.answer(
-        """Здесь вы можете выразить свое мнение по поводу текущего тех. состояния чат-бота или предложить свои идеи по его улучшению.
-Мы <ins>всегда</ins> открыты для критики и сделаем всё возможное, чтобы пользование ботом для <b>Вас</b> было наиболее комфортным
-"""
-    )
-    await Feedback.feedback_message.set()
-
-
-# -----------------------------------
-
-
-# states-----------------------------
 # Формирование вопроса по поступлению
 @dp.message_handler(state=Questions.user_question)
 async def question_handler(message: Message, state: FSMContext):
@@ -70,7 +42,7 @@ async def question_handler(message: Message, state: FSMContext):
         await bot.send_message(chat_id=chat_id_group, text=f"""
 {datetime.now().strftime("%d.%m.%Y %H:%M")}
 Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name} {message.from_user.last_name}</a>
-        
+
 "{question}"
             """, reply_markup=button
                                )
@@ -78,6 +50,46 @@ async def question_handler(message: Message, state: FSMContext):
     except Exception as error:
         await message.answer("Произошла ошибка")
         logging.error(error)
+
+    await state.finish()
+
+
+# Обработчик  нажатиия кнопку по направлению
+@dp.message_handler(text="Вопросы по направлению подготовки")
+async def direction_training_questions(message: Message, state: FSMContext):
+    await message.answer(
+        "Задайте свой вопрос в диалоге. Он будет направлен руководителю направления подготовки, который ответит Вам, "
+        "как только сможет",
+        reply_markup=btn.choose_level)
+
+    await state.set_state(PositionState.set_pressed_btn)
+    async with state.proxy() as data:
+        data["page"] = "question_for_dir"
+
+    await PositionState.next()
+
+
+@dp.message_handler(text="Обратная связь")
+async def feedback_page(message: Message):
+    await message.answer(
+        """Здесь вы можете выразить свое мнение по поводу текущего тех. состояния чат-бота или предложить свои идеи по его улучшению.
+Мы <ins>всегда</ins> открыты для критики и сделаем всё возможное, чтобы пользование ботом для <b>Вас</b> было наиболее комфортным
+"""
+    )
+    await Feedback.feedback_message.set()
+
+
+@dp.message_handler(state=Feedback.feedback_message)
+async def get_feedback(message: Message, state: FSMContext):
+    fb_message = message.text
+    user_name = ' '.join(
+        [
+            message.from_user.first_name or "", message.from_user.last_name or ""
+        ]
+    )
+    await db_commands.send_feedback(username=user_name, review=fb_message)
+    await message.answer("Ваш отзыв отправлен", reply_markup=kb.main_menu)
+
     await state.finish()
 
 
@@ -105,15 +117,5 @@ async def handler(message: Message, state: FSMContext):
     except Exception as error:
         await message.answer(f"Группа по этому направлению еще не создана или не занесена в базу данных")
         logging.error(error)
-
-    await state.finish()
-
-
-@dp.message_handler(state=Feedback.feedback_message)
-async def get_feedback(message: Message, state: FSMContext):
-    fb_message = message.text
-    user_name = ' '.join([message.from_user.first_name, message.from_user.last_name])
-    await db_commands.send_feedback(username=user_name, review=fb_message)
-    await message.answer("Ваш отзыв отправлен", reply_markup=kb.main_menu)
 
     await state.finish()

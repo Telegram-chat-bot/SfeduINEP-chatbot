@@ -36,3 +36,23 @@ class ChatIDAdmission(models.Model):
 
     def __str__(self) -> str:
         return "Чат для вопросов по поступлению"
+
+
+class Users(models.Model):
+    class Meta:
+        verbose_name = "ID пользователя"
+        verbose_name_plural = "ID пользователей"
+        app_label = "service"
+
+    username = models.CharField(
+        verbose_name="Никнейм пользователя",
+        max_length=50
+    )
+
+    user_id = models.BigIntegerField(
+        verbose_name="user id",
+        unique=True
+    )
+
+    def __str__(self):
+        return f"{self.username}"

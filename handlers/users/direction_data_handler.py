@@ -6,7 +6,7 @@ from aiogram.utils.exceptions import MessageTextIsEmpty
 from django.db.models import QuerySet
 
 from django_admin.bot.models import Directions
-from handlers.errors.empty_table_error import EmptyTableError
+
 from keyboards.inline.buttons import direction_button
 from loader import dp, bot
 from utils.db_api import db_commands
@@ -27,7 +27,6 @@ async def level_handler(call: CallbackQuery, state: FSMContext):
         logging.error(error)
 
     await state.reset_state(with_data=False)
-    # await state.finish()
 
 
 # Удаление инлайн кнопок
@@ -48,9 +47,6 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
 
     try:
         chosen_direction_data = data.filter(direction=callback_data["code"]).last()
-        #
-        # if len(chosen_direction_data) == 0:
-        #     raise EmptyTableError("В базе данных нет информации")
 
         if callback_data["page"] == "inf_dir":
             await call.message.edit_text(
@@ -83,11 +79,10 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
             )
             await call.message.edit_text("Группа успешно занесена в базу данных")
 
-    except EmptyTableError as error:
-        await call.message.edit_text(error.data)
 
     except MessageTextIsEmpty:
-        await call.message.edit_text("В базе данных нет информации по данному направлению")
+        await call.message.edit_text("В базе данных нет информации по данному направлению",
+                                     reply_markup=btn.back_btn_init)
 
     except Exception as error:
         await call.message.edit_text(f"Произошла ошибка", reply_markup=btn.back_btn_init, parse_mode="")

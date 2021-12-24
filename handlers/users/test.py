@@ -13,8 +13,8 @@ from utils import google_sheets
 async def prof_test_handler(message: Message):
     await message.answer(
         f""" Вы сомневаетесь в выборе подходящего направления? Не знаете что вам наиболее всего подходит? Тогда 
-        пройдите профориентационный тест, который был разработан нашими коллегами из психологического факультета 
-        специально для таких случаев. 
+пройдите профориентационный тест, который был разработан нашими коллегами из психологического факультета 
+специально для таких случаев. 
 
 Собственно, сам <a href="https://docs.google.com/forms/d/e/1FAIpQLSeNkbEzcvxl7JsUxuYu13ECBLlZZrxJNyBjC_krgnZbVrUcjQ/viewform?usp=pp_url&entry.834901947={message.from_user.id}">профориентационный тест</a> """,
         reply_markup=kb.check_results_btn

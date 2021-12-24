@@ -1,4 +1,4 @@
-from aiogram.dispatcher.filters import CommandStart, Text, Command
+from aiogram.dispatcher.filters import CommandStart, Command
 
 from filters.ChatTypeFilter import IsChat
 from loader import dp
@@ -15,6 +15,15 @@ async def welcome(message: Message):
     await message.answer(
         await db_commands.get_welcome_msg(),
         reply_markup=kb.main_menu
+    )
+    await db_commands.add_user(
+        name=' '.join(
+            [
+                message.from_user.first_name or "",
+                message.from_user.last_name or ""
+            ]
+        ),
+        uid=int(message.from_user.id)
     )
 
 

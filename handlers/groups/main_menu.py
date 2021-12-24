@@ -1,7 +1,7 @@
 import logging
-import re
 
 from aiogram.dispatcher import FSMContext
+from django.db.models import QuerySet
 
 from filters import IsGroup
 from loader import dp, bot
@@ -15,45 +15,26 @@ from states.state_machine import GroupState
 
 from utils.db_api import db_commands
 
-# --------------------------
-'''
-@dp.message_handler(text="Ответить на вопрос")
-async def answer_to_question(message: Message, state: FSMContext):
-    await message.answer("Введите id человека, предоставленный в вопросе")
-    await state.set_state(GroupState.get_id)
-
-
-@dp.message_handler(state=GroupState.get_id)
-async def get_user_id(message: Message, state: FSMContext):
-    if re.compile(r"\d{9,10}").match(message.text):
-        await state.update_data(user_id=message.text)
-        await message.answer("Напишите свой ответ")
-
-        await GroupState.get_answer.set()
-    else:
-        await message.answer("Некорректный ID. Введите заново")
-
-
-@dp.message_handler(state=GroupState.get_answer)
-async def send_answer(message: Message, state: FSMContext):
-    await state.update_data(answer=message.text)
-
-    data = await state.get_data()
-
-    await bot.send_message(
-        chat_id=data.get("user_id"),
-        text=f"""
-Вам пришел ответ на ваш ранее заданный вопрос
-"{data.get("answer")}"
-        """
-    )
-    await message.answer("Ответ на вопрос отправлен абитуриенту")
-    await state.finish()'''
-
 
 # -----------------------------
+@dp.message_handler(IsGroup(), text="Сделать объявление абитуриентам")
+async def attention_message(message: Message):
+    await message.answer("Напишите сообщение")
+    await GroupState.attention_message.set()
 
-# -----------------------------
+
+@dp.message_handler(state=GroupState.attention_message)
+async def send_attention_msg(message: Message, state: FSMContext):
+    message_to = message.text
+    users: QuerySet = await db_commands.get_users()
+
+    for user in users:
+        await bot.send_message(chat_id=user[0], text=message_to)
+
+    await message.answer("Сообщение разослано всем пользователям")
+    await state.finish()
+
+
 @dp.message_handler(IsGroup(), text="Удалить группу из базы данных")
 async def del_chat(message: Message):
     try:
@@ -96,18 +77,21 @@ async def type_of_group(call: CallbackQuery, state: FSMContext):
         await call.message.edit_text("ID группы уже существует в базе данных")
 
 
+# Обработчик кнопки "Ответить"
 @dp.callback_query_handler(group_btn.answer_to_question.filter())
 async def ask_to_question_handler(call: CallbackQuery, state: FSMContext):
     await state.set_state(Questions.answer)
     callback_data = group_btn.answer_to_question.parse(call.data)
     await call.message.delete_reply_markup()
+
     async with state.proxy() as data:
         data["questioner_id"] = callback_data["user_id"]
-    await call.message.answer("Напишите ответ")
 
+    await call.message.answer("Напишите ответ")
     await Questions.get_answer.set()
 
 
+# Обработчик отправки сообщения с ответом
 @dp.message_handler(state=Questions.get_answer)
 async def send_answer(message: Message, state: FSMContext):
     user_id = await state.get_data()
@@ -121,7 +105,6 @@ async def send_answer(message: Message, state: FSMContext):
 """
                            )
     await message.answer("Ответ был отправлен абитуриенту")
-
     await state.finish()
 
 

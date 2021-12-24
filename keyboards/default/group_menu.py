@@ -3,7 +3,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 main_menu = ReplyKeyboardMarkup(
     [
         [
-            KeyboardButton("Ответить на вопрос"),
+            KeyboardButton("Сделать объявление абитуриентам"),
             KeyboardButton("Помощь")
         ],
         [

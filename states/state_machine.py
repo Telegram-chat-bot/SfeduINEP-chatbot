@@ -19,8 +19,7 @@ class Questions(StatesGroup):
 
 
 class GroupState(StatesGroup):
-    get_id = State()
-    get_answer = State()
+    attention_message = State()
 
 
 class Feedback(StatesGroup):
