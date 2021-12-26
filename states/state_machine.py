@@ -6,15 +6,21 @@ class PositionState(StatesGroup):
     get_pressed_btn = State()
 
 
-class User_State(StatesGroup):
+class UserState(StatesGroup):
     direction = State()
-
     get_info_for_question = State()
+
+
+class Questions(StatesGroup):
+    user_question = State()
     user_question_dir = State()
-
-    question = State()
-
-
-class AdminState(StatesGroup):
-    get_id = State()
+    answer = State()
     get_answer = State()
+
+
+class GroupState(StatesGroup):
+    attention_message = State()
+
+
+class Feedback(StatesGroup):
+    feedback_message = State()

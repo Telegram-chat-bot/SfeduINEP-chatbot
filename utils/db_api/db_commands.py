@@ -1,7 +1,8 @@
-import asyncio
 from django_admin.bot.models import *
 from django_admin.service.models import *
+from django_admin.feedback.models import *
 from asgiref.sync import sync_to_async
+from django.db.models import Q
 
 
 # -----------------------------------------
@@ -119,16 +120,13 @@ def get_dir_code():
     return [el.direction for el in Directions.objects.all()]
 
 
-# Получение направлений бакалавриата для ПРОФ.ТЕСТА
+# Получение направлений для ПРОФ.ТЕСТА
 @sync_to_async
 def get_bak_directions():
     return {
         k["direction"]: k["name_of_dir"] for k in
-        Directions.objects.filter(level="bak").values("direction", "name_of_dir")
+        Directions.objects.filter(Q(level="bak") | Q(level="spec")).values("direction", "name_of_dir")
     }
-
-
-# -------------------------------------------
 
 
 # Получение данных для раздела FAQ
@@ -137,6 +135,7 @@ def get_faq():
     return Questions.objects.all().values_list("faq")[0][0]
 
 
+# --------------------------------------------
 # Получение приветственного сообщения
 @sync_to_async
 def get_welcome_msg():
@@ -167,3 +166,38 @@ def save_chat_id_group_admission(group_id):
 @sync_to_async
 def save_chat_id_group_direction(group_id, direction):
     return ChatIDDirections(chat_id=group_id, chat_direction=direction).save()
+
+
+# Проверка на существование id чата в бд
+@sync_to_async
+def isChatExist(chat_id):
+    return ChatIDDirections.objects.filter(chat_id=chat_id).exists() or ChatIDAdmission.objects.filter(
+        chat_id=chat_id).exists()
+
+
+# Удаление id чата группы
+@sync_to_async
+def del_chat_id(chat_id):
+    try:
+        return ChatIDAdmission.objects.get(chat_id=chat_id).delete()
+    except:
+        ChatIDDirections.objects.get(chat_id=chat_id).delete()
+
+
+# Сохранение отзыва
+@sync_to_async
+def send_feedback(username: str, review: str):
+    Feedback(username=username, review=review).save()
+
+
+@sync_to_async
+def add_user(name: str, uid: int):
+    return Users.objects.update_or_create(
+        username=name,
+        user_id=uid
+    )
+
+
+@sync_to_async
+def get_users():
+    return Users.objects.all().values_list("user_id")

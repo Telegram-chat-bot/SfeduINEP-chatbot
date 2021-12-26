@@ -1,1 +1,1 @@
-from .state_machine import AdminState, User_State
+from .state_machine import GroupState, UserState

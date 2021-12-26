@@ -1,12 +1,5 @@
 from aiogram.types.reply_keyboard import KeyboardButton, ReplyKeyboardMarkup
 
-back_keyboard = ReplyKeyboardMarkup(
-    [
-        [KeyboardButton("Назад")]
-    ],
-    resize_keyboard=True
-)
-
 check_results_btn = ReplyKeyboardMarkup(
     [
         [
@@ -31,7 +24,8 @@ main_menu = ReplyKeyboardMarkup(
             KeyboardButton("Задать вопрос")
         ]
     ],
-    resize_keyboard=True
+    resize_keyboard=True,
+    one_time_keyboard=True
 )
 
 university_admission = ReplyKeyboardMarkup(
@@ -93,9 +87,13 @@ ask_question = ReplyKeyboardMarkup(
             KeyboardButton('Вопросы по направлению подготовки')
         ],
         [
+            KeyboardButton("Обратная связь")
+        ],
+        [
             KeyboardButton("Назад")
         ]
     ],
-    resize_keyboard=True
+    resize_keyboard=True,
+    one_time_keyboard=True
 )
 

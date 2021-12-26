@@ -1,20 +1,13 @@
-from aiogram.bot.bot import Bot
-import filters
-
-async def set_commands(bot: Bot):
+async def startup_func(dp):
     from aiogram.types import BotCommand
     commands = [
         BotCommand("start", "Запуск бота"),
         BotCommand("help", "Информация о боте"),
-        BotCommand("exit", "Выход из режима ввода данных"),
-        BotCommand("answer", "Ответить на вопрос абитуриента (для админов)"),
-        BotCommand("get_id", "Получение id группы")
+        BotCommand("exit", "Выход из режима ввода данных")
     ]
-    await bot.set_my_commands(commands)
 
-async def on_startup(dp):
-    from loader import bot
-    await set_commands(bot)
+    await dp.bot.set_my_commands(commands)
+
 
 def setup_django():
     import django
@@ -23,12 +16,13 @@ def setup_django():
     os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = 'true'
     django.setup()
 
+
 if __name__ == '__main__':
     setup_django()
-    
+
     from aiogram import executor
     import filters
     import handlers
-    from loader import dp
-    
-    executor.start_polling(dp, on_startup=on_startup)
+    from loader import dp, bot
+
+    executor.start_polling(dp, on_startup=startup_func)
