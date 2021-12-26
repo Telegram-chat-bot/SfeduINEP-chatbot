@@ -14,7 +14,7 @@ setup_django()
 
 
 def delete_task():
-    from django_admin.feedback.models import Feedback
+    from feedback import Feedback
     Feedback.objects.filter(date__lte=datetime.now() - timedelta(days=30)).delete()
 
 

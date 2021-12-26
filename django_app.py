@@ -1,3 +1,3 @@
-from django_admin.manage import main
+from manage import main
 
 main()

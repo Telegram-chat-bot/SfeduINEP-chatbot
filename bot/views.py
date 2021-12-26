@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django_admin.feedback.models import Feedback
+from feedback.models import Feedback
 
 
 # Create your views here.

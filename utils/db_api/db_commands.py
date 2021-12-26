@@ -1,6 +1,3 @@
-from django_admin.bot.models import *
-from django_admin.service.models import *
-from django_admin.feedback.models import *
 from asgiref.sync import sync_to_async
 from django.db.models import Q
 
