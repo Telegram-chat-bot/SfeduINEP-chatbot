@@ -5,7 +5,7 @@ __pycache__/
 locales
 *.code-workspace
 .idea
-
+creds.json
 # C extensions
 *.so
 
