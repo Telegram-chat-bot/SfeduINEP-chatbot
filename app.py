@@ -12,7 +12,7 @@ async def startup_func(dp):
 def setup_django():
     import django
     import os
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'django_admin.django_admin.settings'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'django_admin.settings'
     os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = 'true'
     django.setup()
 
