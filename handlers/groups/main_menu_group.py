@@ -1,5 +1,5 @@
 import logging
-
+from aiogram.dispatcher.filters.builtin import AdminFilter, Text
 from aiogram.dispatcher import FSMContext
 from django.db.models import QuerySet
 
@@ -17,7 +17,7 @@ from utils.db_api import db_commands
 
 
 # -----------------------------
-@dp.message_handler(IsGroup(), text="Сделать объявление абитуриентам")
+@dp.message_handler(IsGroup(), AdminFilter(), text="Сделать объявление абитуриентам")
 async def attention_message(message: Message):
     await message.answer("Напишите сообщение")
     await GroupState.attention_message.set()
@@ -29,26 +29,34 @@ async def send_attention_msg(message: Message, state: FSMContext):
     users: QuerySet = await db_commands.get_users()
 
     for user in users:
-        await bot.send_message(chat_id=user[0], text=message_to)
+        await bot.send_message(
+            chat_id=user[0],
+            text=f"""
+❗❗❗ВНИМАНИЕ❗❗❗
+СООБЩЕНИЕ ОТ <u>АДМИНИСТРАТОРА</u>  
+        
+{message_to}  
+"""
+        )
 
     await message.answer("Сообщение разослано всем пользователям")
     await state.finish()
 
 
-@dp.message_handler(IsGroup(), text="Удалить группу из базы данных")
+@dp.message_handler(IsGroup(), AdminFilter(), Text(equals="Удалить группу из базы данных"))
 async def del_chat(message: Message):
     try:
         await db_commands.del_chat_id(message.chat.id)
         await message.answer("Группа удалена из базы данных")
     except Exception as error:
-        await message.answer("Ошибка")
+        await message.answer("Группа уже удалена из базы данных")
         logging.error(error)
 
 
 # --------------------------------
 
 # -------------------------------
-@dp.message_handler(IsGroup(), text="Занести группу в базу данных")
+@dp.message_handler(IsGroup(), AdminFilter(), text="Занести группу в базу данных")
 async def add_group(message: Message):
     await message.answer("Какого типа ваша группа?", reply_markup=group_btn.group_type)
 
@@ -60,7 +68,7 @@ async def type_of_group(call: CallbackQuery, state: FSMContext):
     if call.data == "adm_type" and not chat_exists:
         try:
             await db_commands.save_chat_id_group_admission(call.message.chat.id)
-            await call.message.answer("Группа успешно занесена в базу данных")
+            await call.message.edit_text("Группа успешно занесена в базу данных")
         except Exception as error:
             await call.message.edit_text(f"Группа уже занесена в базу данных", parse_mode='')
             logging.error(error)

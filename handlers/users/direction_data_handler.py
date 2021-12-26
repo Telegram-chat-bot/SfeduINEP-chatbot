@@ -79,57 +79,9 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
             )
             await call.message.edit_text("Группа успешно занесена в базу данных")
 
-
     except MessageTextIsEmpty:
         await call.message.edit_text("В базе данных нет информации по данному направлению",
                                      reply_markup=btn.back_btn_init)
-
     except Exception as error:
         await call.message.edit_text(f"Произошла ошибка", reply_markup=btn.back_btn_init, parse_mode="")
         logging.error(error)
-
-
-"""    try:
-        for el in data:
-            if el["direction"] == callback_data["code"]:
-                # Если нет информации в бд, вызываем исключение
-                if len(el["inf"]) == 0:
-                    raise EmptyTableError("В базе данных нет информации")
-
-                if callback_data["page"] == "inf_dir":
-                    await call.message.edit_text(
-                        f"Всю информацию по данному направлению вы можете найти по ссылке ниже\n{el['inf']}",
-                        reply_markup=btn.back_btn_init)
-
-                elif callback_data["page"] == "pass_score":
-                    await call.message.edit_text(
-                        await db_commands.get_admission_passing_scores(id=el["id"]),
-                        reply_markup=btn.back_btn_init
-                    )
-                elif callback_data["page"] == "number_of_places":
-                    await call.message.edit_text(
-                        await db_commands.get_admission_num_places(id=el["id"]),
-                        reply_markup=btn.back_btn_init
-                    )
-                elif callback_data["page"] == "question_for_dir":
-                    await state.set_state(UserState.get_info_for_question)
-
-                    async with state.proxy() as qdata:
-                        qdata["direction"] = el["direction"]
-                    await call.message.edit_text("Задайте вопрос")
-
-                    await Questions.user_question_dir.set()
-
-                elif callback_data["page"] == "add_group_data":
-                    await db_commands.save_chat_id_group_direction(
-                        group_id = call.message.chat.id,
-                        direction=Directions.objects.get(direction=callback_data["code"])
-                    )
-                    await call.message.edit_text("Группа успешно занесена в базу данных")
-
-    except EmptyTableError as error:
-        await call.message.edit_text(error.data)
-
-    except Exception as error:
-        await call.message.edit_text(f"Произошла ошибка", reply_markup=btn.back_btn_init, parse_mode="")
-        logging.error(error)"""

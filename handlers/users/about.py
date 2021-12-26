@@ -19,8 +19,8 @@ async def excursion(message: Message):
 
 @dp.message_handler(text="Наука и учёба")
 async def science(message: Message):
-    science = await db_commands.get_about_science()
-    await message.answer(*science)
+    science_article = await db_commands.get_about_science()
+    await message.answer(*science_article)
 
 
 @dp.message_handler(text="Мероприятия")
@@ -51,8 +51,8 @@ async def excursion(message: Message):
 
 @dp.message_handler(text="Фото")
 async def photo(message: Message):
-    photo = await db_commands.get_about_photo()
-    await message.answer(*photo)
+    photo_link = await db_commands.get_about_photo()
+    await message.answer(*photo_link)
 
 
 @dp.message_handler(text="Контакты")

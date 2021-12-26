@@ -1,11 +1,5 @@
-from datetime import datetime
-
 from django.db import models
 from django.utils import timezone
-
-
-def get_time():
-    return timezone.localtime(timezone.now())
 
 
 class Feedback(models.Model):
@@ -23,7 +17,7 @@ class Feedback(models.Model):
     )
     created_at = models.DateTimeField(
         verbose_name="Дата отправки отзыва",
-        default=get_time()
+        default=timezone.now
     )
 
     def __str__(self):

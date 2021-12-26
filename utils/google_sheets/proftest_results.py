@@ -14,7 +14,6 @@ def get_results(user_id, directions):
 
     # Получаем id пользователя
     get_rows_id = sheet.findall(user_id)
-
     # Получение номера строки, где лежит id
     rows = [row.row for row in get_rows_id]
 
