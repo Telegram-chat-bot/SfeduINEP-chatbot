@@ -16,6 +16,7 @@ async def welcome(message: Message):
         await db_commands.get_welcome_msg(),
         reply_markup=kb.main_menu
     )
+
     await db_commands.add_user(
         name=' '.join(
             [
@@ -24,7 +25,7 @@ async def welcome(message: Message):
             ]
         ),
         uid=int(message.from_user.id)
-    )
+    ) or None
 
 
 @dp.message_handler(IsChat(), Command("help"))
