@@ -25,7 +25,7 @@ async def welcome(message: Message):
             ]
         ),
         uid=int(message.from_user.id)
-    ) or None
+    )
 
 
 @dp.message_handler(IsChat(), Command("help"))

@@ -192,10 +192,13 @@ def send_feedback(username: str, review: str):
 
 @sync_to_async
 def add_user(name: str, uid: int):
-    return Users.objects.update_or_create(
-        username=name,
-        user_id=uid
-    )
+    try:
+        return Users.objects.update_or_create(
+            username=name,
+            user_id=uid
+        )
+    except:
+        return None
 
 
 @sync_to_async
