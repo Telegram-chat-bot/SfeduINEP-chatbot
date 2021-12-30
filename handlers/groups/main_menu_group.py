@@ -36,11 +36,9 @@ async def send_attention_msg(message: Message, state: FSMContext):
 СООБЩЕНИЕ ОТ <u>АДМИНИСТРАТОРА</u>  
         
 {message_to}  
-"""
-        )
-
-    await message.answer("Сообщение разослано всем пользователям")
-    await state.finish()
+""")
+        await state.finish()
+        await message.answer("Сообщение разослано всем пользователям")
 
 
 @dp.message_handler(IsGroup(), AdminFilter(), Text(equals="Удалить группу из базы данных"))

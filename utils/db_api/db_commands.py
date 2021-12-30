@@ -1,7 +1,7 @@
-from django_admin.bot.models import *
-from django_admin.service.models import *
-from django_admin.feedback.models import *
 from asgiref.sync import sync_to_async
+from bot.models import *
+from service.models import *
+from feedback.models import *
 from django.db.models import Q
 
 
@@ -192,10 +192,13 @@ def send_feedback(username: str, review: str):
 
 @sync_to_async
 def add_user(name: str, uid: int):
-    return Users.objects.update_or_create(
-        username=name,
-        user_id=uid
-    )
+    try:
+        return Users.objects.update_or_create(
+            username=name,
+            user_id=uid
+        )
+    except:
+        return None
 
 
 @sync_to_async
