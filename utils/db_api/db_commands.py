@@ -21,13 +21,13 @@ def get_admission_submit_doc():
 
 # Получение данных для раздела Проходные баллы
 @sync_to_async
-def get_admission_passing_scores(id):
+def get_admission_passing_scores(id: str):
     return Passing_scores.objects.get(direction_id=id).inf
 
 
 # Получение данных для раздела Количество мест
 @sync_to_async
-def get_admission_num_places(id):
+def get_admission_num_places(id: str):
     return Num_places.objects.get(direction_id=id).inf
 
 
@@ -115,9 +115,9 @@ def get_directions():
 
 
 # Получение кода направлений
-@sync_to_async
-def get_dir_code():
-    return [el.direction for el in Directions.objects.all()]
+# @sync_to_async
+# def get_dir_code():
+#     return [el.direction for el in Directions.objects.all()]
 
 
 # Получение направлений для ПРОФ.ТЕСТА
@@ -158,26 +158,26 @@ def get_chat_id_admission():
 # ЗАПИСЬ ДАННЫХ В БАЗУ ДАННЫХ
 # Запись id чата по поступлению
 @sync_to_async
-def save_chat_id_group_admission(group_id):
+def save_chat_id_group_admission(group_id: str):
     return ChatIDAdmission(chat_id=group_id).save()
 
 
 # Запись id чата по направлениям
 @sync_to_async
-def save_chat_id_group_direction(group_id, direction):
+def save_chat_id_group_direction(group_id: str, direction: str):
     return ChatIDDirections(chat_id=group_id, chat_direction=direction).save()
 
 
 # Проверка на существование id чата в бд
 @sync_to_async
-def isChatExist(chat_id):
+def isChatExist(chat_id: str):
     return ChatIDDirections.objects.filter(chat_id=chat_id).exists() or ChatIDAdmission.objects.filter(
         chat_id=chat_id).exists()
 
 
 # Удаление id чата группы
 @sync_to_async
-def del_chat_id(chat_id):
+def del_chat_id(chat_id: str):
     try:
         return ChatIDAdmission.objects.get(chat_id=chat_id).delete()
     except:
@@ -190,6 +190,7 @@ def send_feedback(username: str, review: str):
     Feedback(username=username, review=review).save()
 
 
+# Добавление id пользователя в бд после нажатия команды start
 @sync_to_async
 def add_user(name: str, uid: int):
     try:
@@ -201,6 +202,7 @@ def add_user(name: str, uid: int):
         return None
 
 
+# Получение id всех пользователей, которые когда либо общались с ботом
 @sync_to_async
 def get_users():
     return Users.objects.all().values_list("user_id")
