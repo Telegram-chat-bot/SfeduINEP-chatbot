@@ -24,7 +24,8 @@ def get_results(user_id, directions):
         # Добавляем баллы в массив
         test_data = sheet.row_values(rows[-1])[3:]
 
-        scores = {}  # словарь с вычисленным результатом
+        # словарь с вычисленным результатом
+        scores = {}
         first, last = 0, 3
         for k, v in directions.items():
             scores.setdefault(f"{k} - {v}", 0)  # добавление кода направлений с значением 0 по умолчанию
@@ -37,16 +38,21 @@ def get_results(user_id, directions):
         sorted_scores = [(k, scores[k]) for k in
                          sorted(scores, key=scores.get, reverse=True)]  # Сортировка направлений по баллам
 
-        points = [f"{dir_point[0]}: <i>{dir_point[1]}</i>" for dir_point in sorted_scores]  # Представление результатов
+        # Представление результатов
+        points = [
+            #Название направления    балл
+            f"{dir_point[0]}: <b><i>{dir_point[1]}</i></b> {'балл' if (dir_point[1] % 10 == 1 and dir_point[1] != 11) else 'балла' if (dir_point[1] % 10 in [2,3,4] and dir_point[1] not in [12, 13, 14]) else 'баллов' }" for dir_point in sorted_scores
+        ]
 
         # Итоговые наиболее подходящие направления для абитуриента
-        result = [f"<b>{direction}</b>" for direction, point in scores.items() if point == max_point]
+        result = [f"<b>{direction}</b>" for direction, point in scores.items() if (point == max_point and point != 0)]
+        suitable_dir = f"{'подходит направление' if len(result) == 1 else 'подходят направления'}"
 
         return (
                 f"<b>Результаты теста, выполненного <i>{date}</i></b>\n\n"
                 + "<u>Баллы по направлениям</u>\n"
                 + "\n".join(points)
-                + f'\n\nПодведя итоги, могу сказать, что более всего для вас {"подходит направление" if len(result) == 1 else "подходят направления"}\n'
+                + f"\n\n{'Подведя итоги, могу сказать, что наиболее всего для вас' if len(result) != 0 else 'Вам не подходит ни одно направление'}\n"
                 + "\n".join(result)
         )
     else:
