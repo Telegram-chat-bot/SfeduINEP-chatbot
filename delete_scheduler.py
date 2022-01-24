@@ -1,7 +1,6 @@
 import schedule
 from datetime import datetime, timedelta
 import time
-import asyncio
 
 
 def setup_django():
@@ -15,7 +14,7 @@ setup_django()
 
 
 def delete_task():
-    from feedback.models import Feedback
+    from Django_apps.feedback.models import Feedback
     Feedback.objects.filter(date__lte=datetime.now() - timedelta(days=30)).delete()
 
 

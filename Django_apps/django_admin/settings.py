@@ -36,9 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bot.apps.BotConfig',
-    'feedback.apps.FeedbackConfig',
-    'service.apps.ServiceConfig'
+    'Django_apps.bot.apps.BotConfig',
+    'Django_apps.feedback.apps.FeedbackConfig',
+    'Django_apps.service.apps.ServiceConfig'
 
 ]
 
@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'django_admin.urls'
+ROOT_URLCONF = 'Django_apps.django_admin.urls'
 
 TEMPLATE_DIRS = [
     os.path.join(BASE_DIR, "templates")
@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'django_admin.wsgi.application'
+WSGI_APPLICATION = 'Django_apps.django_admin.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

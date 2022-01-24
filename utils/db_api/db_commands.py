@@ -1,8 +1,8 @@
 from asgiref.sync import sync_to_async
-from bot.models import *
-from service.models import *
-from feedback.models import *
 from django.db.models import Q
+from Django_apps.bot.models import *
+from Django_apps.service.models import  *
+from Django_apps.feedback.models import *
 
 
 # -----------------------------------------

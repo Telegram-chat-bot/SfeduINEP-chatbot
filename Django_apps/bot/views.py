@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from feedback.models import Feedback
-from django_admin.settings import BASE_DIR
+from Django_apps.feedback.models import Feedback
+from Django_apps.django_admin.settings import BASE_DIR
 import os
 
 

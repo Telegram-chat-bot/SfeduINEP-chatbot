@@ -5,7 +5,7 @@ from aiogram.types import CallbackQuery
 from aiogram.utils.exceptions import MessageTextIsEmpty
 from django.db.models import QuerySet
 
-from bot.models import Directions
+from Django_apps.bot.models import Directions
 
 from keyboards.inline.buttons import direction_button
 from loader import dp, bot
