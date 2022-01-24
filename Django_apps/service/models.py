@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
-from django_admin.bot.models import Directions
+from Django_apps.bot.models import Directions
 
 
 class ChatIDDirections(models.Model):

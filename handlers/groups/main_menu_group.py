@@ -29,15 +29,18 @@ async def send_attention_msg(message: Message, state: FSMContext):
     users: QuerySet = await db_commands.get_users()
 
     for user in users:
-        await bot.send_message(
-            chat_id=user[0],
-            text=f"""
+        try:
+            await bot.send_message(
+                chat_id=user[0],
+                text=f"""
 ❗❗❗ВНИМАНИЕ❗❗❗
 СООБЩЕНИЕ ОТ <u>АДМИНИСТРАТОРА</u>  
         
 {message_to}  
 """
         )
+        except:
+            continue
 
     await message.answer("Сообщение разослано всем пользователям")
     await state.finish()

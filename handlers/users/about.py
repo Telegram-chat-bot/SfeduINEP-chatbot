@@ -2,6 +2,7 @@ from loader import dp, bot
 from aiogram.types import Message
 
 from utils.db_api import db_commands
+import aiofiles
 
 
 # РАЗДЕЛ ОБ ИНСТИТУТЕ
@@ -43,8 +44,9 @@ async def stud_council(message: Message):
 
 @dp.message_handler(text="Карта")
 async def excursion(message: Message):
-    with open("img/map.jpg", "rb") as photo:
+    async with aiofiles.open("static/info/img/map.jpg", "rb") as photo:
         await bot.send_photo(chat_id=message.chat.id, photo=photo, caption="Карта общежитий")
+
     await message.answer("Адрес корпуса ИНЭП")
     await bot.send_location(chat_id=message.chat.id, latitude="47.204529", longitude="38.944375")
 
