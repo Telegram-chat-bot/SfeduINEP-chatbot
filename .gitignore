@@ -7,9 +7,14 @@ locales
 .idea
 # C extensions
 *.so
+creds.json
 
 # Distribution / packaging
 .Python
+
+migrations/
+static/admin/
+static/bot/
 build/
 develop-eggs/
 dist/
