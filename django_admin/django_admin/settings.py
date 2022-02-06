@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 from data import config
+from dotenv import load_dotenv
+
+DB_USER = os.environ.get("DB_USER")
+DB_PASS = os.environ.get("DB_PASS")
+DB_NAME = os.environ.get("DB_NAME")
+DB_HOST = os.environ.get("DB_HOST")
+DB_PORT = os.environ.get("DB_PORT")
+SECRET_KEY_DJ = os.environ.get("SECRET_KEY_DJANGO")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,7 +30,7 @@ ROOT_DIR = os.getcwd()
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config.SECRET_KEY #'django-insecure-bmp4k!f5lh=j19=u)z#-^gu_=jy-zxsh_#xfvg_!e7=aj=rril'
+SECRET_KEY = SECRET_KEY_DJ #'django-insecure-bmp4k!f5lh=j19=u)z#-^gu_=jy-zxsh_#xfvg_!e7=aj=rril'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -83,11 +91,11 @@ WSGI_APPLICATION = 'django_admin.django_admin.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config.DB_NAME,
-        'USER': config.DB_USER,
-        'PASSWORD': config.DB_PASS,
-        'HOST': config.DB_HOST,
-        'PORT': config.DB_PORT
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASS,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT
     }
 }
 
