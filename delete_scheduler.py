@@ -1,4 +1,3 @@
-import schedule
 from datetime import datetime, timedelta
 import time
 
@@ -14,11 +13,8 @@ setup_django()
 
 
 def delete_task():
-    from Django_apps.feedback.models import Feedback
+    from django_admin.feedback.models import Feedback
     Feedback.objects.filter(date__lte=datetime.now() - timedelta(days=30)).delete()
 
 
-schedule.every().day.at("07:00").do(delete_task)
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+delete_task()

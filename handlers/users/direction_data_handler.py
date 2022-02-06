@@ -5,13 +5,14 @@ from aiogram.types import CallbackQuery
 from aiogram.utils.exceptions import MessageTextIsEmpty
 from django.db.models import QuerySet
 
-from Django_apps.bot.models import Directions
+from django_admin.bot.models import Directions
 
 from keyboards.inline.buttons import direction_button
 from loader import dp, bot
 from utils.db_api import db_commands
 from states.state_machine import UserState, PositionState, Questions
 
+from keyboards.default import enrollee_menu as kb
 from keyboards.inline import buttons as btn
 
 
@@ -20,8 +21,9 @@ async def level_handler(call: CallbackQuery, state: FSMContext):
     data = await state.get_data()
 
     try:
-        keyboard = await btn.gen_directions_btns(level=call.data, page=data["page"])
-        await call.message.edit_text("Выберите направление подготовки", reply_markup=keyboard)
+        inline_buttons = await btn.gen_directions_btns(level=call.data, page=data["page"])
+        await call.message.edit_text("Выберите направление подготовки", reply_markup=inline_buttons)
+
     except Exception as error:
         await call.message.edit_text("Время ожидания ответа истекло")
         logging.error(error)
@@ -32,9 +34,17 @@ async def level_handler(call: CallbackQuery, state: FSMContext):
 # Удаление инлайн кнопок
 @dp.callback_query_handler(lambda call: call.data == "back_to_menu", state=PositionState.get_pressed_btn)
 async def delete_markup(call: CallbackQuery, state: FSMContext):
-    if call.data == "back_to_menu":
-        await call.message.delete_reply_markup()
-        await bot.delete_message(message_id=call.message.message_id, chat_id=call.message.chat.id)
+    await call.message.delete_reply_markup()
+
+    """
+    Проверка, если это раздел с информацией о направлениях - при нажатии кнопки Назад происходит привязка главной
+    клавиатуры
+    """
+    await bot.delete_message(message_id=call.message.message_id, chat_id=call.message.chat.id)
+    async with state.proxy() as pressed_btn:
+        if pressed_btn["page"] == "inf_dir":
+            await call.message.answer("Вы вернулись в главное меню", reply_markup=kb.main_menu)
+
     await state.finish()
 
 
@@ -46,6 +56,7 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
     await bot.answer_callback_query(callback_query_id=call.id)
 
     try:
+        # Получение словаря с данными о нажатом направлении. Преобразование его из QuerySet в словарь
         chosen_direction_data = data.filter(direction=callback_data["code"]).last()
 
         if callback_data["page"] == "inf_dir":
@@ -66,12 +77,14 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
         elif callback_data["page"] == "question_for_dir":
             await state.set_state(UserState.get_info_for_question)
 
+            # Сохранение названия направления в стейт для дальнейшей обработки
             async with state.proxy() as qdata:
                 qdata["direction"] = chosen_direction_data["direction"]
-            await call.message.edit_text("Задайте вопрос")
 
+            await call.message.edit_text("Задайте вопрос")
             await Questions.user_question_dir.set()
 
+        # Обработка кнопки добавления группы в базу данных (Работает в группах)
         elif callback_data["page"] == "add_group_data":
             await db_commands.save_chat_id_group_direction(
                 group_id=call.message.chat.id,

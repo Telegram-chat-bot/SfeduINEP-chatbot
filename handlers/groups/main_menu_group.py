@@ -23,9 +23,10 @@ async def attention_message(message: Message):
     await GroupState.attention_message.set()
 
 
+# Кнопка создания объявлений пользователям
 @dp.message_handler(state=GroupState.attention_message)
 async def send_attention_msg(message: Message, state: FSMContext):
-    message_to = message.text
+    announcement = message.text
     users: QuerySet = await db_commands.get_users()
 
     for user in users:
@@ -36,9 +37,9 @@ async def send_attention_msg(message: Message, state: FSMContext):
 ❗❗❗ВНИМАНИЕ❗❗❗
 СООБЩЕНИЕ ОТ <u>АДМИНИСТРАТОРА</u>  
         
-{message_to}  
+{announcement}  
 """
-        )
+            )
         except:
             continue
 
@@ -46,6 +47,7 @@ async def send_attention_msg(message: Message, state: FSMContext):
     await state.finish()
 
 
+# Обработчик кнопки удаления группы из базы данных
 @dp.message_handler(IsGroup(), AdminFilter(), Text(equals="Удалить группу из базы данных"))
 async def del_chat(message: Message):
     try:
@@ -72,6 +74,7 @@ async def type_of_group(call: CallbackQuery, state: FSMContext):
         try:
             await db_commands.save_chat_id_group_admission(call.message.chat.id)
             await call.message.edit_text("Группа успешно занесена в базу данных")
+
         except Exception as error:
             await call.message.edit_text(f"Группа уже занесена в базу данных", parse_mode='')
             logging.error(error)
@@ -91,12 +94,17 @@ async def type_of_group(call: CallbackQuery, state: FSMContext):
 # Обработчик кнопки "Ответить"
 @dp.callback_query_handler(group_btn.answer_to_question.filter())
 async def ask_to_question_handler(call: CallbackQuery, state: FSMContext):
+    # При нажатии на кнопку "Ответить" удаляется инлайн кнопка, прикрепленная к вопросу и бот предлагает ответить на
+    # вопрос
     await state.set_state(Questions.answer)
     callback_data = group_btn.answer_to_question.parse(call.data)
+    abiturient_question = call.message.text.split("\n")[-1]
+
     await call.message.delete_reply_markup()
 
     async with state.proxy() as data:
         data["questioner_id"] = callback_data["user_id"]
+        data["question"] = abiturient_question
 
     await call.message.answer("Напишите ответ")
     await Questions.get_answer.set()
@@ -105,14 +113,15 @@ async def ask_to_question_handler(call: CallbackQuery, state: FSMContext):
 # Обработчик отправки сообщения с ответом
 @dp.message_handler(state=Questions.get_answer)
 async def send_answer(message: Message, state: FSMContext):
-    user_id = await state.get_data()
+    user_data = await state.get_data()
     answer = message.text
 
-    await bot.send_message(chat_id=user_id["questioner_id"], text=
+    await bot.send_message(chat_id=user_data["questioner_id"], text=
     f"""
-Вам пришел ответ на ваш раннее заданный вопрос
+Вам пришел ответ на ваш раннее заданный вопрос:
+{user_data["question"]}
 
-"{answer}"
+<i>Ответ:</i> "{answer}"
 """
                            )
     await message.answer("Ответ был отправлен абитуриенту")
@@ -125,17 +134,6 @@ async def send_answer(message: Message, state: FSMContext):
 @dp.message_handler(IsGroup(), text="Помощь")
 async def help_button(message: Message):
     await message.answer(
-        """Краткий экскурс в команды бота: /exit - команда, которая позволяет выйти из режима ввода данных боту ( 
-отмена этого действия);
-
-<b>Ответ на вопрос</b>
-Чтобы ответить абитуриенту, необходимо:
-1) Нажать на кнопку <i>"Ответить на вопрос"</i>;
-2) Ввести <b>ID</b> абитуриента, который указан в вопросе;
-3) Ввести свой ответ и отправить.
-
-<b>P.S.</b>
-<i>Чтобы скопировать конкретный участок текста сообщения 
-на мобильных устройствах, необходимо зажать сообщение -> зажать нужный фрагмент текста и скопировать )</i> """
+       await db_commands.get_help_text(chat_type=message.chat.type)
     )
 # -------------------------------------

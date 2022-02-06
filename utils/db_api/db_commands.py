@@ -1,8 +1,8 @@
 from asgiref.sync import sync_to_async
 from django.db.models import Q
-from Django_apps.bot.models import *
-from Django_apps.service.models import  *
-from Django_apps.feedback.models import *
+from django_admin.bot.models import *
+from django_admin.service.models import  *
+from django_admin.feedback.models import *
 
 
 # -----------------------------------------
@@ -206,3 +206,10 @@ def add_user(name: str, uid: int):
 @sync_to_async
 def get_users():
     return Users.objects.all().values_list("user_id")
+
+@sync_to_async
+def get_help_text(chat_type:str):
+    try:
+        return Help_content.objects.filter(target_user=chat_type).values_list("content")[0][0]
+    except:
+        return "В этот раздел ещё не добавили информацию"

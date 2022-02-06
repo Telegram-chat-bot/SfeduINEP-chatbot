@@ -31,13 +31,5 @@ async def welcome(message: Message):
 @dp.message_handler(IsChat(), Command("help"))
 async def help_command(message: Message):
     await message.answer(
-        """
-Краткий экскурс в команды бота:
-/exit - команда, которая позволяет выйти из режима ввода данных боту (отмена этого действия)
-    
-Бот позволяет абитуриенту:
-1. Пройти профориентационный тест
-2. Узнать проходные баллы, количество мест по тому или иному направлению
-3. Задать вопрос приемной комиссии или руководителю направления
-"""
-    )
+        await db_commands.get_help_text(message.chat.type)
+        )

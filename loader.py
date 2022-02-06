@@ -22,4 +22,4 @@ async def exit_input_mode(message: Message, state: FSMContext):
 
 # Логгирование
 logging.basicConfig(format=u'%(filename)s [LINE:%(lineno)d] #%(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.INFO)
+                    level=logging.INFO, filename="bot.log")

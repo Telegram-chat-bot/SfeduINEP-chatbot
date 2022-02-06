@@ -7,7 +7,7 @@ from asgiref.sync import sync_to_async
 def get_results(user_id, directions):
     scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
              "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("utils/google_sheets/creds.json", scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name("/home/f/fntlabyand/bot_fntlab_ru/public_html/utils/google_sheets/creds.json", scope)
     client = gspread.authorize(creds)
 
     sheet = client.open("Тест на профориентацию (Ответы)").sheet1
