@@ -1,0 +1,156 @@
+body{
+    padding: 0;
+    margin: 0;
+    font-size: 18px;
+    
+    font-family: 'Roboto', sans-serif;
+    background-image: url("../img/background-content.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    
+    padding-bottom: 20px;
+
+}
+header{
+    background: #282c34;
+    color: white;
+    font-size: 25px;
+    padding: 10px;
+}
+.logo {
+    margin-right: 20px;
+    display: inline-block;
+}
+.header-title{
+    text-transform: uppercase;
+    position: relative;
+    top: -14px;
+    display: inline-block;
+}
+.nav-menu{
+    /*display: inline-block;*/
+    float: right;
+    position: relative;
+    top: 12px;
+    margin-right: 10px;
+}
+.nav-menu a{
+    text-transform: lowercase;
+    font-variant: small-caps;
+    font-size: 20px;
+    text-decoration: none;
+    color: white;
+}
+.nav-menu a:hover{
+    text-decoration: underline;
+}
+
+.nav-menu a:active{
+    
+    opacity: 0.5;
+}
+/* Контейнер-центровщик */
+.container{
+    margin: 0 auto;
+    width: 80%;
+}
+.container h1{
+    padding-top: 25px;
+}
+.no-data-msg{
+    opacity: 0.5;
+    font-size: 20px;
+    padding-bottom: 20px;
+}
+.content{
+    background-color: white;
+    text-align: center;
+    
+    min-height: 400px;
+    margin: 10px auto;
+    
+    width: 95%;
+    border-radius: 10px;
+    padding-bottom: 25px;
+}
+.review-text{
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+.review-date{
+    opacity: 0.7;
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+.review-list{
+    word-wrap: break-word;
+    text-align: left;
+
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 6px;
+
+    box-sizing: border-box;
+
+    padding: 20px;
+    margin-bottom: 15px;
+
+    width: 100%;
+
+    box-shadow: 0 10px 15px -5px rgba(0,0,0,0.2);
+}
+.review-list p{
+    margin-bottom: 15px;
+}
+.review-list summary{
+    cursor: pointer;
+    padding-bottom: 10px;
+    padding-left: 30px;
+    font-size: 18px;
+    list-style: none;
+    position: relative;
+}
+.review-list summary::before{
+    cursor: pointer;
+    left: 0;
+    top: 7px;
+
+    background: url("../img/list_down.png") no-repeat 50% 80%;
+    background-size: 35px;
+
+    opacity: 0.7;
+
+    width: 1em;
+    height: 1em;
+
+    content: "";
+    position: absolute;
+}
+.review-list[open] > summary::before{
+    transform: rotateX(180deg);
+    background-position-y: 30%;
+}
+.review-list[open] > summary{
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+}
+.review-list:hover{
+    border: 1px solid gray;
+}
+.review-list[open]{
+    background: rgba(0,0,0,0.03);
+    height: 200px;
+}
+.review-list[open] summary ~ *{
+  animation: sweep .5s ease-in-out;
+}
+@keyframes sweep {
+  0%    {opacity: 0;}
+  100%  {opacity: 1;}
+}
+.review-list[open] > summary:before {
+  transition: 0.7s;
+}
+.review-list > summary:before{
+    transition: 0.7s;
+}
