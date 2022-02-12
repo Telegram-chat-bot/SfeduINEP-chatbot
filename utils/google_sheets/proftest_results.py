@@ -46,13 +46,13 @@ def get_results(user_id, directions):
 
         # Итоговые наиболее подходящие направления для абитуриента
         result = [f"<b>{direction}</b>" for direction, point in scores.items() if (point == max_point and point != 0)]
-        suitable_dir = f"{'подходит направление' if len(result) == 1 else 'подходят направления'}"
+        suitable_dir = f"{'на направлении' if len(result) == 1 else 'на направлениях'}"
 
         return (
                 f"<b>Результаты теста, выполненного <i>{date}</i></b>\n\n"
                 + "<u>Баллы по направлениям</u>\n"
                 + "\n".join(points)
-                + f"\n\n{'Подведя итоги, могу сказать, что наиболее всего для вас' if len(result) != 0 else 'Вам не подходит ни одно направление'}\n"
+                + f"\n\n{'Подведя итоги, могу сказать, что вы хотите учиться {0}' if len(result) != 0 else 'Вам не подходит ни одно направление'}\n".format(suitable_dir)
                 + "\n".join(result)
         )
     else:

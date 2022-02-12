@@ -13,7 +13,7 @@ creds.json
 .Python
 
 migrations/
-static/admin/
+django_admin/static/admin/
 build/
 develop-eggs/
 dist/

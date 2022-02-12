@@ -42,7 +42,7 @@ async def admission_questions(message: Message):
 # Формирование вопроса по поступлению
 @dp.message_handler(state=Questions.user_question)
 async def question_handler(message: Message, state: FSMContext):
-    if message.text not in buttons: # если не была нажата кнопка из клавиатуры после нажатия на кнопку с вопросом
+    if message.text not in buttons:  # если не была нажата кнопка из клавиатуры после нажатия на кнопку с вопросом
         question = message.text
         chat_id_group = await get_chat_id_admission()
 
@@ -62,7 +62,7 @@ async def question_handler(message: Message, state: FSMContext):
             logging.error(error)
 
         await state.finish()
-    
+
     else:
         await message.answer("Выход из режима ввода текста")
         await state.finish()
@@ -94,18 +94,23 @@ async def feedback_page(message: Message):
     await Feedback.feedback_message.set()
 
 
+# Формирование отзыва пользователя и отправка его на сервер
 @dp.message_handler(state=Feedback.feedback_message)
 async def get_feedback(message: Message, state: FSMContext):
-    fb_message = message.text
-    user_name = ' '.join(
-        [
-            message.from_user.first_name or "", message.from_user.last_name or ""
-        ]
-    )
-    await db_commands.send_feedback(username=user_name, review=fb_message)
-    await message.answer("Ваш отзыв отправлен!", reply_markup=kb.main_menu)
+    if message.text not in buttons:
+        fb_message = message.text
+        user_name = ' '.join(
+            [
+                message.from_user.first_name or "", message.from_user.last_name or ""
+            ]
+        )
+        await db_commands.send_feedback(username=user_name, review=fb_message)
+        await message.answer("Ваш отзыв отправлен!", reply_markup=kb.main_menu)
 
-    await state.finish()
+        await state.finish()
+    else:
+        await message.answer("Выход из режима ввода текста")
+        await state.finish()
 
 
 # Формирование вопроса по направлению подготовки
@@ -130,7 +135,7 @@ async def handler(message: Message, state: FSMContext):
 
 "{question}"
 """, reply_markup=button
-                               )
+                                   )
             await message.answer("Ваш вопрос учтён и отправлен руководителю направления. Ожидайте ответа")
 
         except Exception as error:
