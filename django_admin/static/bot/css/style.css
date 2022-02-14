@@ -11,10 +11,30 @@ body{
 }
 
 header {
-        background: #282c34;
-        color: white;
-        font-size: 25px;
-        padding: 10px;
+    background: #282c34;
+    color: white;
+    font-size: 25px;
+    padding: 10px;
+}
+.header-container{
+    display: grid;
+    grid-template-columns: 0.2fr 1fr 2fr;
+    grid-template-areas: "logo title nav";
+    grid-gap: 5px;
+}
+.header-container .logo{
+    grid-area: logo;
+    align-self: center;
+}
+.header-container .header-title{
+    grid-area: title;
+    align-self: center;
+    justify-self: start;
+}
+.header-container .nav-menu{
+    grid-area: nav;
+    align-self: center;
+    justify-self: end;
 }
 .nav-menu a {
         text-transform: lowercase;
