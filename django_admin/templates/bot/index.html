@@ -8,18 +8,25 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Отзывы пользователей</title>
     <link rel="stylesheet" href="{% static 'bot/css/style.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'bot/css/adaptive.css'%}" type="text/css">
 </head>
     <body>
         <header>
-            <div class="logo">
-                <img width="50" height="50" src="{% static 'bot/img/telegram.png' %}" alt="">
-            </div>
-            <div class="header-title">
-                Чат-бот ИНЭП <b>ЮФУ</b>
-            </div>
+            <div class="header-container">
 
-            <div class="nav-menu">
-                <a href="/admin">Войти как админ</a>
+                <div class="logo">
+                    <img width="50" height="50" src="{% static 'bot/img/telegram.png' %}" alt="">
+
+                    <div class="header-title">
+                    Чат-бот ИНЭП <b>ЮФУ</b>
+                    </div>
+
+                </div>
+
+                <div class="nav-menu">
+                    <a href="/admin">Войти как админ</a>
+                </div>
+
             </div>
         </header>
         <section>
@@ -31,7 +38,8 @@
                         <p class="no-data-msg">На данный момент нет отзывов <br>¯\_(ツ)_/¯</p>
                         <style>
                             .content{
-                                width: 40%;
+                                width: 80%;
+                                {#height: 50px;#}
                             }
                         </style>
 
