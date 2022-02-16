@@ -213,3 +213,7 @@ def get_help_text(chat_type:str):
         return Help_content.objects.filter(target_user=chat_type).values_list("content")[0][0]
     except:
         return "В этот раздел ещё не добавили информацию"
+
+@sync_to_async
+def openday_inf():
+    return OpenDay.objects.values_list("inf")
