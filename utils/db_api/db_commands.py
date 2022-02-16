@@ -207,6 +207,7 @@ def add_user(name: str, uid: int):
 def get_users():
     return Users.objects.all().values_list("user_id")
 
+
 @sync_to_async
 def get_help_text(chat_type:str):
     try:
@@ -214,6 +215,7 @@ def get_help_text(chat_type:str):
     except:
         return "В этот раздел ещё не добавили информацию"
 
+
 @sync_to_async
 def openday_inf():
-    return OpenDay.objects.values_list("inf")
+    return OpenDay.objects.values_list("inf")[0]

@@ -30,9 +30,9 @@ async def prepare_direction_item(message: Message, state: FSMContext):
     await PositionState.next()
 
 
-@dp.message_handler(text="Записаться на день открытых дверей")
+@dp.message_handler(text="Записаться на День открытых дверей")
 async def open_day_item(message: Message):
-    await message.answer(await db_commands.get_about_excursion(), reply_markup=kb.main_menu)
+    await message.answer(*await db_commands.openday_inf(), reply_markup=kb.main_menu)
 
 
 @dp.message_handler(text="Об институте")
