@@ -6,8 +6,9 @@ from aiogram.types import Message
 
 from keyboards.default import enrollee_menu as kb
 from keyboards.inline import buttons as btn
-import logging
 
+from utils.db_api import db_commands
+import logging
 
 # ГЛАВНОЕ МЕНЮ--------------
 from utils.db_api import db_commands
@@ -27,6 +28,11 @@ async def prepare_direction_item(message: Message, state: FSMContext):
     async with state.proxy() as data:
         data["page"] = "inf_dir"
     await PositionState.next()
+
+
+@dp.message_handler(text="Записаться на День открытых дверей")
+async def open_day_item(message: Message):
+    await message.answer(*await db_commands.openday_inf(), reply_markup=kb.main_menu)
 
 
 @dp.message_handler(text="Об институте")

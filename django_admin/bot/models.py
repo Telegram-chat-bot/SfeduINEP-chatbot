@@ -212,3 +212,18 @@ class Help_content(models.Model):
 
     def __str__(self) -> str:
         return f"Раздел 'Помощь' для {'групп' if self.target_user == 'supergroup' else 'абитуриентов'}"
+
+
+class OpenDay(models.Model):
+    class Meta:
+        verbose_name = "содержимое раздела 'Записаться на День открытых дверей'"
+        verbose_name_plural = "Раздел 'Записаться на день открытых дверей'"
+        app_label = "bot"
+
+    inf = models.TextField(
+        verbose_name="Информация раздела",
+        blank=True
+    )
+
+    def __str__(self) -> str:
+        return "Содержимое раздела"
