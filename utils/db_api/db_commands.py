@@ -6,17 +6,83 @@ from django_admin.feedback.models import *
 
 
 # -----------------------------------------
-# Получение данных для раздела Поступление
-# Получение данных о правилах приема
-@sync_to_async
-def get_admission_rules():
-    return Admission.objects.values_list("admission_rules")[0]
+
+class AdmissionData:
+    data = Admission.objects.all()[0]
+
+    @classmethod
+    @sync_to_async
+    def admission_rules(cls):
+        return cls.data.admission_rules
+
+    @classmethod
+    @sync_to_async
+    def submit_doc(cls):
+        return cls.data.submit_doc
+
+    @classmethod
+    @sync_to_async
+    def achievements(cls):
+        return cls.data.achievements
+
+    @classmethod
+    @sync_to_async
+    def special_rights(cls):
+        return cls.data.special_rights
+
+    @classmethod
+    @sync_to_async
+    def admiss_stat(cls):
+        return cls.data.admission_stat
+
+    @classmethod
+    @sync_to_async
+    def enrollment_procedure(cls):
+        return cls.data.enrollment_proc
 
 
-# Получение данных Подать документы
-@sync_to_async
-def get_admission_submit_doc():
-    return Admission.objects.values_list("submit_doc")[0]
+class AboutData:
+    data = About.objects.all()[0]
+
+    @classmethod
+    @sync_to_async
+    def acquaintance(cls):
+        return cls.data.acquaintance
+
+    @classmethod
+    @sync_to_async
+    def excursion(cls):
+        return cls.data.excursion
+
+    @classmethod
+    @sync_to_async
+    def science(cls):
+        return cls.data.science
+
+    @classmethod
+    @sync_to_async
+    def contacts(cls):
+        return cls.data.contacts
+
+    @classmethod
+    @sync_to_async
+    def events(cls):
+        return cls.data.events
+
+    @classmethod
+    @sync_to_async
+    def partners_work(cls):
+        return cls.data.partners_work
+
+    @classmethod
+    @sync_to_async
+    def council(cls):
+        return cls.data.stud_council
+
+    @classmethod
+    @sync_to_async
+    def photo(cls):
+        return cls.data.photo
 
 
 # Получение данных для раздела Проходные баллы
@@ -30,94 +96,13 @@ def get_admission_passing_scores(id: str):
 def get_admission_num_places(id: str):
     return Num_places.objects.get(direction_id=id).inf
 
-
-# Получение данных о Индивидуальных достижениях
-@sync_to_async
-def get_admission_achievements():
-    return Admission.objects.values_list("achievements")[0]
-
-
-# Получение данных о Особых льготах
-@sync_to_async
-def get_admission_spec_rights():
-    return Admission.objects.values_list("special_rights")[0]
-
-
-# Получение данных о статистике приема
-@sync_to_async
-def get_admission_stat():
-    return Admission.objects.values_list("admission_stat")[0]
-
-
-# Получение данных о Порядке поступления
-@sync_to_async
-def get_admission_enrollment_proc():
-    return Admission.objects.values_list("enrollment_proc")[0]
-
-
 # --------------------------------------------
 
 
-# Получение данных для раздела Об институте
-# Получение данных о разделе Знакомства
-@sync_to_async
-def get_about_acquaintance():
-    return About.objects.values_list("acquaintance")[0]
-
-
-# Получение данных об Экскурсиях
-@sync_to_async
-def get_about_excursion():
-    return About.objects.values_list("excursion")[0]
-
-
-# Получение данных о науке
-@sync_to_async
-def get_about_science():
-    return About.objects.values_list("science")[0]
-
-
-# Получение данных о Событиях
-@sync_to_async
-def get_about_events():
-    return About.objects.values_list("events")[0]
-
-
-# Получение данных о Партнерах и трудоустройстве
-@sync_to_async
-def get_about_partners_work():
-    return About.objects.values_list("partners_work")[0]
-
-
-# Получение данных о Студсовете
-@sync_to_async
-def get_about_council():
-    return About.objects.values_list("stud_council")[0]
-
-
-# Получение данных о фото
-@sync_to_async
-def get_about_photo():
-    return About.objects.values_list("photo")[0]
-
-
-# Получение данных о контактах
-@sync_to_async
-def get_about_contacts():
-    return About.objects.values_list("contacts")[0]
-
-
-# -------------------------------------------
 # Получение данных о направлениях подготовки
 @sync_to_async
 def get_directions():
     return Directions.objects.values()
-
-
-# Получение кода направлений
-# @sync_to_async
-# def get_dir_code():
-#     return [el.direction for el in Directions.objects.all()]
 
 
 # Получение направлений для ПРОФ.ТЕСТА
@@ -132,14 +117,14 @@ def get_bak_directions():
 # Получение данных для раздела FAQ
 @sync_to_async
 def get_faq():
-    return Questions.objects.all().values_list("faq")[0][0]
+    return Questions.objects.all().values_list("faq")[0]
 
 
 # --------------------------------------------
 # Получение приветственного сообщения
 @sync_to_async
 def get_welcome_msg():
-    return Welcome_message.objects.all().values_list("message")[0][0]
+    return Welcome_message.objects.all().values_list("message")[0]
 
 
 # Получение ID чата для направления подготовки
@@ -181,7 +166,7 @@ def del_chat_id(chat_id: str):
     try:
         return ChatIDAdmission.objects.get(chat_id=chat_id).delete()
     except:
-        ChatIDDirections.objects.get(chat_id=chat_id).delete()
+        return ChatIDDirections.objects.get(chat_id=chat_id).delete()
 
 
 # Сохранение отзыва

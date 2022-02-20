@@ -15,7 +15,7 @@ check_results_btn = ReplyKeyboardMarkup(
 main_menu = ReplyKeyboardMarkup(
     [
         [
-            "Записаться на День открытых дверей"
+            KeyboardButton("Записаться на День открытых дверей")
         ],
         [
             KeyboardButton("Тест на профориентацию"),

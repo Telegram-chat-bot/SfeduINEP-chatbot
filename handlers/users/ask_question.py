@@ -27,7 +27,7 @@ buttons = [
 # РАЗДЕЛ ЗАДАТЬ ВОПРОС
 @dp.message_handler(text="F.A.Q")
 async def answers(message: Message):
-    await message.answer(await get_faq())
+    await message.answer(*await get_faq())
 
 
 # Обработчик нажатия кнопки Вопросы по поступлению

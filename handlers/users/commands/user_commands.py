@@ -13,7 +13,7 @@ from keyboards.default import enrollee_menu as kb
 @dp.message_handler(IsChat(), CommandStart())
 async def welcome(message: Message):
     await message.answer(
-        await db_commands.get_welcome_msg(),
+        *await db_commands.get_welcome_msg(),
         reply_markup=kb.main_menu
     )
 

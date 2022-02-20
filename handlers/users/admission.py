@@ -9,20 +9,19 @@ from keyboards.inline import buttons as btn
 from keyboards.default import enrollee_menu as kb
 from states.state_machine import PositionState
 
-from utils.db_api import db_commands
+from utils.db_api.db_commands import AdmissionData
+import asyncio
 
 
 # РАЗДЕЛ ПОСТУПЛЕНИЕ--------
 @dp.message_handler(text="Правила приема")
 async def rules_admission(message: Message):
-    admission_rules = await db_commands.get_admission_rules()
-    await message.answer(*admission_rules)
+    await message.answer(await AdmissionData.admission_rules())
 
 
 @dp.message_handler(text="Подать документы")
 async def submit_doc(message: Message):
-    submit_document = await db_commands.get_admission_submit_doc()
-    await message.answer(*submit_document)
+    await message.answer(await AdmissionData.submit_doc())
 
 
 @dp.message_handler(text="Проходные баллы")
@@ -47,25 +46,21 @@ async def num_of_places(message: Message, state: FSMContext):
 
 @dp.message_handler(text="Индивидуальные достижения")
 async def achievements(message: Message):
-    achievements = await db_commands.get_admission_achievements()
-    await message.answer(*achievements)
+    await message.answer(await AdmissionData.achievements())
 
 
 @dp.message_handler(text="Особые права и льготы")
 async def special_rights(message: Message):
-    special_rights = await db_commands.get_admission_spec_rights()
-    await message.answer(*special_rights)
+    await message.answer(await AdmissionData.special_rights())
 
 
 @dp.message_handler(text="Статистика приёма")
-async def admission_statcistics(message: Message):
-    statistic = await db_commands.get_admission_stat()
-    await message.answer(*statistic)
+async def admission_statistics(message: Message):
+    await message.answer(await AdmissionData.admiss_stat())
 
 
 @dp.message_handler(text="Порядок зачисления")
 async def enrollment_procedure(message: Message):
-    enrollment_procedure = await db_commands.get_admission_enrollment_proc()
-    await message.answer(*enrollment_procedure)
+    await message.answer(await AdmissionData.enrollment_procedure())
 
 # ---------------------------
