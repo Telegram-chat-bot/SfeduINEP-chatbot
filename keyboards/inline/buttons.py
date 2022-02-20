@@ -50,7 +50,13 @@ async def gen_directions_btns(level: str, page: str):
     for el in data:
         if el["level"] == level:
             buttons.add(
-                InlineKeyboardButton(text=f"{el['direction']} - {el['name_of_dir']}", callback_data=direction_button.new(code=el["direction"], level=level, page=page)))
+                InlineKeyboardButton
+                (
+                    text = f"{el['direction']} - {el['name_of_dir']}",
+                    callback_data = direction_button.new(code = el["direction"],
+                    level = level,
+                    page = page))
+            )
     buttons.add(back_btn)
 
     return buttons

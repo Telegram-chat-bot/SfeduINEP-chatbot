@@ -96,5 +96,5 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
         await call.message.edit_text("В базе данных нет информации по данному направлению",
                                      reply_markup=btn.back_btn_init)
     except Exception as error:
-        await call.message.edit_text(f"Произошла ошибка", reply_markup=btn.back_btn_init, parse_mode="")
+        await call.message.edit_text("Произошла ошибка", reply_markup=btn.back_btn_init, parse_mode="")
         logging.error(error)
