@@ -1,7 +1,10 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
 
-from utils.db_api.db_commands import get_directions
+from django_admin.bot.models import Directions
+from utils.db_api.db_commands import Database
+
+db = Database(Directions)
 
 back_btn = InlineKeyboardButton(text="Назад", callback_data="back_to")
 back_btn_init = InlineKeyboardMarkup(
@@ -46,16 +49,17 @@ choose_level = InlineKeyboardMarkup(
 # Специальности бакалавра
 async def gen_directions_btns(level: str, page: str):
     buttons = InlineKeyboardMarkup(row_width=1)
-    data = await get_directions()
+    data = await db.get_collection_data(is_dict=True)
     for el in data:
         if el["level"] == level:
             buttons.add(
                 InlineKeyboardButton
-                (
-                    text = f"{el['direction']} - {el['name_of_dir']}",
-                    callback_data = direction_button.new(code = el["direction"],
-                    level = level,
-                    page = page))
+                    (
+                    text=f"{el['direction']} - {el['name_of_dir']}",
+                    callback_data=direction_button.new(code=el["direction"],
+                                                       level=level,
+                                                       page=page)
+                )
             )
     buttons.add(back_btn)
 

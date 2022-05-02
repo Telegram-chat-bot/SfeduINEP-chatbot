@@ -3,6 +3,7 @@ from aiogram.dispatcher.filters.builtin import AdminFilter, Text
 from aiogram.dispatcher import FSMContext
 from django.db.models import QuerySet
 
+from django_admin.service.models import Users
 from filters import IsGroup
 from loader import dp, bot
 from aiogram.types import Message, CallbackQuery
@@ -15,8 +16,12 @@ from states.state_machine import GroupState
 
 from utils.db_api import db_commands
 
+from django.core.exceptions import ObjectDoesNotExist
 
 # -----------------------------
+from utils.db_api.db_commands import Database
+
+
 @dp.message_handler(IsGroup(), AdminFilter(), text="Сделать объявление абитуриентам")
 async def attention_message(message: Message):
     await message.answer("Напишите сообщение")
@@ -27,24 +32,26 @@ async def attention_message(message: Message):
 @dp.message_handler(state=GroupState.attention_message)
 async def send_attention_msg(message: Message, state: FSMContext):
     announcement = message.text
-    users: QuerySet = await db_commands.get_users()
+    users: QuerySet = await Database(Users).get_collection_data("user_id", get_all=True)
+    if len(users) > 0:
+        for user in users:
+            try:
+                await bot.send_message(
+                    chat_id=user[0],
+                    text=f"""
+    ❗❗❗ВНИМАНИЕ❗❗❗
+    СООБЩЕНИЕ ОТ <u>АДМИНИСТРАТОРА</u>  
+            
+    {announcement}  
+    """
+                )
+            except:
+                continue
 
-    for user in users:
-        try:
-            await bot.send_message(
-                chat_id=user[0],
-                text=f"""
-❗❗❗ВНИМАНИЕ❗❗❗
-СООБЩЕНИЕ ОТ <u>АДМИНИСТРАТОРА</u>  
-        
-{announcement}  
-"""
-            )
-        except:
-            continue
-
-    await message.answer("Сообщение разослано всем пользователям")
-    await state.finish()
+        await message.answer("Сообщение разослано всем пользователям")
+        await state.finish()
+    else:
+        await message.answer("Еще никто не активировал бота. Некому рассылать")
 
 
 # Обработчик кнопки удаления группы из базы данных
@@ -53,8 +60,8 @@ async def del_chat(message: Message):
     try:
         await db_commands.del_chat_id(message.chat.id)
         await message.answer("Группа удалена из базы данных")
-    except Exception as error:
-        await message.answer("Группа уже удалена из базы данных")
+    except ObjectDoesNotExist as error:
+        await message.answer("Группа уже удалена из базы данных или не состоит в ней вовсе")
         logging.error(error)
 
 
@@ -134,6 +141,6 @@ async def send_answer(message: Message, state: FSMContext):
 @dp.message_handler(IsGroup(), text="Помощь")
 async def help_button(message: Message):
     await message.answer(
-       await db_commands.get_help_text(chat_type=message.chat.type)
+        await db_commands.get_help_text(chat_type=message.chat.type)
     )
 # -------------------------------------

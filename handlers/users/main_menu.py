@@ -7,7 +7,7 @@ from aiogram.types import Message
 from keyboards.default import enrollee_menu as kb
 from keyboards.inline import buttons as btn
 
-from utils.db_api import db_commands
+
 import logging
 
 # ГЛАВНОЕ МЕНЮ--------------

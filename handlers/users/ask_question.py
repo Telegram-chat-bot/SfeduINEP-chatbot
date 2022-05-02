@@ -1,5 +1,8 @@
 import logging
 
+from django.core.exceptions import ObjectDoesNotExist
+
+from django_admin.service.models import ChatIDAdmission
 from loader import dp, bot
 from aiogram.types import Message
 
@@ -7,13 +10,14 @@ from aiogram.dispatcher import FSMContext
 from states.state_machine import UserState, PositionState, Questions, Feedback
 from utils.db_api import db_commands
 
-from utils.db_api.db_commands import get_faq, get_chat_id_group_directions, get_chat_id_admission
+from utils.db_api.db_commands import Database, get_chat_id_group_directions
 
 from datetime import datetime
 
 from keyboards.default import enrollee_menu as kb
 from keyboards.inline import buttons as btn
 from keyboards.inline import group_buttons as group_btn
+from django_admin.bot.models import Questions as QuestModel
 
 buttons = [
     "Назад",
@@ -27,7 +31,7 @@ buttons = [
 # РАЗДЕЛ ЗАДАТЬ ВОПРОС
 @dp.message_handler(text="F.A.Q")
 async def answers(message: Message):
-    await message.answer(*await get_faq())
+    await message.answer(await Database(QuestModel).get_field_by_name("faq"))
 
 
 # Обработчик нажатия кнопки Вопросы по поступлению
@@ -44,7 +48,7 @@ async def admission_questions(message: Message):
 async def question_handler(message: Message, state: FSMContext):
     if message.text not in buttons:  # если не была нажата кнопка из клавиатуры после нажатия на кнопку с вопросом
         question = message.text
-        chat_id_group = await get_chat_id_admission()
+        chat_id_group = await Database(ChatIDAdmission).get_field_by_name("chat_id")
 
         button = await group_btn.gen_answer_btn(user_id=message.from_user.id)
         try:
@@ -86,10 +90,11 @@ async def direction_training_questions(message: Message, state: FSMContext):
 @dp.message_handler(text="Обратная связь")
 async def feedback_page(message: Message):
     await message.answer(
-        """Здесь вы можете выразить свое мнение по поводу текущего тех. состояния чат-бота или предложить свои идеи по его улучшению.
+        """Здесь вы можете выразить свое мнение по поводу текущего тех. состояния чат-бота или предложить свои идеи 
+        по его улучшению. 
         
-Мы <ins>всегда</ins> открыты для критики и сделаем всё возможное, чтобы пользование ботом для <b>Вас</b> было наиболее комфортным.
-"""
+Мы <ins>всегда</ins> открыты для критики и сделаем всё возможное, чтобы пользование ботом для <b>Вас</b> было 
+наиболее комфортным. """
     )
     await Feedback.feedback_message.set()
 
@@ -128,17 +133,21 @@ async def handler(message: Message, state: FSMContext):
 
             chosen_direction = direction.get("direction")
             chat_id = await get_chat_id_group_directions(chosen_direction)
-
-            await bot.send_message(chat_id=chat_id, text=f"""
+            # chat_id = await Database(ChatIDDirections).get_field_by_id(
+            #     "chat_id", id=await Database(Directions).get_field_by_id("id", id=chosen_direction)
+            # )
+            await bot.send_message(
+                chat_id=chat_id, text=f"""
 {datetime.now().strftime("%d.%m.%Y %H:%M")}
-Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name or message.from_user.username} {message.from_user.last_name or ''}</a> по направлению {chosen_direction}
+Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name or message.from_user.username} {message.from_user.last_name or ''}</a> по направлению {chosen_direction} 
 
 "{question}"
 """, reply_markup=button
                                    )
+
             await message.answer("Ваш вопрос учтён и отправлен руководителю направления. Ожидайте ответа")
 
-        except Exception as error:
+        except ObjectDoesNotExist as error:
             await message.answer(f"Группа по этому направлению еще не создана или не занесена в базу данных")
             logging.error(error)
 

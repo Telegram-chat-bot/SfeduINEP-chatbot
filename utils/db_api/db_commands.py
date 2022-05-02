@@ -1,108 +1,42 @@
 from asgiref.sync import sync_to_async
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django_admin.bot.models import *
-from django_admin.service.models import  *
+from django_admin.service.models import *
 from django_admin.feedback.models import *
+from django.db import models
 
 
 # -----------------------------------------
+class Database:
+    def __init__(self, model):
+        self.model: models.Model = model
+        self.fields = self.model.objects
 
-class AdmissionData:
-    data = Admission.objects.all()[0]
+    async def get_field_by_name(self, field) -> str:
+        return getattr(self.fields.get(), field, "Ошибка 404. Поле не существует")
 
-    @classmethod
-    @sync_to_async
-    def admission_rules(cls):
-        return cls.data.admission_rules
+    async def get_collection_data(self, *args: str,
+                                  is_dict: bool = False,
+                                  get_all: bool = False,
+                                  ) -> QuerySet:
+        if get_all:
+            self.fields = self.model.objects.all()
 
-    @classmethod
-    @sync_to_async
-    def submit_doc(cls):
-        return cls.data.submit_doc
+        if is_dict:
+            return self.fields.values(*args)
+        else:
+            return self.fields.values_list(*args)
 
-    @classmethod
-    @sync_to_async
-    def achievements(cls):
-        return cls.data.achievements
+    # async def test(self, **data):
+    #     return self.fields.get(**data)
 
-    @classmethod
-    @sync_to_async
-    def special_rights(cls):
-        return cls.data.special_rights
-
-    @classmethod
-    @sync_to_async
-    def admiss_stat(cls):
-        return cls.data.admission_stat
-
-    @classmethod
-    @sync_to_async
-    def enrollment_procedure(cls):
-        return cls.data.enrollment_proc
-
-
-class AboutData:
-    data = About.objects.all()[0]
-
-    @classmethod
-    @sync_to_async
-    def acquaintance(cls):
-        return cls.data.acquaintance
-
-    @classmethod
-    @sync_to_async
-    def excursion(cls):
-        return cls.data.excursion
-
-    @classmethod
-    @sync_to_async
-    def science(cls):
-        return cls.data.science
-
-    @classmethod
-    @sync_to_async
-    def contacts(cls):
-        return cls.data.contacts
-
-    @classmethod
-    @sync_to_async
-    def events(cls):
-        return cls.data.events
-
-    @classmethod
-    @sync_to_async
-    def partners_work(cls):
-        return cls.data.partners_work
-
-    @classmethod
-    @sync_to_async
-    def council(cls):
-        return cls.data.stud_council
-
-    @classmethod
-    @sync_to_async
-    def photo(cls):
-        return cls.data.photo
-
-
-# Получение данных для раздела Проходные баллы
-@sync_to_async
-def get_admission_passing_scores(id: str):
-    return Passing_scores.objects.get(direction_id=id).inf
-
-
-# Получение данных для раздела Количество мест
-@sync_to_async
-def get_admission_num_places(id: str):
-    return Num_places.objects.get(direction_id=id).inf
 
 # --------------------------------------------
-
-
-# Получение данных о направлениях подготовки
+# Проверка на существование id чата в бд
 @sync_to_async
-def get_directions():
-    return Directions.objects.values()
+def isChatExist(chat_id: str):
+    return ChatIDDirections.objects.filter(chat_id=chat_id).exists() or ChatIDAdmission.objects.filter(
+        chat_id=chat_id).exists()
 
 
 # Получение направлений для ПРОФ.ТЕСТА
@@ -113,18 +47,7 @@ def get_bak_directions():
         Directions.objects.filter(Q(level="bak") | Q(level="spec")).values("direction", "name_of_dir")
     }
 
-
-# Получение данных для раздела FAQ
-@sync_to_async
-def get_faq():
-    return Questions.objects.all().values_list("faq")[0]
-
-
 # --------------------------------------------
-# Получение приветственного сообщения
-@sync_to_async
-def get_welcome_msg():
-    return Welcome_message.objects.all().values_list("message")[0]
 
 
 # Получение ID чата для направления подготовки
@@ -132,12 +55,6 @@ def get_welcome_msg():
 def get_chat_id_group_directions(code):
     origin_data = Directions.objects.get(direction=code).id
     return ChatIDDirections.objects.get(chat_direction_id=origin_data).chat_id
-
-
-# Получение ID чата для вопросов по поступлению
-@sync_to_async
-def get_chat_id_admission():
-    return ChatIDAdmission.objects.all().values_list('chat_id')[0][0]
 
 
 # ЗАПИСЬ ДАННЫХ В БАЗУ ДАННЫХ
@@ -151,13 +68,6 @@ def save_chat_id_group_admission(group_id: str):
 @sync_to_async
 def save_chat_id_group_direction(group_id: str, direction: str):
     return ChatIDDirections(chat_id=group_id, chat_direction=direction).save()
-
-
-# Проверка на существование id чата в бд
-@sync_to_async
-def isChatExist(chat_id: str):
-    return ChatIDDirections.objects.filter(chat_id=chat_id).exists() or ChatIDAdmission.objects.filter(
-        chat_id=chat_id).exists()
 
 
 # Удаление id чата группы
@@ -187,14 +97,8 @@ def add_user(name: str, uid: int):
         return None
 
 
-# Получение id всех пользователей, которые когда либо общались с ботом
 @sync_to_async
-def get_users():
-    return Users.objects.all().values_list("user_id")
-
-
-@sync_to_async
-def get_help_text(chat_type:str):
+def get_help_text(chat_type: str):
     try:
         return Help_content.objects.filter(target_user=chat_type).values_list("content")[0][0]
     except:
