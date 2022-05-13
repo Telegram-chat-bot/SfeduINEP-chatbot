@@ -2,6 +2,52 @@ from django.db import models
 from django.db.models.deletion import CASCADE
 
 
+# class Page(models.Model):
+#     class Meta:
+#         verbose_name = "раздел"
+#         verbose_name_plural = "Разделы бота"
+#         app_label = "bot"
+#         ordering = ["row"]
+#
+#     page_title = models.CharField(
+#         verbose_name="Название раздела",
+#         max_length=50
+#     )
+#     row = models.SmallIntegerField(
+#         verbose_name="Номер ряда в клавиатуре",
+#         help_text="Только положительные числа",
+#         default=1
+#     )
+#
+#     def __str__(self):
+#         return f"Кнопка '{self.page_title}'"
+#
+#
+# class InfoPage(models.Model):
+#     class Meta:
+#         verbose_name = "поле"
+#         verbose_name_plural = "Поля"
+#         app_label = "bot"
+#
+#     fields = models.ForeignKey(
+#         Page,
+#         on_delete=CASCADE
+#     )
+#
+#     field = models.CharField(
+#         verbose_name="Заголовок поля",
+#         max_length=30
+#
+#     )
+#     info = models.TextField(
+#         verbose_name="Информация",
+#         blank=True
+#     )
+#
+#     def __str__(self):
+#         return f"Поле '{self.field}'"
+#
+
 class Admission(models.Model):
     class Meta:
         verbose_name = "элемент раздела"
@@ -187,7 +233,7 @@ class Welcome_message(models.Model):
 
     def __str__(self) -> str:
         return "Текст приветствия"
-        
+
 
 class Help_content(models.Model):
     class Meta:

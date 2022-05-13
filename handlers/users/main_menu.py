@@ -1,4 +1,6 @@
 from aiogram.dispatcher.storage import FSMContext
+
+from django_admin.bot.models import OpenDay
 from filters import CommandBack
 from states.state_machine import PositionState
 from loader import dp
@@ -12,6 +14,7 @@ import logging
 
 # ГЛАВНОЕ МЕНЮ--------------
 from utils.db_api import db_commands
+from utils.db_api.db_commands import Database
 
 
 @dp.message_handler(text="Поступление")
@@ -32,7 +35,8 @@ async def prepare_direction_item(message: Message, state: FSMContext):
 
 @dp.message_handler(text="Записаться на День открытых дверей")
 async def open_day_item(message: Message):
-    await message.answer(*await db_commands.openday_inf(), reply_markup=kb.main_menu)
+    msg = await Database(OpenDay).get_collection_data("inf", is_dict=True)
+    await message.answer(msg[0]["inf"], reply_markup=kb.main_menu, parse_mode="")
 
 
 @dp.message_handler(text="Об институте")

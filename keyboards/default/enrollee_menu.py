@@ -34,12 +34,12 @@ main_menu = ReplyKeyboardMarkup(
 university_admission = ReplyKeyboardMarkup(
     [
         [
-            KeyboardButton("Правила приема"), 
+            KeyboardButton("Правила приема"),
             KeyboardButton("Подать документы"),
         ],
         [
-            KeyboardButton("Проходные баллы"),  
-            KeyboardButton("Количество мест")   
+            KeyboardButton("Проходные баллы"),
+            KeyboardButton("Количество мест")
         ],
         [
             KeyboardButton('Индивидуальные достижения'),
@@ -59,7 +59,6 @@ about_university = ReplyKeyboardMarkup(
         [
             KeyboardButton("Знакомство"),
             KeyboardButton("Записаться на экскурсию"),
-            
         ],
         [
             KeyboardButton("Мероприятия"),
@@ -72,7 +71,7 @@ about_university = ReplyKeyboardMarkup(
         [
             KeyboardButton("Фото"),
             KeyboardButton("Карта"),
-            KeyboardButton("Контакты") 
+            KeyboardButton("Контакты")
         ],
         [
             KeyboardButton("Назад")
@@ -80,7 +79,6 @@ about_university = ReplyKeyboardMarkup(
     ],
     resize_keyboard=True
 )
-
 
 ask_question = ReplyKeyboardMarkup(
     [
@@ -99,4 +97,3 @@ ask_question = ReplyKeyboardMarkup(
     resize_keyboard=True,
     one_time_keyboard=True
 )
-

@@ -9,7 +9,7 @@ import logging
 
 bot = Bot(token=config.BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 storage = MemoryStorage()
-
+DEBUG = True
 dp = Dispatcher(bot, storage=storage)
 
 
@@ -18,6 +18,11 @@ dp = Dispatcher(bot, storage=storage)
 async def exit_input_mode(message: Message, state: FSMContext):
     await state.finish()
     await message.answer("Ввод текста отменён")
+
+
+def debug(error):
+    if DEBUG:
+        return error
 
 
 # Логгирование

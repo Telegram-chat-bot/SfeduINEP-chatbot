@@ -132,10 +132,8 @@ async def handler(message: Message, state: FSMContext):
             direction = await state.get_data()
 
             chosen_direction = direction.get("direction")
+
             chat_id = await get_chat_id_group_directions(chosen_direction)
-            # chat_id = await Database(ChatIDDirections).get_field_by_id(
-            #     "chat_id", id=await Database(Directions).get_field_by_id("id", id=chosen_direction)
-            # )
             await bot.send_message(
                 chat_id=chat_id, text=f"""
 {datetime.now().strftime("%d.%m.%Y %H:%M")}

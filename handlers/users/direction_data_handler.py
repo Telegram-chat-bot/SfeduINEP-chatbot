@@ -6,10 +6,11 @@ from aiogram.utils.exceptions import MessageTextIsEmpty
 from django.db.models import QuerySet
 
 from django_admin.bot.models import Directions, Passing_scores, Num_places
+from django_admin.service.models import ChatIDDirections
 
 from keyboards.inline.buttons import direction_button
-from loader import dp, bot
-# from utils.db_api import db_commands
+from loader import dp, bot, debug
+
 from utils.db_api.db_commands import Database, save_chat_id_group_direction
 
 from states.state_machine import UserState, PositionState, Questions
@@ -91,15 +92,17 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
 
         # Обработка кнопки добавления группы в базу данных (Работает в группах)
         elif callback_data["page"] == "add_group_data":
-            await save_chat_id_group_direction(
-                group_id=call.message.chat.id,
-                direction=Directions.objects.get(direction=callback_data["code"])
-            )
+
+            ChatIDDirections(
+                chat_id=call.message.chat.id,
+                chat_direction=Directions.objects.get(direction=callback_data["code"])
+            ).save()
+
             await call.message.edit_text("Группа успешно занесена в базу данных")
 
     except MessageTextIsEmpty:
         await call.message.edit_text("В базе данных нет информации по данному направлению",
                                      reply_markup=btn.back_btn_init)
     except Exception as error:
-        await call.message.edit_text(f"Произошла ошибка:\n{error}", reply_markup=btn.back_btn_init, parse_mode="")
+        await call.message.edit_text(f"Произошла ошибка:\n{debug(error)}", reply_markup=btn.back_btn_init, parse_mode="")
         logging.error(error)
