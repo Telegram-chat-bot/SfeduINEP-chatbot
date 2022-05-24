@@ -1,6 +1,9 @@
 #!/usr/bin/python3.8
+import os
+
 import middlewares
 
+HOME_DIRECTORY = os.getcwd()
 
 async def startup_func(dp):
     from aiogram.types import BotCommand

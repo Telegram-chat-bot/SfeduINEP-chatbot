@@ -17,7 +17,7 @@ async def welcome(message: Message):
     content = Database(Welcome_message)
     await message.answer(
         await content.get_field_by_name("message"),
-        reply_markup=kb.main_menu
+        reply_markup=kb.generate_keyboard(one_time_keyboard=True)
     )
     await Database(Users).add_user(
         username=' '.join(

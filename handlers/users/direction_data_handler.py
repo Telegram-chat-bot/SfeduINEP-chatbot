@@ -11,7 +11,7 @@ from django_admin.service.models import ChatIDDirections
 from keyboards.inline.buttons import direction_button
 from loader import dp, bot, debug
 
-from utils.db_api.db_commands import Database, save_chat_id_group_direction
+from utils.db_api.db_commands import Database
 
 from states.state_machine import UserState, PositionState, Questions
 
@@ -46,14 +46,13 @@ async def delete_markup(call: CallbackQuery, state: FSMContext):
     await bot.delete_message(message_id=call.message.message_id, chat_id=call.message.chat.id)
     async with state.proxy() as pressed_btn:
         if pressed_btn["page"] == "inf_dir":
-            await call.message.answer("Вы вернулись в главное меню", reply_markup=kb.main_menu)
+            await call.message.answer("Вы вернулись в главное меню", reply_markup=kb.generate_keyboard())
 
     await state.finish()
 
 
 @dp.callback_query_handler(direction_button.filter())
 async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
-    # data: QuerySet = await db_commands.get_directions()
     data: QuerySet = await Database(Directions).get_collection_data(is_dict=True)
     callback_data: dict[str, str] = direction_button.parse(call.data)
 
@@ -70,14 +69,13 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
 
         elif callback_data["page"] == "pass_score":
             await call.message.edit_text(
-                await Passing_scores.objects.get(direction_id=chosen_direction_data["id"]),
-                # await db_commands.get_admission_passing_scores(id=chosen_direction_data["id"]),
+                Passing_scores.objects.get(direction_id=chosen_direction_data["id"]).inf,
                 reply_markup=btn.back_btn_init
             )
         elif callback_data["page"] == "number_of_places":
             await call.message.edit_text(
                 # await db_commands.get_admission_num_places(id=chosen_direction_data["id"]),
-                await Num_places.objects.get(direction_id=chosen_direction_data["id"]),
+                Num_places.objects.get(direction_id=chosen_direction_data["id"]).inf,
                 reply_markup=btn.back_btn_init
             )
         elif callback_data["page"] == "question_for_dir":

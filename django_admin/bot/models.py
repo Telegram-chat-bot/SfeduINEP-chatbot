@@ -2,129 +2,185 @@ from django.db import models
 from django.db.models.deletion import CASCADE
 
 
-# class Page(models.Model):
+class Page(models.Model):
+    class Meta:
+        verbose_name = "раздел"
+        verbose_name_plural = "Разделы бота"
+        app_label = "bot"
+        ordering = ["row"]
+
+    btn_title = models.CharField(
+        verbose_name="Название раздела",
+        max_length=50
+    )
+    inline_tag = models.CharField(
+        verbose_name="Идентификатор инлайн меню",
+        max_length=25,
+        blank=True,
+        default=""
+    )
+    row = models.PositiveSmallIntegerField(
+        verbose_name="Номер ряда в клавиатуре",
+        help_text="Только положительные числа",
+        default=1
+    )
+
+    def __str__(self):
+        return f"Кнопка '{self.btn_title}'"
+
+
+class InfoPage(models.Model):
+    class Meta:
+        verbose_name = "поле"
+        verbose_name_plural = "Поля"
+        app_label = "bot"
+
+    type_field = [
+        ("comment", "Комментарий к кнопке"),
+        ("keyboard", "Инлайн клавиатура (Клавиатура с направлениями)"),
+        ("info", "Информация раздела"),
+        ("none", "Ничего"),
+        ("back", "Кнопка Назад")
+    ]
+
+    fields = models.ForeignKey(
+        Page,
+        on_delete=CASCADE
+    )
+
+    type_content = models.CharField(
+        verbose_name="Тип контента",
+        max_length=30,
+        choices=type_field
+
+    )
+
+    info = models.TextField(
+        verbose_name="Информация",
+        blank=True
+    )
+
+    def __str__(self):
+        return f"Поле '{self.type_content}'"
+
+
+class InnerKeyboard(models.Model):
+    class Meta:
+        verbose_name = "Кнопка"
+        verbose_name_plural = "Вложенная клавиатура"
+        app_label = "bot"
+
+    row = models.PositiveSmallIntegerField(
+        verbose_name="Номер ряда в клавиатуре",
+        help_text="Только положительные числа",
+        default=1
+    )
+
+    buttons = models.ForeignKey(
+        Page, on_delete=CASCADE
+    )
+
+    btn_title = models.CharField(
+        verbose_name="Имя кнопки",
+        max_length=50
+    )
+    type_content = models.CharField(
+        verbose_name="Тип контента",
+        max_length=30,
+        choices=InfoPage.type_field
+    )
+    info = models.TextField(
+        verbose_name="Информация",
+        blank=True
+    )
+
+    inline_tag = models.CharField(
+        verbose_name="Идентификатор кнопки",
+        max_length=20,
+        blank=True
+    )
+
+    def __str__(self):
+        return f"Кнопка {self.btn_title}"
+
+
+# class Admission(models.Model):
 #     class Meta:
-#         verbose_name = "раздел"
-#         verbose_name_plural = "Разделы бота"
-#         app_label = "bot"
-#         ordering = ["row"]
-#
-#     page_title = models.CharField(
-#         verbose_name="Название раздела",
-#         max_length=50
-#     )
-#     row = models.SmallIntegerField(
-#         verbose_name="Номер ряда в клавиатуре",
-#         help_text="Только положительные числа",
-#         default=1
-#     )
-#
-#     def __str__(self):
-#         return f"Кнопка '{self.page_title}'"
-#
-#
-# class InfoPage(models.Model):
-#     class Meta:
-#         verbose_name = "поле"
-#         verbose_name_plural = "Поля"
+#         verbose_name = "элемент раздела"
+#         verbose_name_plural = "Раздел 'Поступление'"
 #         app_label = "bot"
 #
-#     fields = models.ForeignKey(
-#         Page,
-#         on_delete=CASCADE
+#     admission_rules = models.TextField(
+#         verbose_name="Правила приёма",
+#         blank=True
 #     )
-#
-#     field = models.CharField(
-#         verbose_name="Заголовок поля",
-#         max_length=30
-#
+#     submit_doc = models.TextField(
+#         verbose_name="Подать документы",
+#         blank=True
 #     )
-#     info = models.TextField(
-#         verbose_name="Информация",
+#     achievements = models.TextField(
+#         verbose_name="Индивидуальные достижения",
+#         blank=True
+#     )
+#     special_rights = models.TextField(
+#         verbose_name="Особые права и льготы",
+#         blank=True
+#     )
+#     admission_stat = models.TextField(
+#         verbose_name="Статистика приёма",
+#         blank=True
+#     )
+#     enrollment_proc = models.TextField(
+#         verbose_name="Порядок зачисления",
 #         blank=True
 #     )
 #
-#     def __str__(self):
-#         return f"Поле '{self.field}'"
+#     def __str__(self) -> str:
+#         return "Коллекция статей 'Поступление'"
+
+
+# class About(models.Model):
+#     class Meta:
+#         verbose_name = "элемент раздела"
+#         verbose_name_plural = "Раздел 'Об институте'"
+#         app_label = "bot"
 #
-
-class Admission(models.Model):
-    class Meta:
-        verbose_name = "элемент раздела"
-        verbose_name_plural = "Раздел 'Поступление'"
-        app_label = "bot"
-
-    admission_rules = models.TextField(
-        verbose_name="Правила приёма",
-        blank=True
-    )
-    submit_doc = models.TextField(
-        verbose_name="Подать документы",
-        blank=True
-    )
-    achievements = models.TextField(
-        verbose_name="Индивидуальные достижения",
-        blank=True
-    )
-    special_rights = models.TextField(
-        verbose_name="Особые права и льготы",
-        blank=True
-    )
-    admission_stat = models.TextField(
-        verbose_name="Статистика приёма",
-        blank=True
-    )
-    enrollment_proc = models.TextField(
-        verbose_name="Порядок зачисления",
-        blank=True
-    )
-
-    def __str__(self) -> str:
-        return "Коллекция статей 'Поступление'"
-
-
-class About(models.Model):
-    class Meta:
-        verbose_name = "элемент раздела"
-        verbose_name_plural = "Раздел 'Об институте'"
-        app_label = "bot"
-
-    acquaintance = models.TextField(
-        verbose_name="Знакомство",
-        blank=True
-    )
-    excursion = models.TextField(
-        verbose_name="Записаться на экскурсию",
-        blank=True
-    )
-    events = models.TextField(
-        verbose_name="Мероприятия",
-        blank=True
-    )
-    science = models.TextField(
-        verbose_name="Наука и учёба",
-        blank=True
-    )
-    partners_work = models.TextField(
-        verbose_name="Партнёры и трудоустройство",
-        blank=True
-    )
-    stud_council = models.TextField(
-        verbose_name="Студсовет",
-        blank=True
-    )
-    photo = models.TextField(
-        verbose_name="Фото",
-        blank=True
-    )
-    contacts = models.TextField(
-        verbose_name="Контакты",
-        blank=True
-    )
-    map_dormitory = models.TextField(
-        verbose_name="Карта",
-        blank=True
-    )
+#     acquaintance = models.TextField(
+#         verbose_name="Знакомство",
+#         blank=True
+#     )
+#     excursion = models.TextField(
+#         verbose_name="Записаться на экскурсию",
+#         blank=True
+#     )
+#     events = models.TextField(
+#         verbose_name="Мероприятия",
+#         blank=True
+#     )
+#     science = models.TextField(
+#         verbose_name="Наука и учёба",
+#         blank=True
+#     )
+#     partners_work = models.TextField(
+#         verbose_name="Партнёры и трудоустройство",
+#         blank=True
+#     )
+#     stud_council = models.TextField(
+#         verbose_name="Студсовет",
+#         blank=True
+#     )
+#     photo = models.TextField(
+#         verbose_name="Фото",
+#         blank=True
+#     )
+#     contacts = models.TextField(
+#         verbose_name="Контакты",
+#         blank=True
+#     )
+#     map_dormitory = models.TextField(
+#         verbose_name="Карта",
+#         blank=True
+#     )
 
     def __str__(self) -> str:
         return "Коллекция статей 'Об институте'"
@@ -168,8 +224,8 @@ class Directions(models.Model):
 
 class Passing_scores(models.Model):
     class Meta:
-        verbose_name = "элемент раздела"
-        verbose_name_plural = "Раздел 'Поступление -> Проходные баллы'"
+        verbose_name = "Проходные баллы"
+        verbose_name_plural = "Информация о проходных баллах'"
         ordering = ["direction"]
         app_label = "bot"
 
@@ -188,8 +244,8 @@ class Passing_scores(models.Model):
 
 class Num_places(models.Model):
     class Meta:
-        verbose_name = "элемент раздела"
-        verbose_name_plural = "Раздел 'Поступление -> Количество мест'"
+        verbose_name = "Количество мест"
+        verbose_name_plural = "Информация о количестве мест'"
         ordering = ["direction"]
         app_label = "bot"
 
@@ -206,19 +262,19 @@ class Num_places(models.Model):
         return f"{self.direction}"
 
 
-class Questions(models.Model):
-    class Meta:
-        verbose_name = "элемент раздела"
-        verbose_name_plural = "Раздел 'Задать вопрос'"
-        app_label = "bot"
-
-    faq = models.TextField(
-        verbose_name="F.A.Q",
-        blank=True
-    )
-
-    def __str__(self) -> str:
-        return "Часто задаваемые вопросы"
+# class Questions(models.Model):
+#     class Meta:
+#         verbose_name = "элемент раздела"
+#         verbose_name_plural = "Раздел 'Задать вопрос'"
+#         app_label = "bot"
+#
+#     faq = models.TextField(
+#         verbose_name="F.A.Q",
+#         blank=True
+#     )
+#
+#     def __str__(self) -> str:
+#         return "Часто задаваемые вопросы"
 
 
 class Welcome_message(models.Model):
@@ -258,18 +314,3 @@ class Help_content(models.Model):
 
     def __str__(self) -> str:
         return f"Раздел 'Помощь' для {'групп' if self.target_user == 'supergroup' else 'абитуриентов'}"
-
-
-class OpenDay(models.Model):
-    class Meta:
-        verbose_name = "содержимое раздела 'Записаться на День открытых дверей'"
-        verbose_name_plural = "Раздел 'Записаться на день открытых дверей'"
-        app_label = "bot"
-
-    inf = models.TextField(
-        verbose_name="Информация раздела",
-        blank=True
-    )
-
-    def __str__(self) -> str:
-        return "Содержимое раздела"

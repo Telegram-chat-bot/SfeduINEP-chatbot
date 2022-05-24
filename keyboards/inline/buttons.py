@@ -18,30 +18,26 @@ back_btn_init = InlineKeyboardMarkup(
 direction_button = CallbackData("direction", "code", "level", "page")
 
 # Инлайн кнопки выбора уровня образования----------
-choose_level = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="Бакалавриат",
-                callback_data="bak"
-            ),
-            InlineKeyboardButton(
-                text="Специалитет",
-                callback_data="spec"
-            ),
-            InlineKeyboardButton(
-                text="Магистратура",
-                callback_data="mag"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="Назад",
-                callback_data="back_to_menu"
-            )
-        ]
-    ],
-    row_width=1,
+choose_level = InlineKeyboardMarkup(row_width=1)
+choose_level.row(
+    InlineKeyboardButton(
+        text="Бакалавриат",
+        callback_data="bak"
+    ),
+    InlineKeyboardButton(
+        text="Специалитет",
+        callback_data="spec"
+    ),
+    InlineKeyboardButton(
+        text="Магистратура",
+        callback_data="mag"
+    )
+)
+choose_level.row(
+    InlineKeyboardButton(
+        text="Назад",
+        callback_data="back_to_menu"
+    )
 )
 
 
