@@ -11,6 +11,7 @@ creds.json
 # Distribution / packaging
 .Python
 
+/django_admin/uploads/*
 .idea
 migrations/
 django_admin/static/admin/

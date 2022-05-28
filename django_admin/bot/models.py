@@ -9,6 +9,9 @@ class Page(models.Model):
         app_label = "bot"
         ordering = ["row"]
 
+    def get_file_path(instance, filename):
+        return f"{instance.id}/{filename}"
+
     btn_title = models.CharField(
         verbose_name="Название раздела",
         max_length=50
@@ -25,6 +28,14 @@ class Page(models.Model):
         default=1
     )
 
+    file = models.FileField(
+        verbose_name="Изображение или другой файл",
+        help_text="Файл приклепляется при необходимости",
+        upload_to=get_file_path,
+        null=True,
+        blank=True
+    )
+
     def __str__(self):
         return f"Кнопка '{self.btn_title}'"
 
@@ -39,8 +50,7 @@ class InfoPage(models.Model):
         ("comment", "Комментарий к кнопке"),
         ("keyboard", "Инлайн клавиатура (Клавиатура с направлениями)"),
         ("info", "Информация раздела"),
-        ("none", "Ничего"),
-        ("back", "Кнопка Назад")
+        ("none", "Ничего")
     ]
 
     fields = models.ForeignKey(
@@ -51,7 +61,10 @@ class InfoPage(models.Model):
     type_content = models.CharField(
         verbose_name="Тип контента",
         max_length=30,
-        choices=type_field
+        choices=type_field,
+        help_text="""
+Выбор 'ничего' означает, что кнопка должна иметь специфическое программирование, отличное от остальных кнопок'
+"""
 
     )
 
@@ -69,6 +82,9 @@ class InnerKeyboard(models.Model):
         verbose_name = "Кнопка"
         verbose_name_plural = "Вложенная клавиатура"
         app_label = "bot"
+
+    def get_file_path(instance, filename):
+        return f"{instance.buttons_id}/{instance.id}/{filename}"
 
     row = models.PositiveSmallIntegerField(
         verbose_name="Номер ряда в клавиатуре",
@@ -94,9 +110,18 @@ class InnerKeyboard(models.Model):
         blank=True
     )
 
+    file = models.FileField(
+        verbose_name="Изображение или другой файл",
+        help_text="Файл приклепляется при необходимости",
+        upload_to=get_file_path,
+        null=True,
+        blank=True
+    )
+
     inline_tag = models.CharField(
         verbose_name="Идентификатор кнопки",
         max_length=20,
+        help_text="Для разработчиков",
         blank=True
     )
 
@@ -181,9 +206,9 @@ class InnerKeyboard(models.Model):
 #         verbose_name="Карта",
 #         blank=True
 #     )
-
-    def __str__(self) -> str:
-        return "Коллекция статей 'Об институте'"
+#
+#     def __str__(self) -> str:
+#         return "Коллекция статей 'Об институте'"
 
 
 class Directions(models.Model):

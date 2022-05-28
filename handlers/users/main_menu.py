@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.db.models import Q
+import aiofiles
 
 from aiogram.dispatcher.storage import FSMContext
 
@@ -249,6 +249,7 @@ async def get_results(message: Message):
         await message.answer("Вы еще не прошли профориентационный тест")
 
 
+# * Обработчик вложенной клавиатуры
 @dp.message_handler(lambda message: message.text in buttons_title_second)
 async def InnerKeyboardHandler(message: Message, state: FSMContext):
     pressed_button: str = message.text
@@ -284,7 +285,17 @@ async def InnerKeyboardHandler(message: Message, state: FSMContext):
                 btn_title=pressed_button
             ).values_list("info").last()
 
-            await message.answer(*information)
+            try:
+                file_path = InnerKeyboard.objects.get(btn_title=pressed_button).file.path
+                async with aiofiles.open(file_path, "rb") as photograph:
+                    await bot.send_photo(
+                        chat_id=message.chat.id, photo=photograph,
+                        caption=information[0]
+                    )
+
+            except ValueError as error:
+                logging.error(f"file not exist\n{error}")
+                await message.answer(*information)
 
     except MessageTextIsEmpty:
         await message.answer("Информации нет")

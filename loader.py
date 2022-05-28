@@ -13,6 +13,7 @@ bot = Bot(token=config.BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 # * создание хранилища для машины состояния
 storage = MemoryStorage()
 
+# ! Задать переменной False при выгрузке в продакшн
 DEBUG: bool = True
 dp = Dispatcher(bot, storage=storage)
 
