@@ -1,6 +1,10 @@
+import re
 from datetime import datetime
 
 import aiofiles
+
+import os
+from django_admin.django_admin.settings import MEDIA_ROOT
 
 from aiogram.dispatcher.storage import FSMContext
 
@@ -29,22 +33,22 @@ from utils.db_api import db_commands
 from utils.db_api.db_commands import Database, get_chat_id_group_directions
 
 # ! Формирование словаря => кнопка : id
-buttons: QuerySet[dict[str, int]] = Page.objects.values("btn_title", "id")
+buttons = Page.objects.values("btn_title", "id")
 buttons_id: dict = {}
 for btn in buttons:
     buttons_id[btn['btn_title']] = btn["id"]
 
-inner_buttons: QuerySet[dict[str, int]] = InnerKeyboard.objects.values("btn_title", "buttons_id")
+inner_buttons = InnerKeyboard.objects.values("btn_title", "buttons_id")
 inner_buttons_id: dict = {}
 for btn in inner_buttons:
     inner_buttons_id[btn["btn_title"]] = btn["buttons_id"]
 
 # * Формирование списка кнопок
-buttons_first: QuerySet[tuple[str]] = Page.objects.values_list("btn_title")
+buttons_first = Page.objects.values_list("btn_title")
 buttons_second = InnerKeyboard.objects.values_list("btn_title")
 
-buttons_title_second: list[str] = []
-buttons_title_first: list[str] = []
+buttons_title_second = []
+buttons_title_first = []
 for btn in buttons_first:
     buttons_title_first.append(*btn)
 
@@ -124,12 +128,14 @@ async def handler(message: Message, state: FSMContext):
 @dp.message_handler(text="Обратная связь")
 async def feedback_page(message: Message):
     pressed_button: str = message.text
+
     btn_id: int = inner_buttons_id[pressed_button]
 
     comment: tuple = InnerKeyboard.objects.filter(
         btn_title=pressed_button,
         buttons_id=btn_id
     ).values_list("info").last()
+
     await message.answer(*comment)
 
     await Feedback.feedback_message.set()
@@ -138,7 +144,9 @@ async def feedback_page(message: Message):
 # * Формирование отзыва пользователя и отправка его на сервер
 @dp.message_handler(state=Feedback.feedback_message)
 async def get_feedback(message: Message, state: FSMContext):
-    if message.text not in (inner_buttons_id and buttons_id) and message.text != "Назад":
+    if message.text in buttons_title_second or message.text in ["Обратная связь", "Назад"]:
+        await message.answer("Введите свой отзыв или активируйте команду /exit для выхода из режима ожидания ввода")
+    else:
         fb_message: str = message.text
         user_name: str = ' '.join(
             [
@@ -150,9 +158,9 @@ async def get_feedback(message: Message, state: FSMContext):
         await message.answer("Ваш отзыв отправлен!", reply_markup=kb.generate_keyboard(one_time_keyboard=True))
 
         await state.finish()
-    else:
-        await message.answer("Выход из режима ввода текста")
-        await state.finish()
+    # else:
+    #     await message.answer("Выход из режима ввода текста")
+    #     await state.finish()
 
 
 # ! РАЗДЕЛ ЗАДАТЬ ВОПРОС
@@ -202,6 +210,35 @@ f"""{datetime.now().strftime("%d.%m.%Y %H:%M")}
         await state.finish()
 
 
+# @dp.message_handler(text="Тест на профориентацию")
+# async def prof_test(message: Message):
+#     link = f"https://docs.google.com/forms/d/e/1FAIpQLSeNkbEzcvxl7JsUxuYu13ECBLlZZrxJNyBjC_krgnZbVrUcjQ/viewform?usp=pp_url&entry.834901947={message.from_user.id}"
+#     await message.answer(
+#         f"""
+# Вы сомневаетесь в выборе подходящего направления? Не знаете что вам наиболее всего подходит? Тогда
+# пройдите профориентационный тест, который был разработан нашими коллегами из психологического факультета
+# специально для таких случаев.
+#
+# Собственно, сам <a href="{link}">профориентационный тест</a>
+#         """
+#     )
+
+
+@dp.message_handler(text="Получить результаты")
+async def get_results(message: Message):
+    await message.answer("Ваш запрос обрабатывается. Подождите несколько секунд")
+
+    query: dict = await db_commands.get_bak_directions()
+    directions = dict(sorted(query.items(), key=lambda k: k[0]))
+
+    result: str = await google_sheets.proftest_results.get_results(str(message.from_user.id), directions)
+    try:
+        await message.answer(result)
+
+    except MessageTextIsEmpty:
+        await message.answer("Вы еще не прошли профориентационный тест")
+
+
 # ! Обработчик клавиатуры первого уровня
 @dp.message_handler(lambda message: message.text in buttons_title_first)
 async def menu(message: Message, state: FSMContext):
@@ -227,26 +264,15 @@ async def menu(message: Message, state: FSMContext):
             await PositionState.next()
 
         else:
+            if pressed_button == "Тест на профориентацию":
+                link = f"https://docs.google.com/forms/d/e/1FAIpQLSeNkbEzcvxl7JsUxuYu13ECBLlZZrxJNyBjC_krgnZbVrUcjQ/viewform?usp=pp_url&entry.834901947={message.from_user.id}"
+                comment += f"\nСобственно, сам <a href='{link}'>профориентационный тест</a>"
+
             await message.answer(
                 comment, reply_markup=kb.generate_keyboard(btn_id)
             )
     except MessageTextIsEmpty:
         await message.answer("Информации нет")
-
-
-@dp.message_handler(text="Получить результаты")
-async def get_results(message: Message):
-    await message.answer("Ваш запрос обрабатывается. Подождите несколько секунд")
-
-    query: dict = await db_commands.get_bak_directions()
-    directions = dict(sorted(query.items(), key=lambda k: k[0]))
-
-    result: str = await google_sheets.proftest_results.get_results(str(message.from_user.id), directions)
-    try:
-        await message.answer(result)
-
-    except MessageTextIsEmpty:
-        await message.answer("Вы еще не прошли профориентационный тест")
 
 
 # * Обработчик вложенной клавиатуры
@@ -261,6 +287,7 @@ async def InnerKeyboardHandler(message: Message, state: FSMContext):
     ).values_list("type_content").last()
 
     try:
+        # * если нажата кнопка с id 'keyboard' -> формирование инлайн клавиатуры
         if type_content[0] == "keyboard":
             information = InnerKeyboard.objects.filter(
                 buttons_id=btn_id,
@@ -270,6 +297,7 @@ async def InnerKeyboardHandler(message: Message, state: FSMContext):
             await message.answer(*information, reply_markup=choose_level)
 
             await state.set_state(PositionState.set_pressed_btn)
+
             async with state.proxy() as data:
                 inline_id: tuple = InnerKeyboard.objects.filter(
                     btn_title=pressed_button,
@@ -285,8 +313,11 @@ async def InnerKeyboardHandler(message: Message, state: FSMContext):
                 btn_title=pressed_button
             ).values_list("info").last()
 
+
             try:
-                file_path = InnerKeyboard.objects.get(btn_title=pressed_button).file.path
+                file_path = os.path.join(MEDIA_ROOT, InnerKeyboard.objects.get(btn_title=pressed_button).file.path)
+                logging.info(file_path)
+
                 async with aiofiles.open(file_path, "rb") as photograph:
                     await bot.send_photo(
                         chat_id=message.chat.id, photo=photograph,

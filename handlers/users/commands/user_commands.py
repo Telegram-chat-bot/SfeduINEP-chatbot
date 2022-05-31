@@ -2,7 +2,7 @@ from aiogram.dispatcher.filters import CommandStart, Command
 
 from django_admin.service.models import Users
 from filters.ChatTypeFilter import IsChat
-from loader import dp
+from loader import dp, DEBUG
 from aiogram.types import Message
 
 from utils.db_api.db_commands import Database
@@ -38,3 +38,9 @@ async def help_command(message: Message):
     await message.answer(
         content or "В этот раздел еще не добавили информацию"
     )
+
+
+@dp.message_handler(Command("get_id"))
+async def get_userid(message: Message):
+    if DEBUG:
+        await message.answer(message.from_user.id)
