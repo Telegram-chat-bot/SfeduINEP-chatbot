@@ -268,9 +268,23 @@ async def menu(message: Message, state: FSMContext):
                 link = f"https://docs.google.com/forms/d/e/1FAIpQLSeNkbEzcvxl7JsUxuYu13ECBLlZZrxJNyBjC_krgnZbVrUcjQ/viewform?usp=pp_url&entry.834901947={message.from_user.id}"
                 comment += f"\nСобственно, сам <a href='{link}'>профориентационный тест</a>"
 
-            await message.answer(
-                comment, reply_markup=kb.generate_keyboard(btn_id)
-            )
+            try:
+                file_path = os.path.join(MEDIA_ROOT, Page.objects.get(btn_title=pressed_button).file.path)
+                logging.info(file_path)
+
+                async with aiofiles.open(file_path, "rb") as photograph:
+                    await bot.send_photo(
+                        chat_id=message.chat.id, photo=photograph,
+                        caption=comment
+                    )
+
+            except ValueError as error:
+                logging.error(f"file not exist\n{error}")
+                await message.answer(comment, reply_markup=kb.generate_keyboard(btn_id))
+
+            # await message.answer(
+            #     comment, reply_markup=kb.generate_keyboard(btn_id)
+            # )
     except MessageTextIsEmpty:
         await message.answer("Информации нет")
 

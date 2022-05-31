@@ -18,6 +18,7 @@ class InnerKeyboardInline(admin.StackedInline):
 class PageAdmin(admin.ModelAdmin):
     inlines = [InfoInline, InnerKeyboardInline]
     list_display = ["btn_title", "row"]
+    list_editable = ["row"]
 
 
 class NumPlacesInline(admin.StackedInline):

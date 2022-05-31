@@ -1,9 +1,11 @@
+import os
 from aiogram import Dispatcher, Bot, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
 from aiogram.types import Message
 
+from app import HOME_DIRECTORY
 from data import config
 import logging
 
@@ -31,7 +33,7 @@ def debug(error):
         return error
 
 
-filename = "" if DEBUG else "bot.log"
+filename = "" if DEBUG else os.path.join(HOME_DIRECTORY, "bot.log")
 
 logging.basicConfig(format=u'%(filename)s [LINE:%(lineno)d] #%(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.INFO, filename=filename)
