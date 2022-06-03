@@ -11,12 +11,12 @@ from django_admin.bot.models import Welcome_message, Help_content
 from keyboards.default import enrollee_menu as kb
 
 
-# СТАРТОВОЕ СООБЩЕНИЕ
+# * СТАРТОВОЕ СООБЩЕНИЕ
 @dp.message_handler(IsChat(), CommandStart())
 async def welcome(message: Message):
-    content = Database(Welcome_message)
+    content: str = await Database(Welcome_message).get_field_by_name("message")
     await message.answer(
-        await content.get_field_by_name("message"),
+        content,
         reply_markup=kb.generate_keyboard(one_time_keyboard=True)
     )
     await Database(Users).add_user(

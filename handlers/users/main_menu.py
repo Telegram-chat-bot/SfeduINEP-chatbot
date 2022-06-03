@@ -1,4 +1,3 @@
-import re
 from datetime import datetime
 
 import aiofiles
@@ -10,7 +9,6 @@ from aiogram.dispatcher.storage import FSMContext
 
 from aiogram.utils.exceptions import MessageTextIsEmpty
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
-from django.db.models import QuerySet
 
 from django_admin.bot.models import Page, InfoPage, InnerKeyboard
 from django_admin.service.models import ChatIDAdmission
@@ -32,28 +30,29 @@ from utils import google_sheets
 from utils.db_api import db_commands
 from utils.db_api.db_commands import Database, get_chat_id_group_directions
 
-# ! Формирование словаря => кнопка : id
+# * Формирование словаря кнопок первого уровня => кнопка : id
 buttons = Page.objects.values("btn_title", "id")
 buttons_id: dict = {}
 for btn in buttons:
     buttons_id[btn['btn_title']] = btn["id"]
 
+# * Формирование словаря кнопок второго уровня => кнопка : id
 inner_buttons = InnerKeyboard.objects.values("btn_title", "buttons_id")
 inner_buttons_id: dict = {}
 for btn in inner_buttons:
     inner_buttons_id[btn["btn_title"]] = btn["buttons_id"]
 
 # * Формирование списка кнопок
-buttons_first = Page.objects.values_list("btn_title")
-buttons_second = InnerKeyboard.objects.values_list("btn_title")
-
-buttons_title_second = []
 buttons_title_first = []
-for btn in buttons_first:
-    buttons_title_first.append(*btn)
+buttons_title_second = []
+keyboard = {}
+for btn in buttons_id:
+    buttons_title_first.append(btn)
+keyboard["first"] = buttons_title_first
 
-for btn in buttons_second:
-    buttons_title_second.append(*btn)
+for btn in inner_buttons_id:
+    buttons_title_second.append(btn)
+keyboard["second"] = buttons_title_second
 
 
 # * Обработчик кнопки Назад
@@ -103,9 +102,11 @@ async def handler(message: Message, state: FSMContext):
 
             chat_id = await get_chat_id_group_directions(chosen_direction)
             await bot.send_message(
-                chat_id=chat_id, text=f"""
-{datetime.now().strftime("%d.%m.%Y %H:%M")}
-Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name or message.from_user.username} {message.from_user.last_name or ''}</a> по направлению {chosen_direction}
+                chat_id=chat_id, text=f"""{datetime.now().strftime("%d.%m.%Y %H:%M")}
+Вопрос от \
+<a href='tg://user?id={message.from_user.id}'>\
+{message.from_user.first_name or message.from_user.username} {message.from_user.last_name or ''}\
+</a> по направлению {chosen_direction}
 
 "{question}"
 """, reply_markup=button
@@ -128,7 +129,6 @@ async def handler(message: Message, state: FSMContext):
 @dp.message_handler(text="Обратная связь")
 async def feedback_page(message: Message):
     pressed_button: str = message.text
-
     btn_id: int = inner_buttons_id[pressed_button]
 
     comment: tuple = InnerKeyboard.objects.filter(
@@ -158,12 +158,9 @@ async def get_feedback(message: Message, state: FSMContext):
         await message.answer("Ваш отзыв отправлен!", reply_markup=kb.generate_keyboard(one_time_keyboard=True))
 
         await state.finish()
-    # else:
-    #     await message.answer("Выход из режима ввода текста")
-    #     await state.finish()
 
 
-# ! РАЗДЕЛ ЗАДАТЬ ВОПРОС
+#  РАЗДЕЛ ЗАДАТЬ ВОПРОС
 # * Обработчик нажатия кнопки Вопросы по поступлению
 @dp.message_handler(text="Вопросы по поступлению")
 async def admission_questions(message: Message):
@@ -183,24 +180,23 @@ async def question_handler(message: Message, state: FSMContext):
     if message.text not in (inner_buttons_id and buttons_id) and message.text != "Назад":
         try:
             question: str = message.text
-            chat_id_group = await Database(ChatIDAdmission).get_field_by_name("chat_id")
+            chat_id_group: str = await Database(ChatIDAdmission).get_field_by_name("chat_id")
 
             button = await group_btn.gen_answer_btn(user_id=message.from_user.id)
 
-            await bot.send_message(chat_id=chat_id_group, text=
-f"""{datetime.now().strftime("%d.%m.%Y %H:%M")}
+            await bot.send_message(chat_id=chat_id_group, text=f"""{datetime.now().strftime("%d.%m.%Y %H:%M")}
 Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name} {message.from_user.last_name}</a>
 
 "{question}" """, reply_markup=button
-                                   )
+                        )
 
             await message.answer("Ваш вопрос учтён и отправлен приёмной комиссии. Ожидайте ответа")
 
         except MultipleObjectsReturned as error:
-            await message.answer(f"Ошибка 500. Не удалось отправить сообщение\n{debug(error)}")
+            await message.answer(f"Ошибка 500. Не удалось отправить сообщение\n{debug(str(error))}")
 
         except Exception as error:
-            await message.answer(f"Произошла неизвестная ошибка\n{debug(error)}")
+            await message.answer(f"Произошла неизвестная ошибка\n{debug(str(error))}")
             logging.error(error)
 
         await state.finish()
@@ -208,20 +204,6 @@ f"""{datetime.now().strftime("%d.%m.%Y %H:%M")}
     else:
         await message.answer("Выход из режима ввода текста")
         await state.finish()
-
-
-# @dp.message_handler(text="Тест на профориентацию")
-# async def prof_test(message: Message):
-#     link = f"https://docs.google.com/forms/d/e/1FAIpQLSeNkbEzcvxl7JsUxuYu13ECBLlZZrxJNyBjC_krgnZbVrUcjQ/viewform?usp=pp_url&entry.834901947={message.from_user.id}"
-#     await message.answer(
-#         f"""
-# Вы сомневаетесь в выборе подходящего направления? Не знаете что вам наиболее всего подходит? Тогда
-# пройдите профориентационный тест, который был разработан нашими коллегами из психологического факультета
-# специально для таких случаев.
-#
-# Собственно, сам <a href="{link}">профориентационный тест</a>
-#         """
-#     )
 
 
 @dp.message_handler(text="Получить результаты")
@@ -239,8 +221,8 @@ async def get_results(message: Message):
         await message.answer("Вы еще не прошли профориентационный тест")
 
 
-# ! Обработчик клавиатуры первого уровня
-@dp.message_handler(lambda message: message.text in buttons_title_first)
+# * Обработчик клавиатуры первого уровня
+@dp.message_handler(lambda message: message.text in keyboard["first"])
 async def menu(message: Message, state: FSMContext):
     pressed_button: str = message.text
     btn_id: int = buttons_id[pressed_button]
@@ -279,18 +261,15 @@ async def menu(message: Message, state: FSMContext):
                     )
 
             except ValueError as error:
-                logging.error(f"file not exist\n{error}")
+                logging.error(debug(f"file not exist\n{error}"))
                 await message.answer(comment, reply_markup=kb.generate_keyboard(btn_id))
 
-            # await message.answer(
-            #     comment, reply_markup=kb.generate_keyboard(btn_id)
-            # )
     except MessageTextIsEmpty:
         await message.answer("Информации нет")
 
 
 # * Обработчик вложенной клавиатуры
-@dp.message_handler(lambda message: message.text in buttons_title_second)
+@dp.message_handler(lambda message: message.text in keyboard["second"])
 async def InnerKeyboardHandler(message: Message, state: FSMContext):
     pressed_button: str = message.text
     btn_id: int = inner_buttons_id[pressed_button]
@@ -326,7 +305,6 @@ async def InnerKeyboardHandler(message: Message, state: FSMContext):
                 buttons_id=btn_id,
                 btn_title=pressed_button
             ).values_list("info").last()
-
 
             try:
                 file_path = os.path.join(MEDIA_ROOT, InnerKeyboard.objects.get(btn_title=pressed_button).file.path)

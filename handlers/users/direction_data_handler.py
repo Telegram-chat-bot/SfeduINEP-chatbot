@@ -19,6 +19,7 @@ from keyboards.default import enrollee_menu as kb
 from keyboards.inline import buttons as btn
 
 
+# * Обработка уровня подготовки
 @dp.callback_query_handler(lambda call: call.data in ["mag", "spec", "bak"], state=PositionState.get_pressed_btn)
 async def level_handler(call: CallbackQuery, state: FSMContext):
     data = await state.get_data()
@@ -34,7 +35,7 @@ async def level_handler(call: CallbackQuery, state: FSMContext):
     await state.reset_state(with_data=False)
 
 
-# Удаление инлайн кнопок
+# * Удаление инлайн кнопок
 @dp.callback_query_handler(lambda call: call.data == "back_to_menu", state=PositionState.get_pressed_btn)
 async def delete_markup(call: CallbackQuery, state: FSMContext):
     await call.message.delete_reply_markup()
@@ -51,12 +52,11 @@ async def delete_markup(call: CallbackQuery, state: FSMContext):
     await state.finish()
 
 
+# * Обработка нажатого направления
 @dp.callback_query_handler(direction_button.filter())
 async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
     data: QuerySet = await Database(Directions).get_collection_data(is_dict=True)
     callback_data: dict[str, str] = direction_button.parse(call.data)
-
-    await bot.answer_callback_query(callback_query_id=call.id)
 
     try:
         # Получение словаря с данными о нажатом направлении. Преобразование его из QuerySet в словарь
@@ -74,14 +74,13 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
             )
         elif callback_data["page"] == "number_of_places":
             await call.message.edit_text(
-                # await db_commands.get_admission_num_places(id=chosen_direction_data["id"]),
                 Num_places.objects.get(direction_id=chosen_direction_data["id"]).inf,
                 reply_markup=btn.back_btn_init
             )
         elif callback_data["page"] == "question_for_dir":
             await state.set_state(UserState.get_info_for_question)
 
-            # Сохранение названия направления в стейт для дальнейшей обработки
+            # Сохранение названия направления в состояние для дальнейшей обработки
             async with state.proxy() as qdata:
                 qdata["direction"] = chosen_direction_data["direction"]
 
@@ -102,5 +101,7 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
         await call.message.edit_text("В базе данных нет информации по данному направлению",
                                      reply_markup=btn.back_btn_init)
     except Exception as error:
-        await call.message.edit_text(f"Произошла ошибка:\n{debug(error)}", reply_markup=btn.back_btn_init, parse_mode="")
+        await call.message.edit_text(
+            f"Произошла ошибка:\n{debug(str(error))}", reply_markup=btn.back_btn_init, parse_mode=""
+        )
         logging.error(error)

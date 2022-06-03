@@ -5,7 +5,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
 from aiogram.types import Message
 
-from app import HOME_DIRECTORY
+from django_admin.django_admin.settings import ROOT_DIR
 from data import config
 import logging
 
@@ -28,12 +28,11 @@ async def exit_input_mode(message: Message, state: FSMContext):
 
 
 # * Функция вывода ошибок в обработчиках исключений
-def debug(error):
+def debug(error: str) -> str:
     if DEBUG:
         return error
 
 
-filename = "" if DEBUG else os.path.join(HOME_DIRECTORY, "bot.log")
-
+filename: str = "" if DEBUG else os.path.join(ROOT_DIR, "bot.log")
 logging.basicConfig(format=u'%(filename)s [LINE:%(lineno)d] #%(levelname)-8s [%(asctime)s]  %(message)s',
                     level=logging.INFO, filename=filename)

@@ -1,21 +1,30 @@
 import logging
-import os.path
+import os
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from asgiref.sync import sync_to_async
-from app import HOME_DIRECTORY
+
+from django_admin.django_admin.settings import ROOT_DIR
 
 
-@sync_to_async
-def get_results(user_id, directions):
+async def right_word(word: str, quantity: int) -> str:
+    if quantity % 10 == 1 and quantity != 11:
+        return word
+    elif 1 < quantity % 10 < 5 and not (11 < quantity < 15):
+        return word + "а"
+    else:
+        return word + "ов"
+
+
+# @sync_to_async
+async def get_results(user_id: str, directions: dict):
     scope = [
         "https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
         "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"
     ]
     try:
         creds = ServiceAccountCredentials.from_json_keyfile_name(
-            os.path.join(HOME_DIRECTORY, "utils/google_sheets/creds.json"), scope
+            os.path.join(ROOT_DIR, "utils/google_sheets/creds.json"), scope
         )
 
         client = gspread.authorize(creds)
@@ -33,16 +42,19 @@ def get_results(user_id, directions):
             date = sheet.row_values(rows[-1])[0]
 
             # * Добавляем баллы в массив
+            """
+            Извлекаются баллы, начиная с третьего столбца
+            """
             test_data = sheet.row_values(rows[-1])[3:]
 
             # * словарь с вычисленным результатом
             scores: dict = {}
-            first, last = 0, 3
+            first, last = 0, 3  # * шаги для перехода от одной группе вопросов к другой
             for k, v in directions.items():
                 scores.setdefault(f"{k} - {v}", 0)  # * добавление кода направлений с значением 0 по умолчанию
                 for point in test_data[first:last]:
-                    scores[f"{k} - {v}"] += int(
-                        point)  # * на каждое направление суммируются баллы из каждых трех вопросов
+                    # * на каждое направление суммируются баллы из каждых трех вопросов
+                    scores[f"{k} - {v}"] += int(point)
                 first += 3
                 last += 3
 
@@ -53,14 +65,15 @@ def get_results(user_id, directions):
 
             # Представление результатов
             points: list = [
-                # Название направления балл
-                f"{dir_point[0]}: <b><i>{dir_point[1]}</i></b> {'балл' if (dir_point[1] % 10 == 1 and dir_point[1] != 11) else 'балла' if (dir_point[1] % 10 in [2, 3, 4] and dir_point[1] not in [12, 13, 14]) else 'баллов'}"
+                # Название направления : балл
+                f"{dir_point[0]}: <b><i>{dir_point[1]}</i></b> {await right_word('балл', dir_point[1])}"
                 for dir_point in sorted_scores
             ]
 
             # Итоговые наиболее подходящие направления для абитуриента
-            result: list = [f"<b>{direction}</b>" for direction, point in scores.items() if
-                            (point == max_point and point != 0)]
+            result: list = [
+                f"<b>{direction}</b>" for direction, point in scores.items() if (point == max_point and point)
+            ]
             suitable_dir: str = f"{'на направлении' if len(result) == 1 else 'на направлениях'}"
 
             return (
@@ -75,4 +88,3 @@ def get_results(user_id, directions):
 
     except FileNotFoundError:
         logging.error("File creds.json not found")
-

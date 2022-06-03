@@ -1,4 +1,4 @@
-from aiogram.types.reply_keyboard import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types.reply_keyboard import ReplyKeyboardMarkup
 from django.db.models import QuerySet
 
 from django_admin.bot.models import Page, InnerKeyboard
@@ -9,7 +9,7 @@ def generate_keyboard(btn_id: int = None, one_time_keyboard: bool = False) -> Re
     keyboard = {}
 
     if btn_id:
-        buttons = InnerKeyboard.objects.filter(buttons_id=btn_id).values("btn_title", "row").order_by("buttons_id")
+        buttons: QuerySet = InnerKeyboard.objects.filter(buttons_id=btn_id).values("btn_title", "row").order_by("buttons_id")
 
     for button in buttons:
         if button["row"] not in keyboard:
@@ -25,16 +25,3 @@ def generate_keyboard(btn_id: int = None, one_time_keyboard: bool = False) -> Re
     main_menu.row("Назад") if btn_id else None
 
     return main_menu
-
-
-check_results_btn = ReplyKeyboardMarkup(
-    [
-        [
-            KeyboardButton("Получить результаты")
-        ],
-        [
-            KeyboardButton("Назад")
-        ]
-    ],
-    resize_keyboard=True
-)
