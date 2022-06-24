@@ -33,7 +33,7 @@ class Page(models.Model):
         help_text="Файл приклепляется при необходимости",
         upload_to=get_file_path,
         null=True,
-        blank=True
+        default=None
     )
 
     def __str__(self):

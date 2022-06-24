@@ -7,7 +7,7 @@ from django_admin.django_admin.settings import MEDIA_ROOT
 
 from aiogram.dispatcher.storage import FSMContext
 
-from aiogram.utils.exceptions import MessageTextIsEmpty
+from aiogram.utils.exceptions import MessageTextIsEmpty, CantParseEntities
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from django_admin.bot.models import Page, InfoPage, InnerKeyboard
@@ -250,8 +250,8 @@ async def menu(message: Message, state: FSMContext):
                 link = f"https://docs.google.com/forms/d/e/1FAIpQLSeNkbEzcvxl7JsUxuYu13ECBLlZZrxJNyBjC_krgnZbVrUcjQ/viewform?usp=pp_url&entry.834901947={message.from_user.id}"
                 comment += f"\nСобственно, сам <a href='{link}'>профориентационный тест</a>"
 
-            try:
-                file_path = os.path.join(MEDIA_ROOT, Page.objects.get(btn_title=pressed_button).file.path)
+            if not (Page.objects.get(btn_title=pressed_button).file.name is None):
+                file_path = Page.objects.get(btn_title=pressed_button).file.path
                 logging.info(file_path)
 
                 async with aiofiles.open(file_path, "rb") as photograph:
@@ -259,10 +259,10 @@ async def menu(message: Message, state: FSMContext):
                         chat_id=message.chat.id, photo=photograph,
                         caption=comment
                     )
-
-            except ValueError as error:
-                logging.error(debug(f"file not exist\n{error}"))
+            try:
                 await message.answer(comment, reply_markup=kb.generate_keyboard(btn_id))
+            except CantParseEntities:
+                await message.answer("Ошибка! Неправильная разметка информации")
 
     except MessageTextIsEmpty:
         await message.answer("Информации нет")
@@ -306,8 +306,8 @@ async def InnerKeyboardHandler(message: Message, state: FSMContext):
                 btn_title=pressed_button
             ).values_list("info").last()
 
-            try:
-                file_path = os.path.join(MEDIA_ROOT, InnerKeyboard.objects.get(btn_title=pressed_button).file.path)
+            if not (InnerKeyboard.objects.get(btn_title=pressed_button).file.name is None):
+                file_path = InnerKeyboard.objects.get(btn_title=pressed_button).file.path
                 logging.info(file_path)
 
                 async with aiofiles.open(file_path, "rb") as photograph:
@@ -315,10 +315,11 @@ async def InnerKeyboardHandler(message: Message, state: FSMContext):
                         chat_id=message.chat.id, photo=photograph,
                         caption=information[0]
                     )
-
-            except ValueError as error:
-                logging.error(f"file not exist\n{error}")
-                await message.answer(*information)
+            else:
+                try:
+                    await message.answer(*information)
+                except CantParseEntities:
+                    await message.answer("Ошибка! Неправильная разметка информации")
 
     except MessageTextIsEmpty:
         await message.answer("Информации нет")
