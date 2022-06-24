@@ -4,7 +4,6 @@ __pycache__/
 *$py.class
 locales
 *.code-workspace
-.idea
 # C extensions
 *.so
 creds.json
@@ -12,6 +11,8 @@ creds.json
 # Distribution / packaging
 .Python
 
+/django_admin/uploads/*
+.idea
 migrations/
 django_admin/static/admin/
 build/

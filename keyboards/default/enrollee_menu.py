@@ -1,102 +1,27 @@
-from aiogram.types.reply_keyboard import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types.reply_keyboard import ReplyKeyboardMarkup
+from django.db.models import QuerySet
 
-check_results_btn = ReplyKeyboardMarkup(
-    [
-        [
-            KeyboardButton("Получить результаты")
-        ],
-        [
-            KeyboardButton("Назад")
-        ]
-    ],
-    resize_keyboard=True
-)
-
-main_menu = ReplyKeyboardMarkup(
-    [
-        [
-            KeyboardButton("Записаться на День открытых дверей")
-        ],
-        [
-            KeyboardButton("Тест на профориентацию"),
-            KeyboardButton("Направления подготовки"),
-        ],
-        [
-            KeyboardButton("Поступление"),
-            KeyboardButton("Об институте"),
-            KeyboardButton("Задать вопрос")
-        ]
-    ],
-    resize_keyboard=True,
-    one_time_keyboard=True
-)
-
-university_admission = ReplyKeyboardMarkup(
-    [
-        [
-            KeyboardButton("Правила приема"), 
-            KeyboardButton("Подать документы"),
-        ],
-        [
-            KeyboardButton("Проходные баллы"),  
-            KeyboardButton("Количество мест")   
-        ],
-        [
-            KeyboardButton('Индивидуальные достижения'),
-            KeyboardButton('Особые права и льготы')
-        ],
-        [
-            KeyboardButton('Статистика приёма'),
-            KeyboardButton('Порядок зачисления'),
-            KeyboardButton('Назад')
-        ]
-    ],
-    resize_keyboard=True
-)
-
-about_university = ReplyKeyboardMarkup(
-    [
-        [
-            KeyboardButton("Знакомство"),
-            KeyboardButton("Записаться на экскурсию"),
-            
-        ],
-        [
-            KeyboardButton("Мероприятия"),
-            KeyboardButton("Наука и учёба")
-        ],
-        [
-            KeyboardButton("Партнеры и трудоустройство"),
-            KeyboardButton("Студсовет")
-        ],
-        [
-            KeyboardButton("Фото"),
-            KeyboardButton("Карта"),
-            KeyboardButton("Контакты") 
-        ],
-        [
-            KeyboardButton("Назад")
-        ]
-    ],
-    resize_keyboard=True
-)
+from django_admin.bot.models import Page, InnerKeyboard
 
 
-ask_question = ReplyKeyboardMarkup(
-    [
-        [
-            KeyboardButton('F.A.Q'),
-            KeyboardButton('Вопросы по поступлению'),
-            KeyboardButton('Вопросы по направлению подготовки')
-        ],
-        [
-            KeyboardButton("Обратная связь")
-        ],
-        [
-            KeyboardButton("Назад")
-        ]
-    ],
-    resize_keyboard=True,
-    one_time_keyboard=True
-)
+def generate_keyboard(btn_id: int = None, one_time_keyboard: bool = False) -> ReplyKeyboardMarkup:
+    buttons = Page.objects.values("btn_title", "row")
+    keyboard = {}
 
+    if btn_id:
+        buttons: QuerySet = InnerKeyboard.objects.filter(buttons_id=btn_id).values("btn_title", "row").order_by("buttons_id")
+
+    for button in buttons:
+        if button["row"] not in keyboard:
+            keyboard[button["row"]] = [button["btn_title"]]
+        else:
+            keyboard[button["row"]] += [button["btn_title"]]
+
+    main_menu = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=one_time_keyboard)
+
+    for btn in keyboard.values():
+        main_menu.row(*btn)
+
+    main_menu.row("Назад") if btn_id else None
+
+    return main_menu

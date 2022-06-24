@@ -11,18 +11,23 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 from pathlib import Path
 import os
-from data import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
+# import _locale
+# _locale._getdefaultlocale = (lambda *args: ['en_US', 'utf8'])
 
+# * root path of django project
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# * root path of project
 ROOT_DIR = os.getcwd()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config.SECRET_KEY_DJ
+SECRET_KEY = "django-insecure-g2vvo@o5pl(r6ee%0*p$#!iyu(@#vv)_@!-71i884_#v!9-45n"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,7 +36,6 @@ ALLOWED_HOSTS = ['*']
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django_admin.bot.apps.BotConfig',
     'django_admin.feedback.apps.FeedbackConfig',
@@ -83,14 +87,13 @@ WSGI_APPLICATION = 'django_admin.django_admin.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config.DB_NAME,
-        'USER': config.DB_USER,
-        'PASSWORD': config.DB_PASS,
-        'HOST': config.DB_HOST,
-        'PORT': config.DB_PORT
+        'NAME': 'chat-bot-data',
+        'USER': 'postgres',
+        'PASSWORD': '860269',
+        'HOST': '127.0.0.1',
+        'PORT': '5432'
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -128,6 +131,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "django_admin/uploads")
+MEDIA_URL = '/uploads/'
+
 STATIC_URL = '/static/'
 
 # Для локального сервера
@@ -135,7 +142,7 @@ STATICFILES_DIRS = [
    os.path.join(BASE_DIR, 'static')
 ]
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, '/static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
