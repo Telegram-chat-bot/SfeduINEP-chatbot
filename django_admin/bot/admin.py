@@ -5,7 +5,7 @@ admin.site.register(Welcome_message)
 admin.site.register(Help_content)
 
 
-class InfoInline(admin.TabularInline):
+class InfoInline(admin.StackedInline):
     extra = 0
     model = InfoPage
 

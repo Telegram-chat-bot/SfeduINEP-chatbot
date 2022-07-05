@@ -2,12 +2,11 @@ from datetime import datetime
 
 import aiofiles
 
-import os
 from django_admin.django_admin.settings import MEDIA_ROOT
 
 from aiogram.dispatcher.storage import FSMContext
 
-from aiogram.utils.exceptions import MessageTextIsEmpty, CantParseEntities
+from aiogram.utils.exceptions import MessageTextIsEmpty, CantParseEntities, PhotoDimensions
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from django_admin.bot.models import Page, InfoPage, InnerKeyboard
@@ -32,26 +31,14 @@ from utils.db_api.db_commands import Database, get_chat_id_group_directions
 
 # * Формирование словаря кнопок первого уровня => кнопка : id
 buttons = Page.objects.values("btn_title", "id")
-buttons_id: dict = {}
-for btn in buttons:
-    buttons_id[btn['btn_title']] = btn["id"]
-
+buttons_id: dict = {btn['btn_title']: btn["id"] for btn in buttons}
 # * Формирование словаря кнопок второго уровня => кнопка : id
 inner_buttons = InnerKeyboard.objects.values("btn_title", "buttons_id")
-inner_buttons_id: dict = {}
-for btn in inner_buttons:
-    inner_buttons_id[btn["btn_title"]] = btn["buttons_id"]
+inner_buttons_id: dict = {btn["btn_title"]: btn["buttons_id"] for btn in inner_buttons}
 
-# * Формирование списка кнопок
-buttons_title_first = []
-buttons_title_second = []
-keyboard = {}
-for btn in buttons_id:
-    buttons_title_first.append(btn)
-keyboard["first"] = buttons_title_first
-
-for btn in inner_buttons_id:
-    buttons_title_second.append(btn)
+buttons_title_first = list(buttons_id)
+keyboard = {"first": buttons_title_first}
+buttons_title_second = list(inner_buttons_id)
 keyboard["second"] = buttons_title_second
 
 
@@ -63,7 +50,7 @@ async def back_to_btn_handler(message: Message):
     ))
 
 
-# * Обработчик  нажатиия кнопки вопроса по направлению
+# * Обработчик нажатия кнопки вопроса по направлению
 @dp.message_handler(text="Вопросы по направлению подготовки")
 async def direction_training_questions(message: Message, state: FSMContext):
     pressed_button: str = message.text
@@ -115,14 +102,14 @@ async def handler(message: Message, state: FSMContext):
             await message.answer("Ваш вопрос учтён и отправлен руководителю направления. Ожидайте ответа")
 
         except ObjectDoesNotExist as error:
-            await message.answer(f"Группа по этому направлению еще не создана или не занесена в базу данных")
-            logging.error(error)
+            await message.answer("Группа по этому направлению еще не создана или не занесена в базу данных")
 
-        await state.finish()
+            logging.error(error)
 
     else:
         await message.answer("Выход из режима ввода")
-        await state.finish()
+
+    await state.finish()
 
 
 # * Обработчик кнопки Обратная связь
@@ -199,11 +186,10 @@ async def question_handler(message: Message, state: FSMContext):
             await message.answer(f"Произошла неизвестная ошибка\n{debug(str(error))}")
             logging.error(error)
 
-        await state.finish()
-
     else:
         await message.answer("Выход из режима ввода текста")
-        await state.finish()
+
+    await state.finish()
 
 
 @dp.message_handler(text="Получить результаты")
@@ -250,22 +236,26 @@ async def menu(message: Message, state: FSMContext):
                 link = f"https://docs.google.com/forms/d/e/1FAIpQLSeNkbEzcvxl7JsUxuYu13ECBLlZZrxJNyBjC_krgnZbVrUcjQ/viewform?usp=pp_url&entry.834901947={message.from_user.id}"
                 comment += f"\nСобственно, сам <a href='{link}'>профориентационный тест</a>"
 
-            if not (Page.objects.get(btn_title=pressed_button).file.name is None):
-                file_path = Page.objects.get(btn_title=pressed_button).file.path
+            if Page.objects.get(btn_title=pressed_button).file.name not in [None, ""]:
+                file_path: str = Page.objects.get(btn_title=pressed_button).file.path
                 logging.info(file_path)
 
                 async with aiofiles.open(file_path, "rb") as photograph:
                     await bot.send_photo(
                         chat_id=message.chat.id, photo=photograph,
-                        caption=comment
+                        caption=comment,
+                        reply_markup=kb.generate_keyboard(btn_id)
                     )
-            try:
+            else:
                 await message.answer(comment, reply_markup=kb.generate_keyboard(btn_id))
-            except CantParseEntities:
-                await message.answer("Ошибка! Неправильная разметка информации")
 
     except MessageTextIsEmpty:
         await message.answer("Информации нет")
+    except PhotoDimensions as err:
+        await message.answer("Ошибка вывода изображения: большое разрешение")
+        logging.error(err)
+    except CantParseEntities:
+        await message.answer("Ошибка! Неправильная разметка информации")
 
 
 # * Обработчик вложенной клавиатуры
@@ -301,14 +291,13 @@ async def InnerKeyboardHandler(message: Message, state: FSMContext):
             await PositionState.next()
 
         else:
-            information = InnerKeyboard.objects.filter(
+            information: tuple = InnerKeyboard.objects.filter(
                 buttons_id=btn_id,
                 btn_title=pressed_button
             ).values_list("info").last()
 
-            if not (InnerKeyboard.objects.get(btn_title=pressed_button).file.name is None):
-                file_path = InnerKeyboard.objects.get(btn_title=pressed_button).file.path
-                logging.info(file_path)
+            if InnerKeyboard.objects.get(btn_title=pressed_button).file.name not in [None, ""]:
+                file_path: str = InnerKeyboard.objects.get(btn_title=pressed_button).file.path
 
                 async with aiofiles.open(file_path, "rb") as photograph:
                     await bot.send_photo(
@@ -316,10 +305,12 @@ async def InnerKeyboardHandler(message: Message, state: FSMContext):
                         caption=information[0]
                     )
             else:
-                try:
-                    await message.answer(*information)
-                except CantParseEntities:
-                    await message.answer("Ошибка! Неправильная разметка информации")
+                await message.answer(*information)
 
     except MessageTextIsEmpty:
         await message.answer("Информации нет")
+    except PhotoDimensions as err:
+        await message.answer("Ошибка вывода изображения: большое разрешение")
+        logging.error(err)
+    except CantParseEntities:
+        await message.answer("Ошибка! Неправильная разметка информации")
