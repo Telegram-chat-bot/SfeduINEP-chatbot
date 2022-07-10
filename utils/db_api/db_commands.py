@@ -32,12 +32,15 @@ class Database:
     async def save_data(self, *args, **kwargs):
         return self.model(*args, **kwargs).save()
 
+    async def delete_data(self, *args):
+        self.objects.get(*args).delete()
+
     async def add_user(self, *args, **kwargs):
         try:
             return self.objects.update_or_create(
                 *args, **kwargs
             )
-        except:
+        except Exception:
             return None
 
 

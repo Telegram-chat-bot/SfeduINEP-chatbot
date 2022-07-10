@@ -28,7 +28,7 @@ async def exit_input_mode(message: Message, state: FSMContext):
 
 
 # * Функция вывода ошибок в обработчиках исключений
-def debug(error: str) -> str:
+async def debugger(error: str) -> str:
     if DEBUG:
         return error
 

@@ -1,43 +1,34 @@
-from datetime import datetime
-
 import aiofiles
-
-from django_admin.django_admin.settings import MEDIA_ROOT
-
 from aiogram.dispatcher.storage import FSMContext
-
 from aiogram.utils.exceptions import MessageTextIsEmpty, CantParseEntities, PhotoDimensions
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from django_admin.bot.models import Page, InfoPage, InnerKeyboard
-from django_admin.service.models import ChatIDAdmission
-from django_admin.feedback.models import Feedback as FB_Model
-
 from filters import CommandBack
+
 from keyboards.inline.buttons import choose_level
 
-from states.state_machine import PositionState, Feedback, Questions, UserState
-from loader import dp, bot, debug
+from states.state_machine import PositionState
+from loader import dp, bot, debugger
 from aiogram.types import Message
 
 from keyboards.default import enrollee_menu as kb
-from keyboards.inline import group_buttons as group_btn
 
 import logging
 
 from utils import google_sheets
 from utils.db_api import db_commands
-from utils.db_api.db_commands import Database, get_chat_id_group_directions
 
 # * Формирование словаря кнопок первого уровня => кнопка : id
 buttons = Page.objects.values("btn_title", "id")
 buttons_id: dict = {btn['btn_title']: btn["id"] for btn in buttons}
+
 # * Формирование словаря кнопок второго уровня => кнопка : id
 inner_buttons = InnerKeyboard.objects.values("btn_title", "buttons_id")
 inner_buttons_id: dict = {btn["btn_title"]: btn["buttons_id"] for btn in inner_buttons}
 
 buttons_title_first = list(buttons_id)
 keyboard = {"first": buttons_title_first}
+
 buttons_title_second = list(inner_buttons_id)
 keyboard["second"] = buttons_title_second
 
@@ -45,151 +36,9 @@ keyboard["second"] = buttons_title_second
 # * Обработчик кнопки Назад
 @dp.message_handler(CommandBack())
 async def back_to_btn_handler(message: Message):
-    await message.answer("Вы вернулись назад", reply_markup=kb.generate_keyboard(
+    await message.answer("Вы вернулись назад", reply_markup=await kb.generate_keyboard(
         one_time_keyboard=True
     ))
-
-
-# * Обработчик нажатия кнопки вопроса по направлению
-@dp.message_handler(text="Вопросы по направлению подготовки")
-async def direction_training_questions(message: Message, state: FSMContext):
-    pressed_button: str = message.text
-    btn_id: int = inner_buttons_id[pressed_button]
-
-    comment: tuple = InnerKeyboard.objects.filter(
-        btn_title=pressed_button,
-        buttons_id=btn_id
-    ).values_list("info").last()
-
-    await message.answer(
-        *comment,
-        reply_markup=choose_level)
-
-    await state.set_state(PositionState.set_pressed_btn)
-    async with state.proxy() as data:
-        data["page"] = "question_for_dir"
-
-    await PositionState.next()
-
-
-# * Формирование вопроса по направлению подготовки
-@dp.message_handler(state=Questions.user_question_dir)
-async def handler(message: Message, state: FSMContext):
-    if message.text not in (inner_buttons_id and buttons_id) and message.text != "Назад":
-        question: str = message.text
-
-        await state.set_state(UserState.direction)
-
-        # Формирование кнопки для ответа, которая прикрепляется к сообщению с вопросом в группе
-        button = await group_btn.gen_answer_btn(user_id=message.from_user.id)
-        try:
-            direction = await state.get_data()
-
-            chosen_direction: str = direction.get("direction")
-
-            chat_id = await get_chat_id_group_directions(chosen_direction)
-            await bot.send_message(
-                chat_id=chat_id, text=f"""{datetime.now().strftime("%d.%m.%Y %H:%M")}
-Вопрос от \
-<a href='tg://user?id={message.from_user.id}'>\
-{message.from_user.first_name or message.from_user.username} {message.from_user.last_name or ''}\
-</a> по направлению {chosen_direction}
-
-"{question}"
-""", reply_markup=button
-            )
-
-            await message.answer("Ваш вопрос учтён и отправлен руководителю направления. Ожидайте ответа")
-
-        except ObjectDoesNotExist as error:
-            await message.answer("Группа по этому направлению еще не создана или не занесена в базу данных")
-
-            logging.error(error)
-
-    else:
-        await message.answer("Выход из режима ввода")
-
-    await state.finish()
-
-
-# * Обработчик кнопки Обратная связь
-@dp.message_handler(text="Обратная связь")
-async def feedback_page(message: Message):
-    pressed_button: str = message.text
-    btn_id: int = inner_buttons_id[pressed_button]
-
-    comment: tuple = InnerKeyboard.objects.filter(
-        btn_title=pressed_button,
-        buttons_id=btn_id
-    ).values_list("info").last()
-
-    await message.answer(*comment)
-
-    await Feedback.feedback_message.set()
-
-
-# * Формирование отзыва пользователя и отправка его на сервер
-@dp.message_handler(state=Feedback.feedback_message)
-async def get_feedback(message: Message, state: FSMContext):
-    if message.text in buttons_title_second or message.text in ["Обратная связь", "Назад"]:
-        await message.answer("Введите свой отзыв или активируйте команду /exit для выхода из режима ожидания ввода")
-    else:
-        fb_message: str = message.text
-        user_name: str = ' '.join(
-            [
-                message.from_user.first_name or "", message.from_user.last_name or ""
-            ]
-        )
-
-        await Database(FB_Model).save_data(username=user_name, review=fb_message)
-        await message.answer("Ваш отзыв отправлен!", reply_markup=kb.generate_keyboard(one_time_keyboard=True))
-
-        await state.finish()
-
-
-#  РАЗДЕЛ ЗАДАТЬ ВОПРОС
-# * Обработчик нажатия кнопки Вопросы по поступлению
-@dp.message_handler(text="Вопросы по поступлению")
-async def admission_questions(message: Message):
-    pressed_button: str = message.text
-    information: str = InnerKeyboard.objects.get(
-        btn_title=pressed_button
-    ).info
-
-    await message.answer(information)
-    await Questions.user_question.set()
-
-
-# * Формирование вопроса по поступлению
-@dp.message_handler(state=Questions.user_question)
-async def question_handler(message: Message, state: FSMContext):
-    # если не была нажата кнопка из клавиатуры после нажатия на кнопку с вопросом
-    if message.text not in (inner_buttons_id and buttons_id) and message.text != "Назад":
-        try:
-            question: str = message.text
-            chat_id_group: str = await Database(ChatIDAdmission).get_field_by_name("chat_id")
-
-            button = await group_btn.gen_answer_btn(user_id=message.from_user.id)
-
-            await bot.send_message(chat_id=chat_id_group, text=f"""{datetime.now().strftime("%d.%m.%Y %H:%M")}
-Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name} {message.from_user.last_name}</a>
-
-"{question}" """, reply_markup=button
-                        )
-
-            await message.answer("Ваш вопрос учтён и отправлен приёмной комиссии. Ожидайте ответа")
-
-        except MultipleObjectsReturned as error:
-            await message.answer(f"Ошибка 500. Не удалось отправить сообщение\n{debug(str(error))}")
-
-        except Exception as error:
-            await message.answer(f"Произошла неизвестная ошибка\n{debug(str(error))}")
-            logging.error(error)
-
-    else:
-        await message.answer("Выход из режима ввода текста")
-
-    await state.finish()
 
 
 @dp.message_handler(text="Получить результаты")
@@ -244,68 +93,10 @@ async def menu(message: Message, state: FSMContext):
                     await bot.send_photo(
                         chat_id=message.chat.id, photo=photograph,
                         caption=comment,
-                        reply_markup=kb.generate_keyboard(btn_id)
+                        reply_markup=await kb.generate_keyboard(btn_id)
                     )
             else:
-                await message.answer(comment, reply_markup=kb.generate_keyboard(btn_id))
-
-    except MessageTextIsEmpty:
-        await message.answer("Информации нет")
-    except PhotoDimensions as err:
-        await message.answer("Ошибка вывода изображения: большое разрешение")
-        logging.error(err)
-    except CantParseEntities:
-        await message.answer("Ошибка! Неправильная разметка информации")
-
-
-# * Обработчик вложенной клавиатуры
-@dp.message_handler(lambda message: message.text in keyboard["second"])
-async def InnerKeyboardHandler(message: Message, state: FSMContext):
-    pressed_button: str = message.text
-    btn_id: int = inner_buttons_id[pressed_button]
-
-    type_content: tuple = InnerKeyboard.objects.filter(
-        buttons_id=btn_id,
-        btn_title=pressed_button
-    ).values_list("type_content").last()
-
-    try:
-        # * если нажата кнопка с id 'keyboard' -> формирование инлайн клавиатуры
-        if type_content[0] == "keyboard":
-            information = InnerKeyboard.objects.filter(
-                buttons_id=btn_id,
-                btn_title=pressed_button
-            ).values_list("info").last()
-
-            await message.answer(*information, reply_markup=choose_level)
-
-            await state.set_state(PositionState.set_pressed_btn)
-
-            async with state.proxy() as data:
-                inline_id: tuple = InnerKeyboard.objects.filter(
-                    btn_title=pressed_button,
-                    buttons_id=btn_id
-                ).values_list("inline_tag").last()
-
-                data["page"] = inline_id[0]
-            await PositionState.next()
-
-        else:
-            information: tuple = InnerKeyboard.objects.filter(
-                buttons_id=btn_id,
-                btn_title=pressed_button
-            ).values_list("info").last()
-
-            if InnerKeyboard.objects.get(btn_title=pressed_button).file.name not in [None, ""]:
-                file_path: str = InnerKeyboard.objects.get(btn_title=pressed_button).file.path
-
-                async with aiofiles.open(file_path, "rb") as photograph:
-                    await bot.send_photo(
-                        chat_id=message.chat.id, photo=photograph,
-                        caption=information[0]
-                    )
-            else:
-                await message.answer(*information)
+                await message.answer(comment, reply_markup=await kb.generate_keyboard(btn_id))
 
     except MessageTextIsEmpty:
         await message.answer("Информации нет")

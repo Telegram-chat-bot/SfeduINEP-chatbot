@@ -7,13 +7,7 @@ from utils.db_api.db_commands import Database
 db = Database(Directions)
 
 back_btn = InlineKeyboardButton(text="Назад", callback_data="back_to")
-back_btn_init = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            back_btn
-        ]
-    ]
-)
+back_btn_init = InlineKeyboardMarkup(inline_keyboard=[[back_btn]])
 
 direction_button = CallbackData("direction", "code", "level", "page")
 
@@ -41,33 +35,25 @@ choose_level.row(
 )
 
 
-# СПЕЦИАЛЬНОСТИ -----------
-# Специальности бакалавра
-async def gen_directions_btns(level: str, page: str):
+async def gen_directions_btn(level: str, page: str) -> InlineKeyboardMarkup:
+    # инициализация клавиатуры
     buttons = InlineKeyboardMarkup(row_width=1)
     data = await db.get_collection_data(is_dict=True)
     for el in data:
         if el["level"] == level:
-            buttons.add(
-                InlineKeyboardButton
-                    (
-                    text=f"{el['direction']} - {el['name_of_dir']}",
-                    callback_data=direction_button.new(code=el["direction"],
-                                                       level=level,
-                                                       page=page)
-                )
+            button = InlineKeyboardButton(
+                text=f"{el['direction']} - {el['name_of_dir']}",
+                callback_data=direction_button.new(code=el["direction"], level=level, page=page)
             )
+            buttons.add(button)
     buttons.add(back_btn)
-
     return buttons
 
 
-async def init_url(link: str):
+async def init_url(link: str) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup(row_width=1)
     keyboard.add(
         InlineKeyboardButton(text="Ссылка", url=link),
         back_btn
     )
     return keyboard
-
-# -------------------------------

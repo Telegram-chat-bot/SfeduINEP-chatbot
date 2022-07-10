@@ -17,7 +17,7 @@ async def welcome(message: Message):
     content: str = await Database(Welcome_message).get_field_by_name("message")
     await message.answer(
         content,
-        reply_markup=kb.generate_keyboard(one_time_keyboard=True)
+        reply_markup=await kb.generate_keyboard(one_time_keyboard=True)
     )
     await Database(Users).add_user(
         username=' '.join(
@@ -32,12 +32,8 @@ async def welcome(message: Message):
 
 @dp.message_handler(IsChat(), Command("help"))
 async def help_command(message: Message):
-    content = Help_content.objects.filter(
-        target_user=message.chat.type
-    ).first().content
-    await message.answer(
-        content or "В этот раздел еще не добавили информацию"
-    )
+    content = Help_content.objects.filter(target_user=message.chat.type).first().content
+    await message.answer(content or "В этот раздел еще не добавили информацию")
 
 
 @dp.message_handler(Command("get_id"))
