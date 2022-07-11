@@ -1,5 +1,6 @@
 import logging
-from loader import dp, bot, debugger
+from loader import dp, bot
+from utils.debugger import debugger
 from filters import IsNotButton
 from datetime import datetime
 
@@ -111,8 +112,8 @@ async def question_handler(message: Message, state: FSMContext):
     except MultipleObjectsReturned as error:
         await message.answer(f"Ошибка 500. Не удалось отправить сообщение\n{await debugger(str(error))}")
 
-    except Exception as error:
-        await message.answer(f"Произошла неизвестная ошибка\n{await debugger(str(error))}")
+    except ObjectDoesNotExist as error:
+        await message.answer(f"Ошибка! Группы, куда должен быть направлен вопрос, не существует.\n{await debugger(str(error))}")
         logging.error(error)
 
     await state.finish()

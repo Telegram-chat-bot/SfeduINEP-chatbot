@@ -3,6 +3,7 @@ import os
 import middlewares
 from utils.scheduler.delete_scheduler import delete_old_feedback
 from utils.bot_commands import commands
+import utils.logger
 import asyncio
 import aioschedule as schedule
 

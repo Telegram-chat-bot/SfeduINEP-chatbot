@@ -1,3 +1,4 @@
+from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import CommandStart, Command
 
 from django_admin.service.models import Users
@@ -9,6 +10,13 @@ from utils.db_api.db_commands import Database
 from django_admin.bot.models import Welcome_message, Help_content
 
 from keyboards.default import enrollee_menu as kb
+
+
+# * обработчик для команды выхода из состояния пользовательского ввода
+@dp.message_handler(Command("exit"), state="*")
+async def exit_input_mode(message: Message, state: FSMContext):
+    await state.finish()
+    await message.answer("Ввод текста отменён")
 
 
 # * СТАРТОВОЕ СООБЩЕНИЕ

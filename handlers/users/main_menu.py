@@ -8,7 +8,8 @@ from filters import CommandBack
 from keyboards.inline.buttons import choose_level
 
 from states.state_machine import PositionState
-from loader import dp, bot, debugger
+from loader import dp, bot
+from utils.debugger import debugger
 from aiogram.types import Message
 
 from keyboards.default import enrollee_menu as kb

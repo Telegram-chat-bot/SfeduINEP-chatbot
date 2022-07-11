@@ -1,6 +1,7 @@
-aiogram==2.17.1
+aiogram==2.21
 aiofiles==0.8.0
 aiohttp==3.8.1
+aioschedule==0.5.2
 aiosignal==1.2.0
 asgiref==3.4.1
 async-timeout==4.0.1
@@ -35,5 +36,3 @@ typing_extensions==4.0.1
 tzdata==2021.5
 urllib3==1.26.7
 yarl==1.7.2
-schedule==1.1.0
-aiofiles==0.8.0

@@ -9,7 +9,8 @@ from django_admin.bot.models import Directions, Passing_scores, Num_places
 from django_admin.service.models import ChatIDDirections
 
 from keyboards.inline.buttons import direction_button
-from loader import dp, bot, debugger
+from loader import dp, bot
+from utils.debugger import debugger
 
 from utils.db_api.db_commands import Database
 
