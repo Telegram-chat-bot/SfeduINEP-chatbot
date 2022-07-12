@@ -69,3 +69,8 @@ async def InnerKeyboardHandler(message: Message, state: FSMContext):
         logging.error(err)
     except CantParseEntities:
         await message.answer("Ошибка! Неправильная разметка информации")
+    except FileNotFoundError:
+        await message.answer(InnerKeyboard.objects.filter(
+                buttons_id=btn_id,
+                btn_title=pressed_button
+            ).values_list("info").last()[0])
