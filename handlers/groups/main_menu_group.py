@@ -5,7 +5,7 @@ from aiogram.utils.exceptions import BotBlocked
 from django.db.models import QuerySet
 
 from django_admin.bot.models import Help_content
-from django_admin.service.models import Users, ChatIDAdmission, ChatIDDirections
+from django_admin.service.models import Users, ChatIDAdmission
 from filters import IsGroup
 from loader import dp, bot
 from utils.debugger import debugger

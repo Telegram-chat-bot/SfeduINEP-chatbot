@@ -3,7 +3,6 @@ import os
 import middlewares
 from utils.scheduler.delete_scheduler import delete_old_feedback
 from utils.bot_commands import commands
-from utils.db_api.backup_module import DatabaseDump
 import utils.logger
 import asyncio
 import aioschedule as schedule
@@ -18,7 +17,6 @@ async def startup(dp) -> None:
 
 async def scheduler() -> None:
     schedule.every().day.at("4:00").do(delete_old_feedback)
-    # schedule.every(2).seconds.do(DatabaseDump.make_dump)
     while True:
         await schedule.run_pending()
         await asyncio.sleep(1)

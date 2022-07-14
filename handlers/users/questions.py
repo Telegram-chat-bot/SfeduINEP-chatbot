@@ -102,7 +102,8 @@ async def question_handler(message: Message, state: FSMContext):
         await bot.send_message(
             chat_id=chat_id_group,
             text=f"""{datetime.now().strftime("%d.%m.%Y %H:%M")}
-Вопрос от <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name} {message.from_user.last_name}</a>
+Вопрос от <a href='tg://user?id={message.from_user.id}'>\
+{message.from_user.first_name or message.from_user.username} {message.from_user.last_name or ''}</a>
 
 "{question}" """, reply_markup=button
                         )
@@ -113,7 +114,9 @@ async def question_handler(message: Message, state: FSMContext):
         await message.answer(f"Ошибка 500. Не удалось отправить сообщение\n{await debugger(str(error))}")
 
     except ObjectDoesNotExist as error:
-        await message.answer(f"Ошибка! Группы, куда должен быть направлен вопрос, не существует.\n{await debugger(str(error))}")
+        await message.answer(
+            f"Ошибка! Группы, куда должен быть направлен вопрос, не существует.\n{await debugger(str(error))}"
+        )
         logging.error(error)
 
     await state.finish()
