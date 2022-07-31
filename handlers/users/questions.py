@@ -22,6 +22,12 @@ from utils.db_api.db_commands import get_chat_id_group_directions, Database
 from django_admin.feedback.models import Feedback as FB_Model
 from keyboards.default import enrollee_menu as kb
 
+except_words = [
+    *inner_buttons_id.keys(),
+    *buttons_id.keys(),
+    "Назад"
+]
+
 
 @dp.message_handler(text="Вопросы по направлению подготовки")
 async def direction_training_questions(message: Message, state: FSMContext):
@@ -45,7 +51,7 @@ async def direction_training_questions(message: Message, state: FSMContext):
 
 
 # * Формирование вопроса по направлению подготовки
-@dp.message_handler(IsNotButton([*inner_buttons_id.keys(), *buttons_id.keys(), "Назад"]), state=Questions.user_question_dir)
+@dp.message_handler(IsNotButton(except_words), state=Questions.user_question_dir)
 async def handler(message: Message, state: FSMContext):
     question: str = message.text
     await state.set_state(UserState.direction)
@@ -91,7 +97,7 @@ async def admission_questions(message: Message):
 
 
 # * Формирование вопроса по поступлению
-@dp.message_handler(IsNotButton([*inner_buttons_id.keys(), *buttons_id.keys(), "Назад"]), state=Questions.user_question)
+@dp.message_handler(IsNotButton(except_words), state=Questions.user_question)
 async def question_handler(message: Message, state: FSMContext):
     try:
         question: str = message.text
@@ -139,19 +145,16 @@ async def feedback_page(message: Message):
 
 
 # * Формирование отзыва пользователя и отправка его на сервер
-@dp.message_handler(state=Feedback.feedback_message)
+@dp.message_handler(IsNotButton(except_words), state=Feedback.feedback_message)
 async def get_feedback(message: Message, state: FSMContext):
-    if message.text in buttons_title_second or message.text in ["Обратная связь", "Назад"]:
-        await message.answer("Введите свой отзыв или активируйте команду /exit для выхода из режима ожидания ввода")
-    else:
-        fb_message: str = message.text
-        user_name: str = ' '.join(
-            [
-                message.from_user.first_name or "", message.from_user.last_name or ""
-            ]
-        )
+    fb_message: str = message.text
+    user_name: str = ' '.join(
+        [
+            message.from_user.first_name or "", message.from_user.last_name or ""
+        ]
+    )
 
-        await Database(FB_Model).save_data(username=user_name, review=fb_message)
-        await message.answer("Ваш отзыв отправлен!", reply_markup=await kb.generate_keyboard(one_time_keyboard=True))
+    await Database(FB_Model).save_data(username=user_name, review=fb_message)
+    await message.answer("Ваш отзыв отправлен!", reply_markup=await kb.generate_keyboard(one_time_keyboard=True))
 
-        await state.finish()
+    await state.finish()
