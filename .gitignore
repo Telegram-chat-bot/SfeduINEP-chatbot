@@ -6,15 +6,24 @@ locales
 *.code-workspace
 # C extensions
 *.so
+
+# PyCharm workspace directory
+.idea
+
+# Configuration files
 creds.json
+
+# Other files
+*.txt
 
 # Distribution / packaging
 .Python
 
+# Django generated directories
 /django_admin/django_admin/uploads/*
-.idea
 migrations/
 django_admin/static/admin/
+
 build/
 develop-eggs/
 dist/

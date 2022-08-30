@@ -9,6 +9,7 @@ import aioschedule as schedule
 
 
 async def startup(dp) -> None:
+    import filters
     await setup_django()
     await commands.setup_commands(dp)
     middlewares.setup(dp)
@@ -35,6 +36,7 @@ if __name__ == '__main__':
 
     from aiogram import executor
     import filters
-    import handlers
+    from handlers import dp
     from loader import dp, bot
+
     executor.start_polling(dp, on_startup=startup)

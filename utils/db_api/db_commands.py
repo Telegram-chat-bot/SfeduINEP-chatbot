@@ -5,7 +5,6 @@ from django_admin.service.models import *
 from django.db import models
 
 
-# -----------------------------------------
 class Database:
     def __init__(self, model):
         self.model: models.Model = model
@@ -26,22 +25,8 @@ class Database:
 
         if is_dict:
             return self.objects.values(*args)
-        else:
-            return self.objects.values_list(*args)
 
-    async def save_data(self, *args, **kwargs):
-        return self.model(*args, **kwargs).save()
-
-    async def delete_data(self, *args):
-        self.objects.get(*args).delete()
-
-    async def add_user(self, *args, **kwargs):
-        try:
-            return self.objects.update_or_create(
-                *args, **kwargs
-            )
-        except Exception:
-            return None
+        return self.objects.values_list(*args)
 
 
 # Проверка на существование id чата в бд
@@ -71,6 +56,7 @@ def get_chat_id_group_directions(code):
 @sync_to_async
 def del_chat_id(chat_id: str):
     try:
-        return ChatIDAdmission.objects.get(chat_id=chat_id).delete()
-    except:
-        return ChatIDDirections.objects.get(chat_id=chat_id).delete()
+        ChatIDAdmission.objects.get(chat_id=chat_id).delete()
+    except Exception as error:
+        ChatIDDirections.objects.get(chat_id=chat_id).delete()
+        return error

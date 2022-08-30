@@ -1,11 +1,13 @@
 from aiogram import Dispatcher
 from aiogram.types import BotCommand
 
+commands = {
+    "start": "Запуск бота",
+    "help": "Информация о боте",
+    "exit": "Выход из режима ввода данных"
+}
+
 
 async def setup_commands(dp: Dispatcher):
-    commands = [
-        BotCommand("start", "Запуск бота"),
-        BotCommand("help", "Информация о боте"),
-        BotCommand("exit", "Выход из режима ввода данных")
-    ]
-    await dp.bot.set_my_commands(commands)
+    array = [BotCommand(cmd, desc) for cmd, desc in commands.items()]
+    await dp.bot.set_my_commands(array)

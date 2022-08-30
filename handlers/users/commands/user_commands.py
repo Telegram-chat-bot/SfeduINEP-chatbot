@@ -3,7 +3,7 @@ from aiogram.dispatcher.filters import CommandStart, Command
 
 from django_admin.service.models import Users
 from filters.ChatTypeFilter import IsChat
-from loader import dp, DEBUG
+from loader import dp
 from aiogram.types import Message
 
 from utils.db_api.db_commands import Database
@@ -15,8 +15,12 @@ from keyboards.default import enrollee_menu as kb
 # * обработчик для команды выхода из состояния пользовательского ввода
 @dp.message_handler(Command("exit"), state="*")
 async def exit_input_mode(message: Message, state: FSMContext):
-    await state.finish()
-    await message.answer("Ввод текста отменён")
+    current_state = await state.get_state()
+    if current_state:
+        await state.finish()
+        await message.answer("Ввод текста отменён")
+    else:
+        await message.answer("Нечего отменять🫤")
 
 
 # * СТАРТОВОЕ СООБЩЕНИЕ
@@ -27,14 +31,12 @@ async def welcome(message: Message):
         content,
         reply_markup=await kb.generate_keyboard(one_time_keyboard=True)
     )
-    await Database(Users).add_user(
-        username=' '.join(
-            [
-                message.from_user.first_name or "",
-                message.from_user.last_name or ""
-            ]
-        ),
-        user_id=int(message.from_user.id)
+    Users.objects.update_or_create(username=' '.join(
+        [
+            message.from_user.first_name or "",
+            message.from_user.last_name or ""
+        ]
+        ), user_id=message.from_user.id
     )
 
 
@@ -46,5 +48,4 @@ async def help_command(message: Message):
 
 @dp.message_handler(Command("get_id"))
 async def get_userid(message: Message):
-    if DEBUG:
-        await message.answer(message.from_user.id)
+    await message.answer(message.from_user.id)

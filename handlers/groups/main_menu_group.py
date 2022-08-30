@@ -1,5 +1,6 @@
 import logging
 from aiogram.dispatcher.filters.builtin import AdminFilter, Text
+from aiogram.dispatcher.filters import CommandHelp
 from aiogram.dispatcher import FSMContext
 from aiogram.utils.exceptions import BotBlocked
 from django.db.models import QuerySet
@@ -69,12 +70,12 @@ async def send_attention_msg(message: Message, state: FSMContext):
 @dp.message_handler(IsGroup(), AdminFilter(), Text(equals="Удалить группу из базы данных"))
 async def del_chat(message: Message):
     try:
-        await db_commands.del_chat_id(message.chat.id)
+        await message.answer(await db_commands.del_chat_id(message.chat.id), parse_mode='')
         await message.answer("Группа удалена из базы данных")
 
     except ObjectDoesNotExist as error:
         await message.answer(
-            f"Группа уже удалена из базы данных или не состоит в ней вовсе.\n{await debugger(str(error))}"
+            f"Группа уже удалена из базы данных или не состоит в ней вовсе.\n{await debugger(error)}", parse_mode=''
         )
         logging.error(error)
 
@@ -82,8 +83,7 @@ async def del_chat(message: Message):
 # * Обработчик кнопки "Занести группу в базу данных"
 @dp.message_handler(IsGroup(), AdminFilter(), text="Занести группу в базу данных")
 async def add_group(message: Message):
-    chat_exists: bool = await db_commands.isChatExist(message.chat.id)
-    if not chat_exists:
+    if not (chat_exists := await db_commands.isChatExist(message.chat.id)):
         await message.answer("Какого типа ваша группа?", reply_markup=group_btn.group_type)
     else:
         await message.answer("Группа уже числится в базе данных")
@@ -135,7 +135,7 @@ async def ask_to_question_handler(call: CallbackQuery, state: FSMContext):
 # * Обработчик отправки сообщения с ответом
 @dp.message_handler(state=Questions.get_answer)
 async def send_answer(message: Message, state: FSMContext):
-    user_data = await state.get_data()
+    user_data: dict = await state.get_data()
     answer: str = message.text
 
     await bot.send_message(chat_id=user_data["questioner_id"], text=f"""
@@ -144,16 +144,18 @@ async def send_answer(message: Message, state: FSMContext):
 
 <i>Ответ:</i> "{answer}"
 """
-                           )
+            )
     await message.answer("Ответ был отправлен абитуриенту")
     await state.finish()
 
 
 # * Обработчик кнопки Помощь
-@dp.message_handler(IsGroup(), text="Помощь")
+@dp.message_handler(IsGroup(), CommandHelp())
 async def help_button(message: Message):
-    content: str = Help_content.objects.filter(
-        target_user=message.chat.type
-    ).first().content
-
-    await message.answer(content or "В этот раздел ещё не добавили информацию")
+    try:
+        content: str = Help_content.objects.filter(
+            target_user=message.chat.type
+        ).first().content
+        await message.answer(content)
+    except AttributeError as error:
+        await message.answer("В этот раздел ещё не добавили информацию", parse_mode='')

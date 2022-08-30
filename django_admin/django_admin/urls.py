@@ -22,4 +22,4 @@ from django_admin.django_admin import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("django_admin.bot.urls"))
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)

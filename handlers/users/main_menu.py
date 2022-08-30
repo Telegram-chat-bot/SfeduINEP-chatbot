@@ -3,7 +3,7 @@ from aiogram.dispatcher.storage import FSMContext
 from aiogram.utils.exceptions import MessageTextIsEmpty, CantParseEntities, PhotoDimensions
 
 from django_admin.bot.models import Page, InfoPage, InnerKeyboard
-from filters import CommandBack
+from filters import CommandBack, OtherWords
 
 from keyboards.inline.buttons import choose_level
 
@@ -18,6 +18,9 @@ import logging
 
 from utils import google_sheets
 from utils.db_api import db_commands
+from utils.bot_commands.commands import commands
+
+from handlers.groups.main_menu_group import group_menu
 
 # * Формирование словаря кнопок первого уровня => кнопка : id
 buttons = Page.objects.values("btn_title", "id")
@@ -33,10 +36,31 @@ keyboard = {"first": buttons_title_first}
 buttons_title_second = list(inner_buttons_id)
 keyboard["second"] = buttons_title_second
 
+service_words = [*keyboard["first"], *keyboard["second"], *group_menu, "Назад", *(map(lambda c: f"/{c}", commands))]
+
+
+# * Обработчик неслужебных слов
+@dp.message_handler(OtherWords(service_words))
+async def service_words_handler(message: Message):
+    """
+    Если пользователь ввел сообщение, которое не содержит закрепленные команды или названия кнопок, бот отвечает ему, \
+    что не понимает сообщения
+
+    :param message: переменная для манипуляции над сообщениями
+    """
+    await message.answer("Извините, но я не понимаю вашей команды")
+
 
 # * Обработчик кнопки Назад
 @dp.message_handler(CommandBack())
 async def back_to_btn_handler(message: Message):
+    """
+    Обработчик нажатия кнопки "Назад"
+
+    При нажатии переводит пользователя на уровень ниже
+
+    :param message: переменная для манипуляции над сообщениями
+    """
     await message.answer("Вы вернулись назад", reply_markup=await kb.generate_keyboard(
         one_time_keyboard=True
     ))
@@ -44,6 +68,13 @@ async def back_to_btn_handler(message: Message):
 
 @dp.message_handler(text="Получить результаты")
 async def get_results(message: Message):
+    """
+    Обработчик нажатия на кнопку "Получить результаты" в разделе "Тест на профориентацию"
+    При нажатии обращается к API Google Sheet, для получения результата теста, если таковой имеется
+    Если результата нет, бот возвращает пользователю сообщение о его отсутствии
+
+    :param message: переменная для манипуляции над сообщениями
+    """
     await message.answer("Ваш запрос обрабатывается. Подождите несколько секунд")
 
     query: dict = await db_commands.get_bak_directions()
@@ -88,7 +119,6 @@ async def menu(message: Message, state: FSMContext):
 
             if Page.objects.get(btn_title=pressed_button).file.name not in [None, ""]:
                 file_path: str = Page.objects.get(btn_title=pressed_button).file.path
-                logging.info(file_path)
 
                 async with aiofiles.open(file_path, "rb") as photograph:
                     await bot.send_photo(
@@ -99,10 +129,12 @@ async def menu(message: Message, state: FSMContext):
             else:
                 await message.answer(comment, reply_markup=await kb.generate_keyboard(btn_id))
 
-    except MessageTextIsEmpty:
-        await message.answer("Информации нет")
-    except PhotoDimensions as err:
-        await message.answer("Ошибка вывода изображения: большое разрешение")
-        logging.error(err)
-    except CantParseEntities:
-        await message.answer("Ошибка! Неправильная разметка информации")
+    except MessageTextIsEmpty as error:
+        await message.answer(f"Информации нет\n{debugger(error)}", parse_mode='')
+
+    except PhotoDimensions as error:
+        await message.answer(f"Ошибка вывода изображения: большое разрешение\n{debugger(error)}", parse_mode='')
+        logging.error(error)
+
+    except CantParseEntities as error:
+        await message.answer(f"Ошибка! Неправильная разметка информации\n{debugger(error)}", parse_mode='')

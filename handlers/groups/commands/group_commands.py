@@ -1,5 +1,3 @@
-import logging
-
 from aiogram.dispatcher.filters import CommandStart, Command
 from filters import IsGroup
 from loader import dp

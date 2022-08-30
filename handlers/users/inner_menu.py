@@ -11,6 +11,7 @@ from keyboards.inline.buttons import choose_level
 
 from loader import dp, bot
 from states.state_machine import PositionState
+from utils.debugger import debugger
 
 
 # * Обработчик вложенной клавиатуры
@@ -62,13 +63,16 @@ async def InnerKeyboardHandler(message: Message, state: FSMContext):
             else:
                 await message.answer(*information)
 
-    except MessageTextIsEmpty:
-        await message.answer("Информации нет")
-    except PhotoDimensions as err:
-        await message.answer("Ошибка вывода изображения: большое разрешение")
-        logging.error(err)
-    except CantParseEntities:
-        await message.answer("Ошибка! Неправильная разметка информации")
+    except MessageTextIsEmpty as error:
+        await message.answer(f"Информации нет\n{debugger(error)}", parse_mode='')
+
+    except PhotoDimensions as error:
+        await message.answer(f"Ошибка вывода изображения: большое разрешение\n{debugger(error)}", parse_mode='')
+        logging.error(error)
+
+    except CantParseEntities as error:
+        await message.answer(f"Ошибка! Неправильная разметка информации\n{debugger(error)}", parse_mode='')
+
     except FileNotFoundError:
         await message.answer(InnerKeyboard.objects.filter(
                 buttons_id=btn_id,

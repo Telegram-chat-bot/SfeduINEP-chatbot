@@ -13,7 +13,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django_admin.bot.models import InnerKeyboard
 from django_admin.service.models import ChatIDAdmission
 
-from handlers.users.main_menu import inner_buttons_id, buttons_id, buttons_title_second
+from handlers.users.main_menu import service_words, inner_buttons_id
 from keyboards.inline.buttons import choose_level
 
 from keyboards.inline import group_buttons as group_btn
@@ -22,13 +22,8 @@ from utils.db_api.db_commands import get_chat_id_group_directions, Database
 from django_admin.feedback.models import Feedback as FB_Model
 from keyboards.default import enrollee_menu as kb
 
-except_words = [
-    *inner_buttons_id.keys(),
-    *buttons_id.keys(),
-    "Назад"
-]
 
-
+# * Обработчик раздела "Вопросы по направлению подготовки"
 @dp.message_handler(text="Вопросы по направлению подготовки")
 async def direction_training_questions(message: Message, state: FSMContext):
     pressed_button: str = message.text
@@ -51,7 +46,7 @@ async def direction_training_questions(message: Message, state: FSMContext):
 
 
 # * Формирование вопроса по направлению подготовки
-@dp.message_handler(IsNotButton(except_words), state=Questions.user_question_dir)
+@dp.message_handler(IsNotButton(service_words), state=Questions.user_question_dir)
 async def handler(message: Message, state: FSMContext):
     question: str = message.text
     await state.set_state(UserState.direction)
@@ -64,6 +59,7 @@ async def handler(message: Message, state: FSMContext):
         chosen_direction: str = direction_data.get("direction")
 
         chat_id = await get_chat_id_group_directions(chosen_direction)
+
         await bot.send_message(
             chat_id=chat_id, text=f"""{datetime.now().strftime("%d.%m.%Y %H:%M")}
 Вопрос от \
@@ -97,7 +93,7 @@ async def admission_questions(message: Message):
 
 
 # * Формирование вопроса по поступлению
-@dp.message_handler(IsNotButton(except_words), state=Questions.user_question)
+@dp.message_handler(IsNotButton(service_words), state=Questions.user_question)
 async def question_handler(message: Message, state: FSMContext):
     try:
         question: str = message.text
@@ -117,11 +113,11 @@ async def question_handler(message: Message, state: FSMContext):
         await message.answer("Ваш вопрос учтён и отправлен приёмной комиссии. Ожидайте ответа")
 
     except MultipleObjectsReturned as error:
-        await message.answer(f"Ошибка 500. Не удалось отправить сообщение\n{await debugger(str(error))}")
+        await message.answer(f"Ошибка 500. Не удалось отправить сообщение\n{await debugger(error)}", parse_mode='')
 
     except ObjectDoesNotExist as error:
         await message.answer(
-            f"Ошибка! Группы, куда должен быть направлен вопрос, не существует.\n{await debugger(str(error))}"
+            f"Ошибка! Группы, куда должен быть направлен вопрос, не существует.\n{await debugger(error)}", parse_mode=''
         )
         logging.error(error)
 
@@ -145,7 +141,7 @@ async def feedback_page(message: Message):
 
 
 # * Формирование отзыва пользователя и отправка его на сервер
-@dp.message_handler(IsNotButton(except_words), state=Feedback.feedback_message)
+@dp.message_handler(IsNotButton(service_words), state=Feedback.feedback_message)
 async def get_feedback(message: Message, state: FSMContext):
     fb_message: str = message.text
     user_name: str = ' '.join(
@@ -153,8 +149,7 @@ async def get_feedback(message: Message, state: FSMContext):
             message.from_user.first_name or "", message.from_user.last_name or ""
         ]
     )
-
-    await Database(FB_Model).save_data(username=user_name, review=fb_message)
+    FB_Model(username=user_name, review=fb_message).save()
     await message.answer("Ваш отзыв отправлен!", reply_markup=await kb.generate_keyboard(one_time_keyboard=True))
 
     await state.finish()

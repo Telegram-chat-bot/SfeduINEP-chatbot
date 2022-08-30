@@ -23,14 +23,20 @@ from keyboards.inline import buttons as btn
 # * Обработка уровня подготовки
 @dp.callback_query_handler(lambda call: call.data in ["mag", "spec", "bak"], state=PositionState.get_pressed_btn)
 async def level_handler(call: CallbackQuery, state: FSMContext):
-    data = await state.get_data()
+    """
+    Получение ИД страницы и генерация инлайн клавиатуры в соответствии со страницей.
+
+    :param call: переменная, необходимая для работы c колбэк событиями.
+    :param state: переменная, характеризующая текущее состояние бота.
+    """
+    data: dict = await state.get_data()
 
     try:
         inline_buttons = await btn.gen_directions_btn(level=call.data, page=data["page"])
         await call.message.edit_text("Выберите направление подготовки", reply_markup=inline_buttons)
 
     except Exception as error:
-        await call.message.edit_text("Время ожидания ответа истекло")
+        await call.message.edit_text(f"Время ожидания ответа истекло\n{debugger(error)}", parse_mode='')
         logging.error(error)
 
     await state.reset_state(with_data=False)
@@ -40,7 +46,6 @@ async def level_handler(call: CallbackQuery, state: FSMContext):
 @dp.callback_query_handler(lambda call: call.data == "back_to_menu", state=PositionState.get_pressed_btn)
 async def delete_markup(call: CallbackQuery, state: FSMContext):
     await call.message.delete_reply_markup()
-
     """
     Проверка, если это раздел с информацией о направлениях - при нажатии кнопки Назад происходит привязка главной
     клавиатуры
@@ -103,6 +108,6 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
                                      reply_markup=btn.back_btn_init)
     except Exception as error:
         await call.message.edit_text(
-            f"Произошла ошибка:\n{await debugger(str(error))}", reply_markup=btn.back_btn_init, parse_mode=""
+            f"Произошла ошибка\n{await debugger(error)}", reply_markup=btn.back_btn_init, parse_mode=""
         )
         logging.error(error)
