@@ -38,6 +38,12 @@ def isChatExist(chat_id: str):
 
 # Получение направлений для ПРОФ.ТЕСТА
 @sync_to_async
+def update_or_create_user(username: str, user_id: int):
+    user = Users.objects.filter(user_id=user_id)
+    return user.update_or_create(username=username) if user else user.create(user_id=user_id, username=username)
+
+
+@sync_to_async
 def get_bak_directions():
     return {
         k["direction"]: k["name_of_dir"] for k in

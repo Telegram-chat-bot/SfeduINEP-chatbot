@@ -1,7 +1,8 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import CommandStart, Command
 
-from django_admin.service.models import Users
+from utils.debugger import debugger
+from utils.db_api.db_commands import update_or_create_user
 from filters.ChatTypeFilter import IsChat
 from loader import dp
 from aiogram.types import Message
@@ -26,18 +27,21 @@ async def exit_input_mode(message: Message, state: FSMContext):
 # * СТАРТОВОЕ СООБЩЕНИЕ
 @dp.message_handler(IsChat(), CommandStart())
 async def welcome(message: Message):
-    content: str = await Database(Welcome_message).get_field_by_name("message")
-    await message.answer(
-        content,
-        reply_markup=await kb.generate_keyboard(one_time_keyboard=True)
-    )
-    Users.objects.update_or_create(username=' '.join(
-        [
-            message.from_user.first_name or "",
-            message.from_user.last_name or ""
-        ]
-        ), user_id=message.from_user.id
-    )
+    try:
+        content: str = await Database(Welcome_message).get_field_by_name("message")
+        await message.answer(
+            content,
+            reply_markup=await kb.generate_keyboard(one_time_keyboard=True)
+        )
+        await update_or_create_user(
+            username=message.from_user.username or " ".join([
+                message.from_user.first_name,
+                message.from_user.last_name
+            ]),
+            user_id=message.from_user.id
+         )
+    except Exception as error:
+        await message.answer(f"Ошибка!{await debugger(error)}", parse_mode="")
 
 
 @dp.message_handler(IsChat(), Command("help"))
