@@ -4,12 +4,14 @@ from django.db.models import QuerySet
 from django_admin.bot.models import Page, InnerKeyboard
 
 
-def generate_keyboard(btn_id: int = None, one_time_keyboard: bool = False) -> ReplyKeyboardMarkup:
-    buttons = Page.objects.values("btn_title", "row")
+async def generate_keyboard(btn_id: int = None, one_time_keyboard: bool = False) -> ReplyKeyboardMarkup:
+    buttons: QuerySet = Page.objects.values("btn_title", "row")
     keyboard = {}
 
     if btn_id:
-        buttons: QuerySet = InnerKeyboard.objects.filter(buttons_id=btn_id).values("btn_title", "row").order_by("buttons_id")
+        buttons: QuerySet = InnerKeyboard.objects.filter(
+            buttons_id=btn_id
+        ).values("btn_title", "row").order_by("buttons_id")
 
     for button in buttons:
         if button["row"] not in keyboard:

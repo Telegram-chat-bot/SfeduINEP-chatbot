@@ -1,20 +1,29 @@
 #!/usr/bin/python3.8
 import os
 import middlewares
+from utils.scheduler.delete_scheduler import delete_old_feedback
+from utils.bot_commands import commands
+import utils.logger
+import asyncio
+import aioschedule as schedule
 
 
-async def startup_func(dp):
-    from aiogram.types import BotCommand
-    commands = [
-        BotCommand("start", "Запуск бота"),
-        BotCommand("help", "Информация о боте"),
-        BotCommand("exit", "Выход из режима ввода данных")
-    ]
+async def startup(dp) -> None:
+    import filters
+    await setup_django()
+    await commands.setup_commands(dp)
     middlewares.setup(dp)
-    await dp.bot.set_my_commands(commands)
+    asyncio.create_task(scheduler())
 
 
-def setup_django():
+async def scheduler() -> None:
+    schedule.every().day.at("4:00").do(delete_old_feedback)
+    while True:
+        await schedule.run_pending()
+        await asyncio.sleep(1)
+
+
+async def setup_django() -> None:
     import django
     os.environ['DJANGO_SETTINGS_MODULE'] = 'django_admin.django_admin.settings'
     os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = 'true'
@@ -22,10 +31,12 @@ def setup_django():
 
 
 if __name__ == '__main__':
-    setup_django()
+    main_loop = asyncio.get_event_loop()
+    main_loop.run_until_complete(setup_django())
 
     from aiogram import executor
     import filters
-    import handlers
+    from handlers import dp
     from loader import dp, bot
-    executor.start_polling(dp, on_startup=startup_func)
+
+    executor.start_polling(dp, on_startup=startup)

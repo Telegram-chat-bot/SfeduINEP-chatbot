@@ -9,7 +9,8 @@ from django_admin.bot.models import Directions, Passing_scores, Num_places
 from django_admin.service.models import ChatIDDirections
 
 from keyboards.inline.buttons import direction_button
-from loader import dp, bot, debug
+from loader import dp, bot
+from utils.debugger import debugger
 
 from utils.db_api.db_commands import Database
 
@@ -22,14 +23,20 @@ from keyboards.inline import buttons as btn
 # * Обработка уровня подготовки
 @dp.callback_query_handler(lambda call: call.data in ["mag", "spec", "bak"], state=PositionState.get_pressed_btn)
 async def level_handler(call: CallbackQuery, state: FSMContext):
-    data = await state.get_data()
+    """
+    Получение ИД страницы и генерация инлайн клавиатуры в соответствии со страницей.
+
+    :param call: переменная, необходимая для работы c колбэк событиями.
+    :param state: переменная, характеризующая текущее состояние бота.
+    """
+    data: dict = await state.get_data()
 
     try:
-        inline_buttons = await btn.gen_directions_btns(level=call.data, page=data["page"])
+        inline_buttons = await btn.gen_directions_btn(level=call.data, page=data["page"])
         await call.message.edit_text("Выберите направление подготовки", reply_markup=inline_buttons)
 
     except Exception as error:
-        await call.message.edit_text("Время ожидания ответа истекло")
+        await call.message.edit_text(f"Время ожидания ответа истекло\n{debugger(error)}", parse_mode='')
         logging.error(error)
 
     await state.reset_state(with_data=False)
@@ -39,7 +46,6 @@ async def level_handler(call: CallbackQuery, state: FSMContext):
 @dp.callback_query_handler(lambda call: call.data == "back_to_menu", state=PositionState.get_pressed_btn)
 async def delete_markup(call: CallbackQuery, state: FSMContext):
     await call.message.delete_reply_markup()
-
     """
     Проверка, если это раздел с информацией о направлениях - при нажатии кнопки Назад происходит привязка главной
     клавиатуры
@@ -47,7 +53,7 @@ async def delete_markup(call: CallbackQuery, state: FSMContext):
     await bot.delete_message(message_id=call.message.message_id, chat_id=call.message.chat.id)
     async with state.proxy() as pressed_btn:
         if pressed_btn["page"] == "inf_dir":
-            await call.message.answer("Вы вернулись в главное меню", reply_markup=kb.generate_keyboard())
+            await call.message.answer("Вы вернулись в главное меню", reply_markup=await kb.generate_keyboard())
 
     await state.finish()
 
@@ -102,6 +108,6 @@ async def direction_inf_handler(call: CallbackQuery, state: FSMContext):
                                      reply_markup=btn.back_btn_init)
     except Exception as error:
         await call.message.edit_text(
-            f"Произошла ошибка:\n{debug(str(error))}", reply_markup=btn.back_btn_init, parse_mode=""
+            f"Произошла ошибка\n{await debugger(error)}", reply_markup=btn.back_btn_init, parse_mode=""
         )
         logging.error(error)
