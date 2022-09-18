@@ -1,3 +1,5 @@
+import logging
+
 from asgiref.sync import sync_to_async
 from django.db.models import Q
 
@@ -40,7 +42,7 @@ def isChatExist(chat_id: str):
 @sync_to_async
 def update_or_create_user(username: str, user_id: int):
     user = Users.objects.filter(user_id=user_id)
-    return user.update_or_create(username=username) if user else user.create(user_id=user_id, username=username)
+    return user.update(username=username) if user else user.create(user_id=user_id, username=username)
 
 
 @sync_to_async

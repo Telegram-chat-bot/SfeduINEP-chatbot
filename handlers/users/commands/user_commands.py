@@ -1,3 +1,5 @@
+import logging
+
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import CommandStart, Command
 
@@ -41,7 +43,8 @@ async def welcome(message: Message):
             user_id=message.from_user.id
          )
     except Exception as error:
-        await message.answer(f"Ошибка!{await debugger(error)}", parse_mode="")
+        await message.answer(f"Ошибка!\n{await debugger(error)}", parse_mode="")
+        logging.error(error)
 
 
 @dp.message_handler(IsChat(), Command("help"))
