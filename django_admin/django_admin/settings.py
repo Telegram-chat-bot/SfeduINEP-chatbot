@@ -24,7 +24,7 @@ ROOT_DIR = os.getcwd()
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config.SECRET_KEY_DJ#"django-insecure-bmp4k!f5lh=j19=u)z#-^gu_=jy-zxsh_#xfvg_!e7=aj=rril"
+SECRET_KEY = config.SECRET_KEY_DJ
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
