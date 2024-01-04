@@ -12,5 +12,6 @@ DB_NAME = os.environ.get("DB_NAME")
 DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
 SECRET_KEY_DJ = os.environ.get("SECRET_KEY_DJANGO")
+DJANGO_DEBUG = os.environ.get("DJANGO_DEBUG").lower() != 'false'
 
 

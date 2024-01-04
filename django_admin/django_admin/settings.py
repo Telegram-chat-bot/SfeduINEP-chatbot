@@ -27,7 +27,7 @@ ROOT_DIR = os.getcwd()
 SECRET_KEY = config.SECRET_KEY_DJ
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.DJANGO_DEBUG
 
 ALLOWED_HOSTS = ['*']
 
@@ -35,6 +35,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    # whitenoise is necessary for correct recognition of the path to static files in production mode
+    'whitenoise.runserver_nostatic',
     'django_admin.bot.apps.BotConfig',
     'django_admin.feedback.apps.FeedbackConfig',
     'django_admin.service.apps.ServiceConfig',
@@ -48,6 +50,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # whitenoise is necessary for correct recognition of the path to static files in production mode
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -133,14 +137,14 @@ USE_TZ = True
 MEDIA_ROOT = os.path.join(BASE_DIR, "django_admin/uploads")
 MEDIA_URL = '/uploads/'
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # For local server
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "static")
+# ]
 
-# STATIC_ROOT = os.path.join(BASE_DIR, STATIC_URL)
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
